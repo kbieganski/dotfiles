@@ -1,0 +1,8 @@
+rofi.color-enabled: true
+rofi.color-window: argb:E0BD93F9, argb:E0BD93F9, argb:00000000
+rofi.color-normal: argb:00000000, argb:F5F8F8F2, argb:00000000, argb:A050FA7B, argb:E0FFFFFF
+rofi.color-active: argb:00000000, argb:F5F8F8F2, argb:00000000, argb:A050FA7B, argb:E0FFFFFF
+rofi.color-urgent: argb:00000000, argb:F5F8F8F2, argb:00000000, argb:A050FA7B, argb:E0FFFFFF
+rofi.separator-style: solid
+rofi.font: Jost* 16
+Xcursor.size: 16
