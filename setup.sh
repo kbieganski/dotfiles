@@ -73,6 +73,22 @@ function install_pip() {
     pip install --user $@
 }
 
+function escape_path() {
+    echo $1 | sed "s/\//\\\\\//g"
+}
+
+function make_dir() {
+    log "Making directory \\e[30;34;3m$1\\e[;;m"
+    mkdir -p $1
+}
+
+function make_copy() {
+    log "Copying \\e[30;34;3m$1\\e[;;m to \\e[30;34;3m$2\\e[;;m"
+    rm -f $2
+    mkdir -p $(dirname $2)
+    cp $1 $2
+}
+
 function make_link() {
     log "Making symbolic link \\e[30;34;3m$2\\e[;;m to \\e[30;34;3m$1\\e[;;m"
     rm -f $2
@@ -119,6 +135,7 @@ install expect inotify-tools psmisc
 install sysstat procps-ng alsa-utils playerctl
 install_pip udiskie
 install zip unzip
+install rclone
 
 section "GRAPHICAL ENVIRONMENT"
 install xorg-server xorg-xinit xclip xbindkeys
@@ -175,3 +192,25 @@ for APP_TARGET in $DOTFILES_DIR/desktop/*; do
     APP_LINK=~/.local/share/applications/$(basename $APP_TARGET)
     make_link $APP_TARGET $APP_LINK
 done
+
+section "BACKGROUND SERVICES"
+DROPBOX_DIR=~/dropbox
+GOOGLE_DRIVE_DIR=~/google-drive
+SYSTEMD_UNITS_DIR=~/.config/systemd/user
+make_dir $DROPBOX_DIR
+make_dir $GOOGLE_DRIVE_DIR
+make_dir $SYSTEMD_UNITS_DIR
+
+for SERVICE_FILE in $DOTFILES_DIR/systemd/*; do
+    SERVICE_FILE_COPY=$SYSTEMD_UNITS_DIR/$(basename $SERVICE_FILE)
+    make_copy $SERVICE_FILE $SERVICE_FILE_COPY
+    log "Unmasking \\e[30;34;3m$SERVICE_FILE_COPY\\e[;;m"
+    sed -i -e "s/MASK_DOTFILES_DIR/$(escape_path $DOTFILES_DIR)/g" \
+           -e "s/MASK_DROPBOX_DIR/$(escape_path $DROPBOX_DIR)/g" \
+           -e "s/MASK_GOOGLE_DRIVE_DIR/$(escape_path $GOOGLE_DRIVE_DIR)/" \
+        $SERVICE_FILE_COPY
+done
+systemctl --user daemon-reload
+systemctl --user enable dropbox; systemctl --user start dropbox
+systemctl --user enable google-drive; systemctl --user start google-drive
+systemctl --user enable ip-update.timer; systemctl --user start ip-update.timer

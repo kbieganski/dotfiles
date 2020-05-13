@@ -1,0 +1,10 @@
+[Unit]
+Description=rclone mount for Google Drive
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=rclone mount google-drive: MASK_GOOGLE_DRIVE_DIR --allow-non-empty
+
+[Install]
+WantedBy=default.target

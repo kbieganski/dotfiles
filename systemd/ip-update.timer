@@ -1,0 +1,10 @@
+[Unit]
+Description=IP address updater
+After=google-drive.service dropbox.service
+
+[Timer]
+OnCalendar=*:0/30
+Unit=ip-update.service
+
+[Install]
+WantedBy=default.target

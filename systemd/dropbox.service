@@ -1,0 +1,10 @@
+[Unit]
+Description=rclone mount for Dropbox
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=rclone mount dropbox: MASK_DROPBOX_DIR --allow-non-empty
+
+[Install]
+WantedBy=default.target
