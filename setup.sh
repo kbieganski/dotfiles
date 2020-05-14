@@ -91,7 +91,7 @@ function make_copy() {
 
 function make_link() {
     log "Making symbolic link \\e[30;34;3m$2\\e[;;m to \\e[30;34;3m$1\\e[;;m"
-    rm -f $2
+    rm -rf $2
     mkdir -p $(dirname $2)
     ln -s $1 $2
 }
