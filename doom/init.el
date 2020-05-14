@@ -10,7 +10,6 @@
        modeline
        ophints
        (popup +defaults)
-       pretty-code
        tabs
        treemacs
        unicode
