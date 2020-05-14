@@ -110,7 +110,7 @@ clone_git https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/
 section "EDITORS"
 install emacs
 clone_git https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install
+~/.emacs.d/bin/doom install -y
 install gvim
 install aspell
 
