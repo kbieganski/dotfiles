@@ -63,7 +63,7 @@ function clone_git() {
         else
             cd $WORKING_DIR
             rm -rf $2
-            git clone $1 $2
+            git clone --depth 1 $1 $2
         fi
     fi
 }
@@ -109,6 +109,8 @@ clone_git https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/
 
 section "EDITORS"
 install emacs
+clone_git https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom install
 install gvim
 install aspell
 
@@ -179,12 +181,14 @@ make_link $DOTFILES_DIR/compton.conf ~/.config/compton.conf
 make_link $DOTFILES_DIR/passhole.ini ~/.config/passhole.ini
 make_link $DOTFILES_DIR/git.conf ~/.gitconfig
 make_link $DOTFILES_DIR/Xresources ~/.Xresources
+make_link $DOTFILES_DIR/doom ~/.doom.d
 
 section "USER EXECUTABLE LINKS"
 for BIN_TARGET in $DOTFILES_DIR/bin/*sh; do
     BIN_LINK=~/.local/bin/$(echo $(basename $BIN_TARGET) | sed "s/\.sh$//g")
     make_link $BIN_TARGET $BIN_LINK
 done
+make_link ~/.emacs.d/bin/doom ~/.local/bin/doom
 make_link ~/.local/bin ~/bin
 
 section "USER DESKTOP ENTRIES"
@@ -211,6 +215,7 @@ for SERVICE_FILE in $DOTFILES_DIR/systemd/*; do
         $SERVICE_FILE_COPY
 done
 systemctl --user daemon-reload
+systemctl --user enable emacs; systemctl --user start emacs
 systemctl --user enable dropbox; systemctl --user start dropbox
 systemctl --user enable google-drive; systemctl --user start google-drive
 systemctl --user enable ip-update.timer; systemctl --user start ip-update.timer
