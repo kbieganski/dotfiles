@@ -111,7 +111,6 @@ section "EDITORS"
 install emacs
 clone_git https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom -y install
-install gvim
 install aspell
 
 section "COMPILERS AND LANGUAGES"

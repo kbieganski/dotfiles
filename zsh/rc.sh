@@ -93,3 +93,5 @@ alias mp='makepkg -is'
 alias shutdown='/usr/bin/shutdown now'
 alias shutdownin='/usr/bin/shutdown'
 alias suspend='systemctl suspend'
+
+alias vim='emacsclient -nw'
