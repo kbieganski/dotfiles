@@ -169,9 +169,9 @@ while :; do
 done
 
 section "USER CONFIGURATION LINKS"
-make_link $DOTFILES_DIR/profile.sh ~/.profile
-make_link $DOTFILES_DIR/zshrc.sh ~/.zshrc
-make_link $DOTFILES_DIR/kb-theme.sh ~/.oh-my-zsh/themes/kb.zsh-theme
+make_link $DOTFILES_DIR/zsh/env.sh ~/.zshenv
+make_link $DOTFILES_DIR/zsh/rc.sh ~/.zshrc
+make_link $DOTFILES_DIR/zsh/theme.sh ~/.oh-my-zsh/themes/kb.zsh-theme
 make_link $DOTFILES_DIR/xinitrc.sh ~/.xinitrc
 make_link $DOTFILES_DIR/termite.conf ~/.config/termite/config
 make_link $DOTFILES_DIR/i3.conf ~/.config/i3/config

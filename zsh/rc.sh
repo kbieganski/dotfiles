@@ -1,5 +1,3 @@
-export GTAGSLABEL=pygments
-export PATH=~/bin:$PATH
 export ZSH=~/.oh-my-zsh
 
 ZSH_THEME='kb'
@@ -7,7 +5,7 @@ COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(colorize emacs extract git gitignore jsontools pip svn-fast-info zsh-navigation-tools zsh_reload zsh-syntax-highlighting)
+plugins=(colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh_reload zsh-syntax-highlighting)
 
 setopt extendedglob      # Regular expressions with *
 setopt nocaseglob        # Case insensitive globbing
