@@ -41,10 +41,10 @@ function install_aur() {
         cd $CLONE_DIR
         local PKG_STRING=$(pkgbuild_fullname)
         if [ -z "$(pacman -Q | grep "$PKG_STRING")" ]; then
-        log "Installing: \\e[30;36;10m$PKG_STRING\\e[;;m"
-        makepkg -si --needed --noconfirm
+            log "Installing: \\e[30;36;10m$PKG_STRING\\e[;;m"
+            makepkg -si --needed --noconfirm
         else
-        log "Skipping \\e[30;36;10m$PKG_STRING\\e[;;m as it is already up to date"
+            log "Skipping \\e[30;36;10m$PKG_STRING\\e[;;m as it is already up to date"
         fi
         cd $WORKING_DIR
         log "Removing \\e[30;34;3m$CLONE_DIR\\e[;;m"
