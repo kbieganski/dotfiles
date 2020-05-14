@@ -181,7 +181,11 @@ make_link $DOTFILES_DIR/compton.conf ~/.config/compton.conf
 make_link $DOTFILES_DIR/passhole.ini ~/.config/passhole.ini
 make_link $DOTFILES_DIR/git.conf ~/.gitconfig
 make_link $DOTFILES_DIR/Xresources ~/.Xresources
+
+section "DOOM-EMACS CONFIGURATION"
 make_link $DOTFILES_DIR/doom ~/.doom.d
+~/.emacs.d/bin/doom sync
+~/.emacs.d/bin/doom purge
 
 section "USER EXECUTABLE LINKS"
 for BIN_TARGET in $DOTFILES_DIR/bin/*sh; do
