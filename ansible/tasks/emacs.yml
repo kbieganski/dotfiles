@@ -1,0 +1,6 @@
+- name: Install Emacs
+  pacman: name=emacs
+- name: Clone doom-emacs
+  git:
+    repo: https://github.com/hlissner/doom-emacs ~/.emacs.d
+    dest:  ~/.emacs.d

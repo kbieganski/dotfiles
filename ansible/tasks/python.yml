@@ -1,0 +1,10 @@
+- name: Install Python packages
+  pacman: name={{item}}
+  with_items:
+  - python
+  - python-pip
+  - pydb
+- name: Install from pip
+  pip: name={{item}}
+  with_items:
+    - pygments

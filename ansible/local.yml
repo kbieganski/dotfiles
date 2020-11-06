@@ -1,0 +1,13 @@
+- hosts: localhost
+  become: true
+  tasks:
+    - include: tasks/users.yml
+- hosts: localhost
+  become: true
+  become_user: ansible
+  pre_tasks:
+    - name: Update repositories
+      pacman: update_cache=yes
+  tasks:
+    - include: tasks/packages.yml
+    - include: tasks/cron.yml
