@@ -4,7 +4,7 @@ Description=Emacs daemon
 [Service]
 Type=forking
 ExecStart=/usr/bin/emacs --daemon
-ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
+ExecStop=/usr/bin/emacsclient --eval "(evil-quit-all-with-error-code)"
 Restart=on-failure
 
 [Install]

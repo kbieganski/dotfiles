@@ -1,0 +1,7 @@
+#!/bin/sh
+
+while :; do
+    $($1)
+    inotifywait -qq -e modify $($2)
+    echo "\n\n\n"
+done

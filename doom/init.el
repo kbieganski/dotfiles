@@ -3,6 +3,7 @@
        ivy
 
        :ui
+       deft
        doom
        doom-dashboard
        doom-quit
@@ -53,6 +54,7 @@
        json
        javascript
        markdown
+       (org +pretty +dragndrop)
        (python +lsp)
        rst
        (rust +lsp)
