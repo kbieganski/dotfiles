@@ -15,10 +15,9 @@
       - unzip
   become: true
 - name: Install utils from pip
-  pip: name={{item}}
+  pip: name={{item}} extra_args="--user"
   with_items:
     - python-language-server
     - pygments
     - ranger
     - udiskie
-  extra_args: --user
