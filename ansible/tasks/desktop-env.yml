@@ -26,7 +26,6 @@
   with_items:
   - ttf-iosevka
   - otf-jost
-  become: true
 - name: Create symlink for xinit run commands
   file:
     src: "{{DOTFILES_DIR}}/xinitrc.sh"
