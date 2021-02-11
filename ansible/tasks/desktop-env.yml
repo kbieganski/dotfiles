@@ -1,0 +1,69 @@
+- name: Install packages
+  pacman:
+    name:
+      - xorg-server
+      - xorg-xinit
+      - xclip
+      - xbindkeys
+      - i3-wm
+      - i3blocks
+      - i3lock-color
+      - xss-lock
+      - redshift
+      - termite
+      - ranger
+      - dunst
+      - rofi
+      - picom
+      - feh
+      - zathura
+      - zathura-pdf-mupdf
+      - zenity
+      - ttf-dejavu
+  become: true
+- name: Install AUR packages
+  aur: name={{item}}
+  with_items:
+  - ttf-iosevka
+  - otf-jost
+  become: true
+- name: Create symlink for xinit run commands
+  file:
+    src: {{DOTFILES_DIR}}/xinitrc.sh
+    dest: ~/.xinitrc
+    state: link
+- name: Create symlink for Termite config
+  file:
+    src: {{DOTFILES_DIR}}/termite.conf
+    dest: ~/.config/termite/config
+    state: link
+- name: Create symlink for i3 config
+  file:
+    src: {{DOTFILES_DIR}}/i3.conf
+    dest: ~/.config/i3/config
+    state: link
+- name: Create symlink for i3blocks config
+  file:
+    src: {{DOTFILES_DIR}}/i3blocks.conf
+    dest: ~/.config/i3blocks/config
+    state: link
+- name: Create symlink for dunst config
+  file:
+    src: {{DOTFILES_DIR}}/dunst.conf
+    dest: ~/.config/dunst/dunstrc
+    state: link
+- name: Create symlink for picom config
+  file:
+    src: {{DOTFILES_DIR}}/compton.conf
+    dest: ~/.config/picom.conf
+    state: link
+- name: Create symlink for passhole config
+  file:
+    src: {{DOTFILES_DIR}}/passhole.ini
+    dest: ~/.config/passhole.ini
+    state: link
+- name: Create symlink for Xresources
+  file:
+    src: {{DOTFILES_DIR}}/Xresources
+    dest: ~/.Xresources
+    state: link

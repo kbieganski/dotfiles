@@ -4,3 +4,4 @@
   - ghc
   - cabal-install
   - stack
+  become: true

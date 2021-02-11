@@ -1,0 +1,24 @@
+- name: Install packages
+  pacman:
+    name:
+      - aspell
+      - lsof
+      - expect
+      - inotify-tools
+      - psmisc
+      - sysstat
+      - procps-ng
+      - alsa-utils
+      - playerctl
+      - udisks2
+      - zip
+      - unzip
+  become: true
+- name: Install utils from pip
+  pip: name={{item}}
+  with_items:
+    - python-language-server
+    - pygments
+    - ranger
+    - udiskie
+  extra_args: --user

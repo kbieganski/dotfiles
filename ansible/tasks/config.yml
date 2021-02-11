@@ -1,5 +1,0 @@
-- name: Create symbolic link 
-  file:
-    src: {{DOTFILES_DIR}}/zsh/env.sh
-    dest: ~/.zshenv
-    state: link

@@ -1,0 +1,11 @@
+- name: Install packages for entertainment
+  pacman:
+    name:
+      - mpv
+      - steam
+  become: true
+- name: Install packages for entertainment from AUR
+  aur: name={{item}}
+  with_items:
+  - spotify
+  become: true

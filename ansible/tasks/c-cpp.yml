@@ -1,13 +1,9 @@
 - name: Install C and C++-related packages
-  pacman: name={{item}}
-  with_items:
-  - base-devel
-  - gcc
-  - clang
-  - clang-tools-extra
-  - cmake
-  - gdb
-  - lldb
-  - valgrind
-  - strace
-  - ltrace
+  pacman:
+    name:
+      - gcc
+      - clang
+      - clang-tools-extra
+      - cmake
+      - ccls
+  become: true

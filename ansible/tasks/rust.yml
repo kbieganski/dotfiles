@@ -6,3 +6,4 @@
   - rustup
   - rust-racer
   - cbindgen
+  become: true

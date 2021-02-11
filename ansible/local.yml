@@ -1,13 +1,26 @@
 - hosts: localhost
-  become: true
   tasks:
     - include: tasks/users.yml
 - hosts: localhost
-  become: true
-  become_user: ansible
+  roles:
+    - aur
   pre_tasks:
     - name: Update repositories
       pacman: update_cache=yes
+      become: true
   tasks:
-    - include: tasks/packages.yml
-    - include: tasks/cron.yml
+    - include: tasks/core.yml
+    - include: tasks/zsh.yml
+    - include: tasks/ansible-pull.yml
+    - include: tasks/c-cpp.yml
+    - include: tasks/native-debug.yml
+    - include: tasks/desktop-env.yml
+    - include: tasks/web.yml
+    - include: tasks/emacs.yml
+    - include: tasks/python.yml
+    - include: tasks/rust.yml
+    - include: tasks/haskell.yml
+    - include: tasks/go.yml
+    - include: tasks/entertainment.yml
+    - include: tasks/pip.yml
+    - include: tasks/utils.yml

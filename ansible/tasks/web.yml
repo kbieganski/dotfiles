@@ -1,0 +1,8 @@
+- name: Install packages
+  pacman:
+    name:
+      - rclone
+      - firefox
+      - chromium
+      - w3m
+  become: true
