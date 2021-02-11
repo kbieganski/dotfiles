@@ -1,6 +1,9 @@
+
+(setq doom-localleader-key "SPC l")
+
 (doom! :completion
        company
-       ivy
+       (ivy +icons)
 
        :ui
        deft
@@ -23,7 +26,7 @@
        (evil +everywhere)
        file-templates
        fold
-       (format +onsave)
+       format
        multiple-cursors
        snippets
        word-wrap
@@ -35,13 +38,11 @@
        vc
 
        :checkers
-       syntax
        spell
        grammar
 
        :tools
        (eval +overlay)
-       lookup
        lsp
        magit
        rgb

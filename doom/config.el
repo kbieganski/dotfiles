@@ -21,10 +21,15 @@
 
 (evil-define-key* '(normal visual) 'global (kbd "J") (lambda () (interactive) (scroll-up 2)))
 (evil-define-key* '(normal visual) 'global (kbd "K") (lambda () (interactive) (scroll-down 2)))
-;(general-define-key
-; :states '(normal visual)
-; "J" (lambda () (interactive) (scroll-up 2))
-; "K" (lambda () (interactive) (scroll-down 2)))
+(evil-define-key* '(normal visual) 'global (kbd "H") (lambda () (interactive) (evil-jump-backward)))
+(evil-define-key* '(normal visual) 'global (kbd "L") (lambda () (interactive) (evil-jump-forward)))
+(map! :leader "m t" 'smerge-mode :desc "Merge mode toggle")
+(map! :leader "m n" 'smerge-next :desc "Next conflict")
+(map! :leader "m N" 'smerge-prev :desc "Prev conflict")
+(map! :leader "m j" 'smerge-keep-lower :desc "Keep lower")
+(map! :leader "m k" 'smerge-keep-upper :desc "Keep upper")
+
+(setq-default evil-kill-on-visual-paste nil)
 
 ;; A bit of frame transparency
 (defconst frame-transparency 90)
@@ -42,3 +47,6 @@
 (setq deft-directory "~/notes"
       deft-extensions '("md")
       deft-recursive t)
+
+(add-hook 'kill-emacs-hook #'doom/quicksave-session)
+(run-at-time 60 t #'doom/save-session)
