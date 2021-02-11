@@ -10,5 +10,5 @@
 - name: Download gdb-dashboard
   get_url:
     url: https://git.io/.gdbinit
-    dest: /home/krzysztof/dotfiles/gdb-dashboard
+    dest: "{{DOTFILES_DIR}}/gdb-dashboard"
     mode: '0440'

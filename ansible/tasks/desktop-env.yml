@@ -10,7 +10,7 @@
       - i3lock-color
       - xss-lock
       - redshift
-      - termite
+      - alacritty
       - ranger
       - dunst
       - rofi
@@ -29,41 +29,41 @@
   become: true
 - name: Create symlink for xinit run commands
   file:
-    src: {{DOTFILES_DIR}}/xinitrc.sh
+    src: "{{DOTFILES_DIR}}/xinitrc.sh"
     dest: ~/.xinitrc
     state: link
 - name: Create symlink for Termite config
   file:
-    src: {{DOTFILES_DIR}}/termite.conf
+    src: "{{DOTFILES_DIR}}/termite.conf"
     dest: ~/.config/termite/config
     state: link
 - name: Create symlink for i3 config
   file:
-    src: {{DOTFILES_DIR}}/i3.conf
+    src: "{{DOTFILES_DIR}}/i3.conf"
     dest: ~/.config/i3/config
     state: link
 - name: Create symlink for i3blocks config
   file:
-    src: {{DOTFILES_DIR}}/i3blocks.conf
-    dest: ~/.config/i3blocks/config
+    src: "{{DOTFILES_DIR}}/i3blocks.conf
+    dest: ~/.config/i3blocks/config"
     state: link
 - name: Create symlink for dunst config
   file:
-    src: {{DOTFILES_DIR}}/dunst.conf
+    src: "{{DOTFILES_DIR}}/dunst.conf"
     dest: ~/.config/dunst/dunstrc
     state: link
 - name: Create symlink for picom config
   file:
-    src: {{DOTFILES_DIR}}/compton.conf
+    src: "{{DOTFILES_DIR}}/compton.conf"
     dest: ~/.config/picom.conf
     state: link
 - name: Create symlink for passhole config
   file:
-    src: {{DOTFILES_DIR}}/passhole.ini
+    src: "{{DOTFILES_DIR}}/passhole.ini"
     dest: ~/.config/passhole.ini
     state: link
 - name: Create symlink for Xresources
   file:
-    src: {{DOTFILES_DIR}}/Xresources
+    src: "{{DOTFILES_DIR}}/Xresources"
     dest: ~/.Xresources
     state: link

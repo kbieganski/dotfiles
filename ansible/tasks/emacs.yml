@@ -7,7 +7,7 @@
     dest:  ~/.emacs.d
 - name: Create symlink for Emacs config
   file:
-    src: {{DOTFILES_DIR}}/doom
+    src: "{{DOTFILES_DIR}}/doom"
     dest: ~/.doom.d
     state: link
 - name: Copy file with owner and permissions

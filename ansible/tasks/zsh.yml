@@ -11,21 +11,21 @@
     dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 - name: Create symlink for ZSH environment config
   file:
-    src: {{DOTFILES_DIR}}/zsh/env.sh
+    src: "{{DOTFILES_DIR}}/zsh/env.sh"
     dest: ~/.zshenv
     state: link
 - name: Create symlink for ZSH profile config
   file:
-    src: {{DOTFILES_DIR}}/zsh/profile.sh
+    src: "{{DOTFILES_DIR}}/zsh/profile.sh"
     dest: ~/.zprofile
     state: link
 - name: Create symlink for ZSH run commands
   file:
-    src: {{DOTFILES_DIR}}/zsh/rc.sh
+    src: "{{DOTFILES_DIR}}/zsh/rc.sh"
     dest: ~/.zshrc
     state: link
 - name: Create symlink for ZSH theme
   file:
-    src: {{DOTFILES_DIR}}/zsh/theme.sh
+    src: "{{DOTFILES_DIR}}/zsh/theme.sh"
     dest: ~/.oh-my-zsh/themes/kb.zsh-theme
     state: link

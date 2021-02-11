@@ -8,4 +8,5 @@
   aur: name={{item}}
   with_items:
   - spotify
+  skip_pgp_check: true
   become: true

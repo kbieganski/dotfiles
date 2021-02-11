@@ -9,9 +9,9 @@
       pacman: update_cache=yes
       become: true
   tasks:
+    - set_fact: DOTFILES_DIR="~/dotfiles"
     - include: tasks/core.yml
     - include: tasks/zsh.yml
-    - include: tasks/ansible-pull.yml
     - include: tasks/c-cpp.yml
     - include: tasks/native-debug.yml
     - include: tasks/desktop-env.yml
@@ -22,5 +22,4 @@
     - include: tasks/haskell.yml
     - include: tasks/go.yml
     - include: tasks/entertainment.yml
-    - include: tasks/pip.yml
     - include: tasks/utils.yml

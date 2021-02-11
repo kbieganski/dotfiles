@@ -8,6 +8,6 @@
   become: true
 - name: Create symlink for git config
   file:
-    src: {{DOTFILES_DIR}}/git.conf
+    src: "{{DOTFILES_DIR}}/git.conf"
     dest: ~/.gitconfig
     state: link
