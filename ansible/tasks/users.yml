@@ -2,5 +2,7 @@
   file: path=/etc/sudoers.d/ state=directory
 - name: Copy sudoers
   copy: src=files/sudoers dest=/etc/sudoers.d/wheel owner=root group=root mode=0440
+- name: Create group
+  user: name=krzysztof gid=1000
 - name: Create user
-  user: name=krzysztof uid=1000 groups="krzysztof wheel"
+  user: name=krzysztof uid=1000 groups="krzysztof,wheel"
