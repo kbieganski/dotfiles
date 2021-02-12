@@ -7,7 +7,7 @@
     dest:  ~/.emacs.d
 
 - name: Ensure '~/bin/' dir exists
-  file: path=~/.config/systemd/user/ state=directory
+  file: path=~/bin/ state=directory
 
 - name: Create symlink for Emacs-doom executable
   file:
