@@ -10,6 +10,7 @@
       - procps-ng
       - alsa-utils
       - playerctl
+      - python-gobject # needed for udiskie
       - udisks2
       - zip
       - unzip
@@ -20,4 +21,4 @@
       - pygments
       - ranger
       - udiskie
-    extra_args: "--user --no-use-pep517"
+    extra_args: "--user"

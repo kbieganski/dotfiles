@@ -9,4 +9,4 @@
   pip:
     name:
       - python-language-server
-    extra_args: "--user --no-use-pep517"
+    extra_args: "--user"
