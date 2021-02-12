@@ -29,3 +29,8 @@
     src: "{{DOTFILES_DIR}}/zsh/theme.sh"
     dest: ~/.oh-my-zsh/themes/kb.zsh-theme
     state: link
+- name: Change user shell to ZSH
+  user:
+    name: krzysztof
+    shell: /bin/zsh
+  become: yes
