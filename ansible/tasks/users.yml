@@ -1,4 +1,4 @@
-- name: Ensures sudoers.d dir exists
+- name: Ensure sudoers.d dir exists
   file: path=/etc/sudoers.d/ state=directory
 - name: Copy sudoers
   copy: src=files/sudoers dest=/etc/sudoers.d/wheel owner=root group=root mode=0440

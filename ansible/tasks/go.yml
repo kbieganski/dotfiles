@@ -1,7 +1,7 @@
 - name: Install Go packages
-  pacman: name={{item}}
-  with_items:
-  - go
-  - go-tools
-  - delve
+  pacman:
+    name:
+      - go
+      - go-tools
+      - delve
   become: true

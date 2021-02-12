@@ -11,4 +11,3 @@
   get_url:
     url: https://git.io/.gdbinit
     dest: "{{DOTFILES_DIR}}/gdb-dashboard"
-    mode: '0440'

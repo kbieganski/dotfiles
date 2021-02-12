@@ -1,9 +1,9 @@
 - name: Install Rust packages
-  pacman: name={{item}}
-  with_items:
-  - rust
-  - rust-docs
-  - rustup
-  - rust-racer
-  - cbindgen
+  pacman:
+    name:
+      - rust
+      - rust-docs
+      - rustup
+      - rust-racer
+      - cbindgen
   become: true

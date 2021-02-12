@@ -1,7 +1,7 @@
 - name: Install Haskell packages
-  pacman: name={{item}}
-  with_items:
-  - ghc
-  - cabal-install
-  - stack
+  pacman:
+    name:
+      - ghc
+      - cabal-install
+      - stack
   become: true

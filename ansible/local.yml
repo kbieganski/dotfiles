@@ -1,6 +1,7 @@
 - hosts: localhost
   tasks:
     - include: tasks/users.yml
+    - include: tasks/pacman.yml
 - hosts: localhost
   roles:
     - aur
