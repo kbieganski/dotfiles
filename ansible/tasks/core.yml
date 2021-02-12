@@ -6,8 +6,16 @@
       - git
       - openssh
   become: true
+
 - name: Create symlink for git config
   file:
     src: "{{DOTFILES_DIR}}/git.conf"
     dest: ~/.gitconfig
     state: link
+
+- name: Make sure SSH service is enabled and running
+  systemd:
+    state: started
+    enabled: true
+    name: sshd
+  become: true

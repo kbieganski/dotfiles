@@ -6,7 +6,25 @@
     repo: https://github.com/hlissner/doom-emacs
     dest:  ~/.emacs.d
 
-- name: Ensure '.config/systemd/user/' dir exists
+- name: Ensure '~/bin/' dir exists
+  file: path=~/.config/systemd/user/ state=directory
+
+- name: Create symlink for Emacs-doom executable
+  file:
+    src: ~/.emacs.d/bin/doom
+    dest: ~/bin/doom
+    state: link
+
+- name: Create symlink for Emacs config
+  file:
+    src: "{{DOTFILES_DIR}}/doom"
+    dest: ~/.doom.d
+    state: link
+
+- name: Doom sync/upgrade/compile
+  command: doom sync; doom upgrade; doom compile
+
+- name: Ensure '~/.config/systemd/user/' dir exists
   file: path=~/.config/systemd/user/ state=directory
 
 - name: Create symlink for Emacs service
@@ -21,12 +39,3 @@
     enabled: true
     scope: user
     name: emacs
-
-- name: Create symlink for Emacs config
-  file:
-    src: "{{DOTFILES_DIR}}/doom"
-    dest: ~/.doom.d
-    state: link
-
-- name: Doom sync/upgrade/compile
-  command: doom sync; doom upgrade; doom compile
