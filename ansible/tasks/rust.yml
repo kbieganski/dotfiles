@@ -1,7 +1,6 @@
 - name: Install Rust packages
   pacman:
     name:
-      - rust
       - rust-docs
       - rustup
       - rust-racer
