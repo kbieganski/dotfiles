@@ -15,8 +15,9 @@
       - unzip
   become: true
 - name: Install utils from pip
-  pip: extra_args="--user --no-use-pep517"
+  pip:
     name:
       - pygments
       - ranger
       - udiskie
+    extra_args: "--user --no-use-pep517"
