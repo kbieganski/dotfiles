@@ -47,7 +47,7 @@
   file: path=~/.config/i3blocks/ state=directory
 - name: Create symlink for i3blocks config
   file:
-    src: "{{DOTFILES_DIR}}/i3blocks.conf
+    src: "{{DOTFILES_DIR}}/i3blocks.conf"
     dest: ~/.config/i3blocks/config"
     state: link
 
