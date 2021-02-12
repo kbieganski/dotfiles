@@ -21,8 +21,12 @@
     dest: ~/.doom.d
     state: link
 
-- name: Doom sync/upgrade/compile
-  command: doom sync; doom upgrade; doom compile
+- name: Emacs-doom sync
+  command: doom -y sync
+- name: Emacs-doom upgrade
+  command: doom -y upgrade
+- name: Emacs-doom compile
+  command: doom -y compile
 
 - name: Ensure '~/.config/systemd/user/' dir exists
   file: path=~/.config/systemd/user/ state=directory
