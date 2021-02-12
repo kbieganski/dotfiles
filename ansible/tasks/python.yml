@@ -5,3 +5,7 @@
       - python-pip
       - pydb
   become: true
+- name: Install Python packages from pip
+  pip: extra_args="--user"
+    name:
+      - python-language-server

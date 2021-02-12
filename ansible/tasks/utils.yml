@@ -1,4 +1,4 @@
-- name: Install packages
+- name: Install utility packages
   pacman:
     name:
       - aspell
@@ -15,9 +15,8 @@
       - unzip
   become: true
 - name: Install utils from pip
-  pip: name={{item}} extra_args="--user"
-  with_items:
-    - python-language-server
-    - pygments
-    - ranger
-    - udiskie
+  pip: extra_args="--user --no-use-pep517"
+    name:
+      - pygments
+      - ranger
+      - udiskie
