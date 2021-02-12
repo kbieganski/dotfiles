@@ -2,5 +2,5 @@
   replace:
     path: /etc/pacman.conf
     regexp: '#\[multilib\]\n#'
-    replace: '[multilib]'
+    replace: '[multilib]\n'
   become: true
