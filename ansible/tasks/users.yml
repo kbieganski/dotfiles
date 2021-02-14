@@ -1,8 +1,12 @@
 - name: Ensure sudoers.d dir exists
-  file: path=/etc/sudoers.d/ state=directory
+  file: path=/etc/sudoers.d/ state=directory mode=0666
+  become: true
 - name: Copy sudoers
-  copy: src=files/sudoers dest=/etc/sudoers.d/wheel owner=root group=root mode=0440
+  copy: src=files/sudoers dest=/etc/sudoers.d/wheel owner=root group=root mode=0666
+  become: true
 - name: Create group
   group: name=krzysztof gid=1000
+  become: true
 - name: Create user
   user: name=krzysztof uid=1000 groups="krzysztof,wheel"
+  become: true

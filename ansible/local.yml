@@ -2,7 +2,6 @@
   tasks:
     - include: tasks/users.yml
     - include: tasks/pacman.yml
-  remote_user: root
 - hosts: localhost
   roles:
     - aur
