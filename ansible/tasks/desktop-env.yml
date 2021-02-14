@@ -63,6 +63,14 @@
     dest: ~/.config/dunst/dunstrc
     state: link
 
+- name: Ensure alacritty config dir exists
+  file: path=~/.config/alacritty/ state=directory
+- name: Create symlink for alacritty config
+  file:
+    src: "{{DOTFILES_DIR}}/alacritty.yml"
+    dest: ~/.config/alacritty/alacritty.yml
+    state: link
+
 - name: Create symlink for picom config
   file:
     src: "{{DOTFILES_DIR}}/compton.conf"
