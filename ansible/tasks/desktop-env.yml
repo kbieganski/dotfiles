@@ -45,8 +45,10 @@
     dest: ~/.config/i3/config
     state: link
 
-- name: Ensure i3blocks config dir exists
-  file: path=~/.config/i3blocks/ state=directory
+- name: Clone i3blocks scripts
+  git:
+    repo: https://github.com/vivien/i3blocks-contrib
+    dest: ~/.config/i3blocks
 - name: Create symlink for i3blocks config
   file:
     src: "{{DOTFILES_DIR}}/i3blocks.conf"

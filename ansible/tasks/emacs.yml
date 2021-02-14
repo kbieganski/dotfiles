@@ -4,7 +4,7 @@
 - name: Clone doom-emacs
   git:
     repo: https://github.com/hlissner/doom-emacs
-    dest:  ~/.emacs.d
+    dest: ~/.emacs.d
 
 - name: Ensure '~/bin/' dir exists
   file: path=~/bin/ state=directory
