@@ -23,5 +23,7 @@
     - include: tasks/rust.yml
     - include: tasks/haskell.yml
     - include: tasks/go.yml
+    - include: tasks/virtual.yml
+    - include: tasks/gamedev.yml
     - include: tasks/entertainment.yml
     - include: tasks/utils.yml

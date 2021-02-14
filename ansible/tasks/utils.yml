@@ -14,6 +14,12 @@
       - udisks2
       - zip
       - unzip
+      - gzip
+      - bzip2
+      - p7zip
+      - cloc
+      - flameshot
+      - xorg-xrandr
   become: true
 - name: Install utils from pip
   pip:

@@ -6,4 +6,6 @@
       - clang-tools-extra
       - cmake
       - ccls
+      - ccache
+      - boost
   become: true

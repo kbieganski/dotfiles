@@ -56,7 +56,8 @@ alias lr='/bin/ls -tRFh --color=auto'
 alias lfil='/bin/ls -lFh --color=auto | grep "^-" --color=never'
 alias ldir='/bin/ls -lFh --color=auto | grep "^d" --color=never'
 
-alias df='/bin/df -h | grep sd --color=never'
+alias df='/bin/df -h'
+alias du='/bin/du -h'
 
 alias ffil='find . -type f -name'
 alias fdir='find . -type d -name'
@@ -82,6 +83,7 @@ alias rm='rm -ivrf'
 alias ln='/bin/ln -s'
 alias hln='/bin/ln'
 
+alias cal='cal -m -3'
 alias weather='curl -s wttr.in/Wroclaw'
 alias pysh='sh -c "python -ic\"import sh\""'
 

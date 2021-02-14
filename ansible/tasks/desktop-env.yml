@@ -20,6 +20,8 @@
       - zathura-pdf-mupdf
       - zenity
       - ttf-dejavu
+      - arc-gtk-theme
+      - arc-icon-theme
   become: true
 - name: Install desktop environment packages from AUR
   aur: name={{item}}
