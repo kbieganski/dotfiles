@@ -49,4 +49,4 @@
       deft-recursive t)
 
 (add-hook 'kill-emacs-hook #'doom/quicksave-session)
-(run-at-time "10 min" t #'doom/save-session)
+(run-at-time `10 min' t #'doom/save-session)
