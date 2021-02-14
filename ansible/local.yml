@@ -1,8 +1,9 @@
 - hosts: localhost
   tasks:
-    - include: tasks/users.yml
-    - include: tasks/pacman.yml
-    when: ansible_user == root
+    - block:
+      - include: tasks/users.yml
+      - include: tasks/pacman.yml
+      when: ansible_user == 'root'
 - hosts: localhost
   roles:
     - aur
@@ -11,19 +12,21 @@
       pacman: update_cache=yes
       become: true
   tasks:
-    - set_fact: DOTFILES_DIR="~/dotfiles"
-    - include: tasks/core.yml
-    - include: tasks/zsh.yml
-    - include: tasks/c-cpp.yml
-    - include: tasks/native-debug.yml
-    - include: tasks/desktop-env.yml
-    - include: tasks/web.yml
-    - include: tasks/emacs.yml
-    - include: tasks/python.yml
-    - include: tasks/rust.yml
-    - include: tasks/haskell.yml
-    - include: tasks/go.yml
-    - include: tasks/virtual.yml
-    - include: tasks/gamedev.yml
-    - include: tasks/entertainment.yml
-    - include: tasks/utils.yml
+    - block:
+      - set_fact: DOTFILES_DIR="~/dotfiles"
+      - include: tasks/core.yml
+      - include: tasks/zsh.yml
+      - include: tasks/c-cpp.yml
+      - include: tasks/native-debug.yml
+      - include: tasks/desktop-env.yml
+      - include: tasks/web.yml
+      - include: tasks/emacs.yml
+      - include: tasks/python.yml
+      - include: tasks/rust.yml
+      - include: tasks/haskell.yml
+      - include: tasks/go.yml
+      - include: tasks/virtual.yml
+      - include: tasks/gamedev.yml
+      - include: tasks/entertainment.yml
+      - include: tasks/utils.yml
+      when: ansible_user == 'krzysztof'

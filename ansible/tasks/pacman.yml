@@ -3,4 +3,3 @@
     path: /etc/pacman.conf
     regexp: '#\[multilib\]\n#'
     replace: '[multilib]\n'
-  become: true
