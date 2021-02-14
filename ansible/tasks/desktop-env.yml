@@ -52,7 +52,7 @@
 - name: Create symlink for i3blocks config
   file:
     src: "{{DOTFILES_DIR}}/i3blocks.conf"
-    dest: ~/.config/i3blocks/config"
+    dest: ~/.config/i3blocks/config
     state: link
 
 - name: Ensure dunst config dir exists
