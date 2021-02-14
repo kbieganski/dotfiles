@@ -1,7 +1,10 @@
 - name: Install gamedev packages
   pacman:
     name:
-      - godot
       - blender
       - vulkan-devel
   become: true
+- name: Install Godot from AUR
+  aur: name={{item}}
+  with_items:
+  - godot

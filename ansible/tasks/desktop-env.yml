@@ -23,7 +23,7 @@
       - arc-gtk-theme
       - arc-icon-theme
   become: true
-- name: Install desktop environment packages from AUR
+- name: Install fonts from AUR
   aur: name={{item}}
   with_items:
   - ttf-iosevka
