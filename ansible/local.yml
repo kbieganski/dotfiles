@@ -2,6 +2,7 @@
   tasks:
     - include: tasks/users.yml
     - include: tasks/pacman.yml
+    when: ansible_user == root
 - hosts: localhost
   roles:
     - aur
