@@ -32,9 +32,9 @@
 (setq-default evil-kill-on-visual-paste nil)
 
 ;; A bit of frame transparency
-(defconst frame-transparency 90)
-(set-frame-parameter (selected-frame) 'alpha frame-transparency)
-(add-to-list 'default-frame-alist `(alpha . ,frame-transparency))
+;(defconst frame-transparency 90)
+;(set-frame-parameter (selected-frame) 'alpha frame-transparency)
+;(add-to-list 'default-frame-alist `(alpha . ,frame-transparency))
 ;; (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 ;; (add-to-list 'default-frame-alist '(alpha . (85 . 90)))
 

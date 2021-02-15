@@ -73,7 +73,7 @@
 
 - name: Create symlink for picom config
   file:
-    src: "{{DOTFILES_DIR}}/compton.conf"
+    src: "{{DOTFILES_DIR}}/picom.conf"
     dest: ~/.config/picom.conf
     state: link
 
