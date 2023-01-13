@@ -52,6 +52,12 @@ function install_aur() {
     done
 }
 
+
+function force_clone_git() {
+    rm -rf $2
+    git clone --depth 1 $1 $2
+}
+
 function clone_git() {
     log "Cloning \\e[30;34;3m$1\\e[;;m to \\e[30;34;3m$2\\e[;;m"
     if [ -d "$2" ]; then
@@ -62,9 +68,10 @@ function clone_git() {
             cd $WORKING_DIR
         else
             cd $WORKING_DIR
-            rm -rf $2
-            git clone --depth 1 $1 $2
+            force_clone_git $1 $2
         fi
+    else
+        force_clone_git $1 $2
     fi
 }
 
@@ -169,6 +176,7 @@ done
 
 section "USER CONFIGURATION LINKS"
 make_link $DOTFILES_DIR/zsh/env.sh ~/.zshenv
+make_link $DOTFILES_DIR/zsh/profile.sh ~/.zprofile
 make_link $DOTFILES_DIR/zsh/rc.sh ~/.zshrc
 make_link $DOTFILES_DIR/zsh/theme.sh ~/.oh-my-zsh/themes/kb.zsh-theme
 make_link $DOTFILES_DIR/xinitrc.sh ~/.xinitrc

@@ -1,10 +1,12 @@
 [Unit]
-Description=rclone mount for Dropbox
+Description=rclone bisync for Dropbox
 Wants=network-online.target
 After=network-online.target
+OnFailure=dropbox-resync.service
 
 [Service]
-ExecStart=rclone mount dropbox: MASK_DROPBOX_DIR --allow-non-empty
+Type=oneshot
+ExecStart=rclone bisync dropbox: {{DROPBOX_DIR}}
 
 [Install]
 WantedBy=default.target

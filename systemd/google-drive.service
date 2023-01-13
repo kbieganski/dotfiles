@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=rclone mount google-drive: MASK_GOOGLE_DRIVE_DIR --allow-non-empty
+ExecStart=rclone sync google-drive: {{GOOGLE_DRIVE_DIR}} --allow-non-empty --vfs-cache-mode full
 
 [Install]
 WantedBy=default.target

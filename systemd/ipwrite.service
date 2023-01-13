@@ -4,4 +4,4 @@ After=google-drive.service dropbox.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh MASK_DOTFILES_DIR/ip-update.sh MASK_GOOGLE_DRIVE_DIR MASK_DROPBOX_DIR
+ExecStart=/bin/sh {{DOTFILES_DIR}}/bin/ipwrite {{GOOGLE_DRIVE_DIR}} {{DROPBOX_DIR}}

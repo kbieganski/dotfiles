@@ -1,0 +1,11 @@
+configuration {
+    font: "Jost* 12";
+    hover-select: true;
+    parse-known-hosts: false;
+    matching: "fuzzy";
+    scroll-method: 1;
+    kb-row-up: "Up,Alt+k";
+    kb-row-down: "Down,Alt+j";
+}
+
+@theme "theme"

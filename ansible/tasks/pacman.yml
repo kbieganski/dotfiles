@@ -1,0 +1,5 @@
+- name: Enable multilib
+  replace:
+    path: /etc/pacman.conf
+    regexp: '#\[multilib\]\n#'
+    replace: '[multilib]\n'

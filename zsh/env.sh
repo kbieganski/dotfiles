@@ -1,3 +1,5 @@
 #!/bin/sh
 
-export PATH=~/bin:$PATH
+export PATH=~/bin:~/.local/bin:$PATH
+
+systemctl --user import-environment PATH HOME

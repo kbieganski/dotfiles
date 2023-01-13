@@ -1,0 +1,39 @@
+- name: Install Zsh and Starship
+  pacman:
+    name:
+      - zsh
+      - starship
+  become: true
+- name: Clone Oh My Zsh
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: ~/.oh-my-zsh
+- name: Clone Oh My Zsh plugin for Zsh syntax highlighting
+  git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+- name: Create symlink for Zsh environment config
+  file:
+    src: "{{DOTFILES_DIR}}/zsh/env.sh"
+    dest: ~/.zshenv
+    state: link
+- name: Create symlink for Zsh profile config
+  file:
+    src: "{{DOTFILES_DIR}}/zsh/profile.sh"
+    dest: ~/.zprofile
+    state: link
+- name: Create symlink for Zsh run commands
+  file:
+    src: "{{DOTFILES_DIR}}/zsh/rc.sh"
+    dest: ~/.zshrc
+    state: link
+- name: Create symlink for Zsh theme
+  file:
+    src: "{{DOTFILES_DIR}}/zsh/theme.sh"
+    dest: ~/.oh-my-zsh/themes/kb.zsh-theme
+    state: link
+- name: Change user shell to Zsh
+  user:
+    name: krzysztof
+    shell: /bin/zsh
+  become: true

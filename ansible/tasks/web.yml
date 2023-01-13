@@ -1,0 +1,12 @@
+- name: Install Firefox and w3m
+  pacman:
+    name:
+      - firefox
+      - w3m
+  become: true
+- name: Install Google Chrome from AUR
+  aur: name={{item}}
+  with_items:
+  - google-chrome
+  become: true
+  become_user: aur

@@ -1,0 +1,44 @@
+- name: Install utility packages
+  pacman:
+    name:
+      - man
+      - screen
+      - lsof
+      - expect
+      - inotify-tools
+      - psmisc
+      - sysstat
+      - procps-ng
+      - htop
+      - python-gobject # needed for udiskie
+      - udisks2
+      - zip
+      - unzip
+      - gzip
+      - bzip2
+      - p7zip
+      - cloc
+      - git-delta
+      - wget
+      - bat
+  become: true
+- name: Install utils from pip
+  pip:
+    name:
+      - ranger-fm
+      - udiskie
+      - passhole
+    extra_args: --user
+- name: Create symlink for phmenu
+  file:
+    src: "{{DOTFILES_DIR}}/bin/phmenu"
+    dest: ~/bin/phmenu
+    state: link
+
+- name: Ensure bat config dir exists
+  file: path=~/.config/bat/ state=directory
+- name: Create symlink for bat config
+  file:
+    src: "{{DOTFILES_DIR}}/batconfig"
+    dest: ~/.config/bat/config
+    state: link

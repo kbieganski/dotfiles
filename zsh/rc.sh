@@ -1,11 +1,11 @@
 export ZSH=~/.oh-my-zsh
-
-ZSH_THEME='kb'
+theme.sh/bin/theme.sh github-dark
+ZSH_THEME='agnoster'
 COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh_reload zsh-syntax-highlighting)
+plugins=(colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh-syntax-highlighting)
 
 setopt extendedglob      # Regular expressions with *
 setopt nocaseglob        # Case insensitive globbing
@@ -41,6 +41,7 @@ bindkey '^[[1;5C' forward-word
 
 source $ZSH/oh-my-zsh.sh
 
+export EDITOR=nvim
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -56,16 +57,14 @@ alias lr='/bin/ls -tRFh --color=auto'
 alias lfil='/bin/ls -lFh --color=auto | grep "^-" --color=never'
 alias ldir='/bin/ls -lFh --color=auto | grep "^d" --color=never'
 
-alias df='/bin/df -h | grep sd --color=never'
+alias df='/bin/df -h'
+alias du='/bin/du -h'
 
 alias ffil='find . -type f -name'
 alias fdir='find . -type d -name'
 
-alias sgrep='/bin/grep -R -n -H -C 5 --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
-
 alias c='clear'
 alias h='history'
-alias ch='echo > ~/.bash_history'
 
 alias term='kill'
 alias kill='kill -9'
@@ -75,23 +74,27 @@ alias free='free -h'
 alias e='exit'
 alias q='exit'
 
-alias cp='cp -ivr'
-alias mv='mv -iv'
-alias rm='rm -ivrf'
+alias cp='/bin/cp -ivr'
+alias mv='/bin/mv -iv'
+alias rm='/bin/rm -ivrf'
 
 alias ln='/bin/ln -s'
 alias hln='/bin/ln'
 
-alias weather='curl -s wttr.in/Wroclaw'
-alias pysh='sh -c "python -ic\"import sh\""'
+alias cal='cal -m -3'
+alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
 
 alias pacman='pacman --color=auto'
 alias pm='pacman --color=auto'
 alias makepkg='makepkg -is'
 alias mp='makepkg -is'
 
-alias shutdown='/usr/bin/shutdown now'
-alias shutdownin='/usr/bin/shutdown'
+alias shutdown='/bin/shutdown now'
 alias suspend='systemctl suspend'
 
-alias vim='emacsclient -nw'
+alias vim='nvim'
+
+export VISUAL=nvim
+export EDITOR=nvim
+
+eval "$(starship init zsh)"

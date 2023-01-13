@@ -1,0 +1,13 @@
+- name: Install music-related packages
+  pacman:
+    name:
+      - spotifyd
+      - playerctl
+  become: true
+- name: Install music-related packages from AUR
+  aur: name={{item}} skip_pgp_check=true
+  with_items:
+  - spotify
+  - spotify-tui
+  become: true
+  become_user: aur

@@ -1,0 +1,5 @@
+- name: Install MPV for media playback
+  pacman:
+    name:
+      - mpv
+  become: true

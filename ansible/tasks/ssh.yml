@@ -1,0 +1,13 @@
+- name: Install SSH packages
+  pacman:
+    name:
+      - openssh
+      - sshfs
+      - keychain
+  become: true
+- name: Ensure SSH service is enabled and running
+  systemd:
+    state: started
+    enabled: true
+    name: sshd
+  become: true

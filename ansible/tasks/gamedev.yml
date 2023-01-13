@@ -1,0 +1,7 @@
+- name: Install gamedev packages
+  pacman:
+    name:
+      - blender
+      - vulkan-devel
+      - godot
+  become: true

@@ -1,0 +1,43 @@
+- name: Install rclone
+  pacman:
+    name:
+      - rclone
+
+- name: Ensure user systemd dir exists
+  file: path=~/.config/systemd/user/ state=directory
+
+- name: Ensure {{GOOGLE_DRIVE_DIR}} dir exists
+  file: path={{GOOGLE_DRIVE_DIR}} state=directory
+- name: Create service for Google Drive
+  template:
+    src: "{{DOTFILES_DIR}}/systemd/google-drive.service"
+    dest: ~/.config/systemd/user/google-drive.service
+- name: Ensure the Google Drive service is enabled and running
+  systemd:
+    state: started
+    enabled: true
+    scope: user
+    name: google-drive
+
+- name: Ensure {{DROPBOX_DIR}} dir exists
+  file: path={{DROPBOX_DIR}} state=directory
+- name: Create service for Dropbox
+  template:
+    src: "{{DOTFILES_DIR}}/systemd/dropbox.service"
+    dest: ~/.config/systemd/user/dropbox.service
+- name: Ensure the Dropbox service is enabled and running
+  systemd:
+    state: started
+    enabled: true
+    scope: user
+    name: dropbox
+
+- name: Create IP address write service
+  template:
+    src: "{{DOTFILES_DIR}}/systemd/ipwrite.service"
+    dest: ~/.config/systemd/user/ipwrite.service
+- name: Create symlink for IP address write timer
+  file:
+    src: "{{DOTFILES_DIR}}/systemd/ipwrite.timer"
+    dest: ~/.config/systemd/user/ipwrite.timer
+    state: link

@@ -1,0 +1,14 @@
+- name: Install debugging tools for native programs
+  pacman:
+    name:
+      - gdb
+      - lldb
+      - valgrind
+      - strace
+      - ltrace
+      - linux-tools
+  become: true
+- name: Download gdb-dashboard
+  get_url:
+    url: https://git.io/.gdbinit
+    dest: ~/.gdbinit

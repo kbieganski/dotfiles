@@ -1,0 +1,33 @@
+- name: Install Neovim utils
+  pacman:
+    name:
+      - fd
+      - ripgrep
+      - zk
+  become: true
+- name: Install Neovim
+  pacman: name=neovim
+  become: true
+
+- name: Ensure Neovim config dir exists
+  file: path=~/.config/nvim/ state=directory
+- name: Create symlink for Neovim config
+  file:
+    src: "{{DOTFILES_DIR}}/init.vim"
+    dest: ~/.config/nvim/init.vim
+    state: link
+
+- name: Create symlink for zettelkasten
+  file:
+    src: "{{DROPBOX_DIR}}/zk"
+    dest: ~/zk
+    state: link
+    force: true
+    follow: false
+
+- name: Install Neovim plugins
+  command: nvim '+PlugInstall | qa'
+- name: Update Neovim plugins
+  command: nvim '+PlugClean! | qa'
+- name: Update Neovim plugins
+  command: nvim '+PlugUpdate | qa'

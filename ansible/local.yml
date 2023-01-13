@@ -1,0 +1,50 @@
+- hosts: localhost
+  collections:
+    - kewlfft.aur
+  tasks:
+    - block:
+      - include: tasks/users.yml
+      - include: tasks/pacman.yml
+      when: ansible_user_id == 'root'
+    - name: Update repositories
+      pacman: update_cache=yes
+      become: true
+    - block:
+      - set_fact: DOTFILES_DIR="$HOME/dotfiles"
+      - set_fact: GOOGLE_DRIVE_DIR="$HOME/google-drive"
+      - set_fact: DROPBOX_DIR="$HOME/dropbox"
+      - block:
+        - include: tasks/core.yml
+        - include: tasks/ssh.yml
+        - include: tasks/zsh.yml
+        - include: tasks/vim.yml
+        - include: tasks/c-cpp.yml
+        - include: tasks/debug.yml
+        - include: tasks/desktop.yml
+        - include: tasks/audio.yml
+        - include: tasks/web.yml
+        - include: tasks/python.yml
+        - include: tasks/rust.yml
+        - include: tasks/virtual.yml
+        - include: tasks/media.yml
+        - include: tasks/music.yml
+        - include: tasks/utils.yml
+        - include: tasks/trash.yml
+        - include: tasks/sync.yml
+      - block:
+        - include: tasks/hardware.yml
+        when: ansible_hostname == 'kbieganski-antmicro'
+      - block:
+        - include: tasks/refind.yml
+        - include: tasks/go.yml
+        - include: tasks/haskell.yml
+        - include: tasks/gamedev.yml
+        - include: tasks/games.yml
+        when: ansible_hostname != 'kbieganski-antmicro'
+      when: ansible_user_id == 'krzysztof'
+    #- name: Cleanup packages
+    #  pacman: ???
+    #  become: true
+    - name: Update packages
+      pacman: upgrade=yes
+      become: true

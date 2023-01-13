@@ -1,0 +1,12 @@
+- name: Install trash-cli and cron
+  pacman:
+    name:
+      - cron
+      - trash-cli
+  become: true
+- name: Install cron job for deleting trash
+  cron:
+    user: krzysztof
+    name: delete trash
+    day: "*"
+    job: "trash-empty 7"

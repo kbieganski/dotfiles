@@ -1,0 +1,11 @@
+- name: Install Python packages
+  pacman:
+    name:
+      - python
+      - python-pip
+  become: true
+- name: Install Python packages from pip
+  pip:
+    name:
+      - python-lsp-server
+    extra_args: --user

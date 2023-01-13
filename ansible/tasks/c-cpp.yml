@@ -1,0 +1,12 @@
+- name: Install C and C++-related packages
+  pacman:
+    name:
+      - gcc
+      - clang
+      - libc++
+      - libc++abi
+      - cmake
+      - ccache
+      - boost
+      - bear
+  become: true
