@@ -244,6 +244,9 @@ telescope.setup {
 		},
 		file_ignore_patterns = { ".cache", ".clangd" },
 	},
+    extensions = {
+        hijack_netrw = true,
+    },
 }
 
 telescope.load_extension 'file_browser'
