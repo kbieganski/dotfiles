@@ -228,14 +228,14 @@ lua <<EOF
 -----------------
 local wk = require 'which-key'
 wk.setup {
-	window = {
-		border = "single",
-		margin = { 4, 4, 4, 4 },
-		padding = { 1, 1, 1, 1 },
-	},
-	layout = {
-		align = "center",
-	},
+    window = {
+        border = "single",
+        margin = { 4, 4, 4, 4 },
+        padding = { 1, 1, 1, 1 },
+    },
+    layout = {
+        align = "center",
+    },
 }
 
 -----------------
@@ -243,23 +243,23 @@ wk.setup {
 -----------------
 local telescope = require 'telescope'
 telescope.setup {
-	defaults = {
-		-- switch between horizontal/vertical layout based on window size
-		layout_strategy = "flex",
-		layout_config = {
-			flex = { flip_columns = 240 },
-			vertical = { width = 0.8, height = 0.9 },
-			horizontal = { width = 0.6, height = 0.9 },
-		},
-		mappings = {
-			i = {
-				["<ESC>"] = "close",
-				["<M-j>"] = "move_selection_next",
-				["<M-k>"] = "move_selection_previous",
-			},
-		},
-		file_ignore_patterns = { ".cache", ".clangd" },
-	},
+    defaults = {
+        -- switch between horizontal/vertical layout based on window size
+        layout_strategy = "flex",
+        layout_config = {
+            flex = { flip_columns = 240 },
+            vertical = { width = 0.8, height = 0.9 },
+            horizontal = { width = 0.6, height = 0.9 },
+        },
+        mappings = {
+            i = {
+                ["<ESC>"] = "close",
+                ["<M-j>"] = "move_selection_next",
+                ["<M-k>"] = "move_selection_previous",
+            },
+        },
+        file_ignore_patterns = { ".cache", ".clangd" },
+    },
     extensions = {
         hijack_netrw = true,
     },
@@ -282,24 +282,24 @@ vim.opt.spelllang = { 'en_us', 'pl' }
 --- Treesitter ---
 ------------------
 require 'nvim-treesitter.configs'.setup {
-	ensure_installed = {
-		"bash",
-		"c",
-		"cpp",
-		"css",
-		"glsl",
-		"go",
-		"haskell",
-		"html",
-		"javascript",
-		"lua",
-		"python",
-		"regex",
-		"rust",
-		"typescript",
-		"zig",
-	},
-	highlight = { enable = true },
+    ensure_installed = {
+        "bash",
+        "c",
+        "cpp",
+        "css",
+        "glsl",
+        "go",
+        "haskell",
+        "html",
+        "javascript",
+        "lua",
+        "python",
+        "regex",
+        "rust",
+        "typescript",
+        "zig",
+    },
+    highlight = { enable = true },
 }
 
 -----------
@@ -307,8 +307,8 @@ require 'nvim-treesitter.configs'.setup {
 -----------
 -- pretty LSP diagnostics icons
 for icon_name, icon in pairs { Error = " ", Warning = " ", Hint = " ", Information = " " } do
-	local hl = "LspDiagnosticsSign" .. icon_name
-	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+    local hl = "LspDiagnosticsSign" .. icon_name
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
 -- enable completion capabilities for LSP
@@ -324,15 +324,15 @@ end
 
 local lspconfig = require 'lspconfig'
 for _, server in pairs { "clangd", "gopls", "hls", "pylsp", "tsserver" } do
-	lspconfig[server].setup {
-		capabilities = capabilities,
-		on_attach = function(client, bufnr)
-			if server ~= "clangd" then
-				require 'lsp-format'.on_attach(client)
-			end
+    lspconfig[server].setup {
+        capabilities = capabilities,
+        on_attach = function(client, bufnr)
+            if server ~= "clangd" then
+                require 'lsp-format'.on_attach(client)
+            end
             setup_lsp_common(client, bufnr)
-		end,
-	}
+        end,
+    }
 end
 
 -- Rust
@@ -343,7 +343,7 @@ require 'rust-tools'.setup {
             highlight = 'LineNr',
         },
     },
-	server = {
+    server = {
         settings = {
             ["rust-analyzer"] = {
                 cargo = {
@@ -351,12 +351,12 @@ require 'rust-tools'.setup {
                 },
             },
         },
-		capabilities = capabilities,
-		on_attach = function(client, bufnr)
-			require 'lsp-format'.on_attach(client)
+        capabilities = capabilities,
+        on_attach = function(client, bufnr)
+            require 'lsp-format'.on_attach(client)
             setup_lsp_common(client, bufnr)
-		end,
-	},
+        end,
+    },
 }
 require 'crates'.setup()
 
@@ -368,8 +368,8 @@ require 'lsp_lines'.setup()
 
 local lines_enabled = true
 function toggle_lines()
-	lines_enabled = not lines_enabled
-	vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
+    lines_enabled = not lines_enabled
+    vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
 end
 
 wk.register { ['<leader>j'] = { toggle_lines, "Show diagnostic lines" } }
@@ -380,38 +380,38 @@ toggle_lines()
 ------------------------
 local cmp = require 'cmp'
 cmp.setup {
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp" },
-		{ name = "path" },
-		{ name = "buffer" },
-		{ name = "nvim_lua" },
-		{ name = "vsnip" },
-		{ name = "crates" },
-	}, {
-		{ name = "buffer" },
-	}),
-	snippet = {
-		expand = function(args)
-			vim.fn["vsnip#anonymous"](args.body)
-		end,
-	},
-	mapping = {
-		["<M-j>"] = cmp.mapping.select_next_item(),
-		["<M-k>"] = cmp.mapping.select_prev_item(),
-		["<M-Space>"] = cmp.mapping.complete(),
-		["<CR>"] = cmp.mapping.confirm { select = true },
-	},
-	formatting = {
-		format = require 'lspkind'.cmp_format(),
-	},
+    sources = cmp.config.sources({
+        { name = "nvim_lsp" },
+        { name = "path" },
+        { name = "buffer" },
+        { name = "nvim_lua" },
+        { name = "vsnip" },
+        { name = "crates" },
+    }, {
+        { name = "buffer" },
+    }),
+    snippet = {
+        expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body)
+        end,
+    },
+    mapping = {
+        ["<M-j>"] = cmp.mapping.select_next_item(),
+        ["<M-k>"] = cmp.mapping.select_prev_item(),
+        ["<M-Space>"] = cmp.mapping.complete(),
+        ["<CR>"] = cmp.mapping.confirm { select = true },
+    },
+    formatting = {
+        format = require 'lspkind'.cmp_format(),
+    },
 }
 
 -----------
 --- Git ---
 -----------
 require 'gitsigns'.setup {
-	numhl = true,
-	current_line_blame = true,
+    numhl = true,
+    current_line_blame = true,
     on_attach = function(bufnr)
         wk.register({
                 g = {
@@ -442,26 +442,26 @@ require 'gitsigns'.setup {
 }
 
 require 'git-conflict'.setup {
-	default_mappings = true,
-	disable_diagnostics = true,
-	highlights = {
-		incoming = "DiffText",
-		current = "DiffAdd",
-	},
+    default_mappings = true,
+    disable_diagnostics = true,
+    highlights = {
+        incoming = "DiffText",
+        current = "DiffAdd",
+    },
 }
 
 ---------------
 --- Lualine ---
 ---------------
 require 'lualine'.setup {
-	sections = {
-		lualine_a = { "mode" },
-		lualine_b = { "branch", "diff" },
-		lualine_c = { "filename", { "diagnostics", sources = { "nvim_diagnostic" } } },
-		lualine_x = { "filetype" },
-		lualine_y = { "encoding", "fileformat" },
-		lualine_z = { "progress", "location" },
-	},
+    sections = {
+        lualine_a = { "mode" },
+        lualine_b = { "branch", "diff" },
+        lualine_c = { "filename", { "diagnostics", sources = { "nvim_diagnostic" } } },
+        lualine_x = { "filetype" },
+        lualine_y = { "encoding", "fileformat" },
+        lualine_z = { "progress", "location" },
+    },
 }
 
 --------------
@@ -472,29 +472,29 @@ notify.setup()
 
 -- set the default notify handler to the notify plugin
 vim.notify = function(msg, ...)
-	-- ignore this message
-	if msg:match "warning: multiple different client offset_encodings" then
-		return
-	end
-	notify(msg, ...)
+    -- ignore this message
+    if msg:match "warning: multiple different client offset_encodings" then
+        return
+    end
+    notify(msg, ...)
 end
 
 -- LSP messages as notifications
 vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
-	local client = vim.lsp.get_client_by_id(ctx.client_id)
-	local lvl = ({
-		"ERROR",
-		"WARN",
-		"INFO",
-		"DEBUG",
-	})[result.type]
-	notify(result.message, lvl, {
-		title = "LSP | " .. client.name,
-		timeout = 10000,
-		keep = function()
-			return lvl == "ERROR" or lvl == "WARN"
-		end,
-	})
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    local lvl = ({
+        "ERROR",
+        "WARN",
+        "INFO",
+        "DEBUG",
+    })[result.type]
+    notify(result.message, lvl, {
+        title = "LSP | " .. client.name,
+        timeout = 10000,
+        keep = function()
+            return lvl == "ERROR" or lvl == "WARN"
+        end,
+    })
 end
 
 -------------
@@ -502,13 +502,13 @@ end
 -------------
 hover = require 'hover'
 hover.setup {
-	init = function()
-		require 'hover.providers.lsp'
-		require 'hover.providers.gh'
-		require 'hover.providers.gh_user'
-		require 'hover.providers.man'
-		require 'hover.providers.dictionary'
-	end,
+    init = function()
+        require 'hover.providers.lsp'
+        require 'hover.providers.gh'
+        require 'hover.providers.gh_user'
+        require 'hover.providers.man'
+        require 'hover.providers.dictionary'
+    end,
 }
 wk.register { m = { h = { hover.hover, "Hover" }, H = { hover.hover_select, "Hover (select)" } } }
 
