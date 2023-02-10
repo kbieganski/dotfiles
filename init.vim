@@ -209,6 +209,19 @@ au BufRead,BufNewFile *.md setlocal textwidth=80
 
 colorscheme github_dark " after lualine setup
 
+"""""""""""""""""""""""""""
+""" Snippet navigation """"
+"""""""""""""""""""""""""""
+
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+imap <expr> <M-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<M-l>'
+smap <expr> <M-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<M-l>'
+imap <expr> <M-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<M-h>'
+smap <expr> <M-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<M-h>'
+
 lua <<EOF
 -----------------
 --- Which-key ---
