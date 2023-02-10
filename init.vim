@@ -120,10 +120,10 @@ nnoremap <Leader>gC :Telescope git_commits<CR>
 nnoremap <Leader>r :Telescope repo<CR>
 
 " GitHub browsing
-nnoremap <Leader>ghi :Telescope gh issues<CR>
-nnoremap <Leader>ghp :Telescope gh pull_request<CR>
-nnoremap <Leader>ghx :Telescope gh gist<CR>
-nnoremap <Leader>gha :Telescope gh run<CR>
+nnoremap <Leader>Ghi :Telescope gh issues<CR>
+nnoremap <Leader>Ghp :Telescope gh pull_request<CR>
+nnoremap <Leader>Ghx :Telescope gh gist<CR>
+nnoremap <Leader>Gha :Telescope gh run<CR>
 
 " browse headings
 nnoremap gh :Telescope heading<CR>
