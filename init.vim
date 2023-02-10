@@ -193,6 +193,7 @@ nnoremap <silent> gr    :Telescope lsp_references<CR>
 nnoremap <silent> gi    :Telescope lsp_implementations<CR>
 nnoremap <silent> gs    :Telescope lsp_document_symbols<CR>
 nnoremap <silent> gS    :Telescope lsp_workspace_symbols<CR>
+nnoremap <silent> mk    :lua vim.lsp.buf.signature()<CR>
 nnoremap <silent> mf    :lua vim.lsp.buf.format()<CR>
 vnoremap <silent> mf    :lua vim.lsp.buf.format()<CR>
 nnoremap <silent> mn    :lua vim.lsp.buf.rename()<CR>
