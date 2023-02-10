@@ -24,6 +24,7 @@ call plug#begin(stdpath('data') . 'plugged')
     Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' " diagnostic lines
     Plug 'simrat39/rust-tools.nvim'
     Plug 'lukas-reineke/lsp-format.nvim' " auto format
+    Plug 'SmiteshP/nvim-navic' " breadcrumbs
 
     " completion
     Plug 'onsails/lspkind-nvim'
@@ -285,18 +286,28 @@ for icon_name, icon in pairs { Error = " ", Warning = " ", Hint = " ", 
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
+-- breadcrumbs in the winbar
+vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+
 -- enable completion capabilities for LSP
 local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
+
+function setup_lsp_common(client, bufnr)
+    require 'illuminate'.on_attach(client)
+    if client.server_capabilities.documentSymbolProvider then
+        require 'nvim-navic'.attach(client, bufnr)
+    end
+end
 
 local lspconfig = require 'lspconfig'
 for _, server in pairs { "clangd", "gopls", "hls", "pylsp", "tsserver" } do
 	lspconfig[server].setup {
 		capabilities = capabilities,
-		on_attach = function(client)
+		on_attach = function(client, bufnr)
 			if server ~= "clangd" then
 				require 'lsp-format'.on_attach(client)
 			end
-			require 'illuminate'.on_attach(client)
+            setup_lsp_common(client, bufnr)
 		end,
 	}
 end
@@ -306,9 +317,9 @@ end
 require 'rust-tools'.setup {
 	server = {
 		capabilities = capabilities,
-		on_attach = function(client)
+		on_attach = function(client, bufnr)
 			require 'lsp-format'.on_attach(client)
-			require 'illuminate'.on_attach(client)
+            setup_lsp_common(client, bufnr)
 		end,
 	},
 }
