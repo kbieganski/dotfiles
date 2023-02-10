@@ -65,6 +65,7 @@ call plug#begin(stdpath('data') . 'plugged')
     Plug 'mcauley-penney/tidy.nvim' " trim whitespace
     Plug 'tpope/vim-eunuch' " unix commands in vim
     Plug 'mfussenegger/nvim-dap' " debugging
+    Plug 'NMAC427/guess-indent.nvim' " guess indentation from file
 call plug#end()
 
 """"""""""""""""""""""""
@@ -496,4 +497,5 @@ require 'dressing'.setup{
 }
 require 'transparent'.setup { enable = true }
 require 'tidy'.setup()
+require'guess-indent'.setup()
 EOF
