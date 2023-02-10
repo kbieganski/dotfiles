@@ -290,9 +290,6 @@ for icon_name, icon in pairs { Error = " ", Warning = " ", Hint = " ", 
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
--- breadcrumbs in the winbar
-vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
-
 -- enable completion capabilities for LSP
 local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
 
@@ -300,6 +297,7 @@ function setup_lsp_common(client, bufnr)
     require 'illuminate'.on_attach(client)
     if client.server_capabilities.documentSymbolProvider then
         require 'nvim-navic'.attach(client, bufnr)
+        vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
     end
 end
 
