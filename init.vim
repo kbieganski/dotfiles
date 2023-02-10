@@ -338,7 +338,19 @@ end
 -- Rust
 -- (this sets up rust-analyzer, so don't do it above)
 require 'rust-tools'.setup {
+    tools = {
+        inlay_hints = {
+            highlight = 'LineNr',
+        },
+    },
 	server = {
+        settings = {
+            ["rust-analyzer"] = {
+                cargo = {
+                    features = 'all',
+                },
+            },
+        },
 		capabilities = capabilities,
 		on_attach = function(client, bufnr)
 			require 'lsp-format'.on_attach(client)
