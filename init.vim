@@ -187,6 +187,7 @@ nnoremap <silent> gc    :Telescope lsp_incoming_calls<CR>
 nnoremap <silent> gC    :Telescope lsp_outgoing_calls<CR>
 nnoremap <silent> gd    :Telescope lsp_definitions<CR>
 nnoremap <silent> gD    :lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> gt    :Telescope lsp_type_definitions<CR>
 nnoremap <silent> gr    :Telescope lsp_references<CR>
 nnoremap <silent> gi    :Telescope lsp_implementations<CR>
 nnoremap <silent> gs    :Telescope lsp_document_symbols<CR>
