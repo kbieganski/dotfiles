@@ -260,6 +260,12 @@ telescope.load_extension 'repo'
 telescope.load_extension 'heading'
 
 ------------------
+--- Spellcheck ---
+------------------
+vim.opt.spell = true
+vim.opt.spelllang = { 'en_us', 'pl' }
+
+------------------
 --- Treesitter ---
 ------------------
 require 'nvim-treesitter.configs'.setup {
