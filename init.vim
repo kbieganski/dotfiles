@@ -105,54 +105,8 @@ set termguicolors " prevent warning about opacity changes
 " TODO use which-key instead
 let g:mapleader=';' " set leader key to ;
 
-" recent files
-nnoremap <Leader>m :Telescope oldfiles<CR>
-
-" currently open buffers
-nnoremap <Leader>b :lua require 'telescope.builtin'.buffers{ignore_current_buffer=true, sort_mru=true}<CR>
-
-" find in current buffer
-nnoremap <Leader>/ :Telescope current_buffer_fuzzy_find<CR>
-
-" git browsing
-nnoremap <Leader>gf :Telescope git_files<CR>
-nnoremap <Leader>gc :Telescope git_bcommits<CR>
-nnoremap <Leader>gC :Telescope git_commits<CR>
-nnoremap <Leader>r :Telescope repo<CR>
-
-" GitHub browsing
-nnoremap <Leader>Ghi :Telescope gh issues<CR>
-nnoremap <Leader>Ghp :Telescope gh pull_request<CR>
-nnoremap <Leader>Ghx :Telescope gh gist<CR>
-nnoremap <Leader>Gha :Telescope gh run<CR>
-
 " browse headings
-nnoremap gh :Telescope heading<CR>
-
-" browse files
-nnoremap <Leader>f :lua require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false }<CR>
-
-" search files
-nnoremap <Leader>s :lua require 'telescope.builtin'.find_files {hidden = true, follow = true}<CR>
-
-" ripgrep current dir
-nnoremap <Leader>d :Telescope live_grep<CR>
-
-" paste register
-nnoremap <Leader>p :Telescope registers<CR>
-
-" paste register
-nnoremap <Leader>l :Telescope diagnostics<CR>
-
-" write file
-nnoremap <Leader>w :w<CR>
-
-" sudo write file
-nnoremap <Leader>W :w !sudo tee %<CR>
-
-" quit/force quit
-nnoremap <Leader>q :qa<CR>
-nnoremap <Leader>Q :qa!<CR>
+nnoremap ga :Telescope heading<CR>
 
 " move up/down on visual lines
 nnoremap <expr> j v:count ? 'j' : 'gj'
@@ -172,34 +126,17 @@ nnoremap <M-S-k> <C-w><S-k>
 nnoremap <M-S-l> <C-w><S-l>
 
 " faster scrolling
-noremap H <C-o>
 noremap J <C-e><C-e>
+noremap K <C-y><C-y>
 
 " move through jump history
-noremap K <C-y><C-y>
+noremap H <C-o>
 noremap L <C-i>
 
 " make < > shifts keep selection
 vnoremap < <gv
 vnoremap > >gv
 
-" LSP mappings
-nnoremap <silent> gc    :Telescope lsp_incoming_calls<CR>
-nnoremap <silent> gC    :Telescope lsp_outgoing_calls<CR>
-nnoremap <silent> gd    :Telescope lsp_definitions<CR>
-nnoremap <silent> gD    :lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> gt    :Telescope lsp_type_definitions<CR>
-nnoremap <silent> gr    :Telescope lsp_references<CR>
-nnoremap <silent> gi    :Telescope lsp_implementations<CR>
-nnoremap <silent> gs    :Telescope lsp_document_symbols<CR>
-nnoremap <silent> gS    :Telescope lsp_workspace_symbols<CR>
-nnoremap <silent> mk    :lua vim.lsp.buf.signature()<CR>
-nnoremap <silent> mf    :lua vim.lsp.buf.format()<CR>
-vnoremap <silent> mf    :lua vim.lsp.buf.format()<CR>
-nnoremap <silent> mn    :lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> ma    :lua vim.lsp.buf.code_action()<CR>
-vnoremap <silent> ma    :lua vim.lsp.buf.range_code_action()<CR>
-nnoremap <silent> go    :ClangdSwitchSourceHeader<CR>
 
 """""""""""""""""""
 """ Line length """
@@ -271,6 +208,43 @@ telescope.load_extension 'ui-select'
 telescope.load_extension 'gh'
 telescope.load_extension 'repo'
 telescope.load_extension 'heading'
+
+telescope_builtin = require 'telescope.builtin'
+
+wk.register({
+        ['/'] = { telescope_builtin.current_buffer_fuzzy_find, "Find in current file" },
+        ['?'] = { function() telescope_builtin.find_files { hidden = true, follow = true } end, "Find in files" },
+        b = { function() telescope_builtin.buffers{ignore_current_buffer=true, sort_mru=true} end, "Buffers" },
+        d = { vim.diagnostic.open_float, "Show this diagnostic" },
+        D = { telescope_builtin.diagnostics, "All diagnostics" },
+        f = {
+            name = "File",
+            f = { function() telescope.extensions.file_browser.file_browser { respect_gitignore = false } end, "Browse files" },
+            F = { function() telescope_builtin.find_files { hidden = true, follow = true } end, "Find file" },
+            r = { telescope_builtin.oldfiles, "Recent files" },
+        },
+        g = {
+            name = "Git",
+            c = { telescope_builtin.git_bcommits, "Current file history" },
+            C = { telescope_builtin.git_commits, "Repo history" },
+            f = { telescope_builtin.git_files, "Find file" },
+            g = { telescope.extensions.repo.repo, "Repositories" },
+        },
+        G = {
+            name = "GitHub",
+            a = { telescope.extensions.gh.issues, "Action runs" },
+            i = { telescope.extensions.gh.issues, "Issues" },
+            p = { telescope.extensions.gh.pull_request, "Pull requests" },
+            x = { telescope.extensions.gh.gist, "Gist" },
+        },
+        p = { telescope_builtin.registers, "Paste" },
+        q = { ':qa<CR>', 'Quit' },
+        Q = { ':qa!<CR>', 'Force quit' },
+        w = { ':w<CR>', 'Write current file' },
+        W = { ':wa<CR>', 'Write all open files' },
+        ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
+    },
+    { prefix = '<leader>' })
 
 ------------------
 --- Spellcheck ---
@@ -360,9 +334,6 @@ require 'rust-tools'.setup {
 }
 require 'crates'.setup()
 
--- show diagnostic in a popup
-wk.register { ['<leader>e'] = { vim.diagnostic.open_float, "Show diagnostic" } }
-
 -- LSP diagnostic lines
 require 'lsp_lines'.setup()
 
@@ -413,12 +384,16 @@ require 'gitsigns'.setup {
     numhl = true,
     current_line_blame = true,
     on_attach = function(bufnr)
+         wk.register({
+                g = {
+                    h = { ':Gitsigns next_hunk<CR>', "Next hunk" },
+                    H = { ':Gitsigns prev_hunk<CR>', "Previous hunk" },
+                },
+            })
         wk.register({
                 g = {
                     b = { ':Gitsigns blame_line<CR>', "Blame line" },
                     d = { ':Gitsigns toggle_deleted<CR>', "Toggle deleted hunks" },
-                    h = { ':Gitsigns next_hunk<CR>', "Next hunk" },
-                    H = { ':Gitsigns prev_hunk<CR>', "Previous hunk" },
                     p = { ':Gitsigns preview_hunk<CR>', "Preview hunk" },
                     r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
                     s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
@@ -510,7 +485,31 @@ hover.setup {
         require 'hover.providers.dictionary'
     end,
 }
-wk.register { m = { h = { hover.hover, "Hover" }, H = { hover.hover_select, "Hover (select)" } } }
+
+wk.register({
+        a = { vim.lsp.buf.code_action, "Code action" },
+        F = { vim.lsp.buf.format, "Format current file" },
+        h = { hover.hover, "Show symbol info" },
+        H = { hover.hover_select, "Show symbol info (select)" },
+        k = { vim.lsp.buf.signature_help, "Show signature" },
+        r = { vim.lsp.buf.rename, "Rename symbol" },
+        s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
+        S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
+    },
+    { prefix = '<leader>' })
+
+wk.register({
+        g = {
+            c = { telescope_builtin.lsp_incoming_calls, "Caller" },
+            C = { telescope_builtin.lsp_outgoing_calls, "Callee" },
+            d = { telescope_builtin.lsp_definitions, "Definition" },
+            D = { vim.lsp.buf.declaration, "Declaration" },
+            t = { telescope_builtin.lsp_type_definitions, "Type definition" },
+            r = { telescope_builtin.lsp_references, "Reference" },
+            i = { telescope_builtin.lsp_implementations, "Implementation" },
+            o = { ':ClangdSwitchSourceHeader<CR>', "Source/header" },
+        },
+    })
 
 -------------
 --- Other ---
@@ -529,5 +528,5 @@ require 'dressing'.setup{
 }
 require 'transparent'.setup { enable = true }
 require 'tidy'.setup()
-require'guess-indent'.setup()
+require 'guess-indent'.setup()
 EOF
