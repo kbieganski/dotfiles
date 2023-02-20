@@ -119,21 +119,32 @@ vim.g.maplocalleader = ';'
 -- browse headings
 vim.cmd.nnoremap 'gh :Telescope heading<CR>'
 
--- use system clilpboard by default
+-- use system clilpbard by default
 vim.cmd.nnoremap 'y "+y'
+vim.cmd.nnoremap 'yy "+yy'
 vim.cmd.nnoremap 'p "+p'
 vim.cmd.nnoremap 'P "+P'
-
--- delete without yanking
-vim.cmd.nnoremap 'd "_d'
-vim.cmd.vnoremap 'd "_d'
+vim.cmd.nnoremap 'd "+d'
+vim.cmd.nnoremap 'dd "+dd'
+vim.cmd.nnoremap 'x "_x'
+vim.cmd.nnoremap 'X "_dd'
 
 -- use system clilpboard by default, and
 -- replace currently selected text with default register
 -- without yanking it
-vim.cmd.vnoremap 'y "+y'
+vim.cmd.vnoremap 'y "+ygv'
 vim.cmd.vnoremap 'p "_d"+P'
 vim.cmd.vnoremap 'P "_d"+P'
+vim.cmd.vnoremap 'd "+d'
+vim.cmd.vnoremap 'x "_x'
+vim.cmd.vnoremap 'X "_x'
+
+-- do not insert on o/O
+vim.cmd.nnoremap 'o o<esc>'
+vim.cmd.nnoremap 'O O<esc>'
+
+-- redo on U
+vim.cmd.nnoremap 'U <C-r><esc>'
 
 -- move up/down on visual lines
 vim.cmd.nnoremap "<expr> j v:count ? 'j' : 'gj'"
@@ -164,6 +175,41 @@ vim.cmd.noremap 'L <C-i>'
 vim.cmd.vnoremap '< <gv'
 vim.cmd.vnoremap '> >gv'
 
+--------------------
+--- Autocommands ---
+--------------------
+
+--- This function is taken from https://github.com/norcalli/nvim_utils
+function nvim_create_augroups(definitions)
+    for group_name, definition in pairs(definitions) do
+        vim.api.nvim_command('augroup '..group_name)
+        vim.api.nvim_command('autocmd!')
+        for _, def in ipairs(definition) do
+            local command = table.concat(vim.tbl_flatten{'autocmd', def}, ' ')
+            vim.api.nvim_command(command)
+        end
+        vim.api.nvim_command('augroup END')
+    end
+end
+
+local autocmds = {
+    reload_vimrc = {
+        -- Reload vim config automatically
+        {"BufWritePost",[[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]};
+    };
+    restore_cursor = {
+        { 'BufRead', '*', [[call setpos(".", getpos("'\""))]] };
+    };
+    resize_windows_proportionally = {
+        { "VimResized", "*", ":wincmd =" };
+    };
+    toggle_search_highlighting = {
+        { "InsertEnter", "*", "setlocal nohlsearch" };
+    };
+}
+
+nvim_create_augroups(autocmds)
+-- autocommands END
 
 -------------------
 --- Line length ---
