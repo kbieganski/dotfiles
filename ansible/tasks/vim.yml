@@ -13,17 +13,9 @@
   file: path=~/.config/nvim/ state=directory
 - name: Create symlink for Neovim config
   file:
-    src: "{{DOTFILES_DIR}}/init.vim"
-    dest: ~/.config/nvim/init.vim
+    src: "{{DOTFILES_DIR}}/init.lua"
+    dest: ~/.config/nvim/init.lua
     state: link
-
-- name: Create symlink for zettelkasten
-  file:
-    src: "{{DROPBOX_DIR}}/zk"
-    dest: ~/zk
-    state: link
-    force: true
-    follow: false
 
 - name: Install Neovim plugins
   command: nvim '+PlugInstall | qa'
