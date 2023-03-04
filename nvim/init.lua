@@ -10,104 +10,105 @@ local Plug = function(plugin, options)
 end
 
 vim.cmd.call "plug#begin(stdpath('data') . 'plugged')"
-    -- needed for other plugins
-    Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-lua/popup.nvim'
+-- needed for other plugins
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/popup.nvim'
 
-    -- picker UI
-    Plug 'nvim-telescope/telescope.nvim'
-    Plug 'nvim-telescope/telescope-file-browser.nvim'
-    Plug('nvim-telescope/telescope-fzf-native.nvim', "{'do': 'make'}")
-    Plug 'nvim-telescope/telescope-ui-select.nvim'
-    Plug 'nvim-telescope/telescope-github.nvim'
-    Plug 'nvim-telescope/telescope-dap.nvim'
-    Plug 'cljoly/telescope-repo.nvim'
-    Plug 'crispgm/telescope-heading.nvim'
+-- picker UI
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
+Plug('nvim-telescope/telescope-fzf-native.nvim', "{'do': 'make'}")
+Plug 'nvim-telescope/telescope-ui-select.nvim'
+Plug 'nvim-telescope/telescope-github.nvim'
+Plug 'nvim-telescope/telescope-dap.nvim'
+Plug 'cljoly/telescope-repo.nvim'
+Plug 'crispgm/telescope-heading.nvim'
 
-    -- syntax highlighting
-    Plug('nvim-treesitter/nvim-treesitter', "{'do': ':TSUpdate'}")
-    Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+-- syntax highlighting
+Plug('nvim-treesitter/nvim-treesitter', "{'do': ':TSUpdate'}")
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
-    -- LSP utils
-    Plug 'neovim/nvim-lspconfig'
-    Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' -- diagnostic lines
-    Plug 'simrat39/rust-tools.nvim'
-    Plug 'lukas-reineke/lsp-format.nvim' -- auto format
-    Plug 'SmiteshP/nvim-navic' -- breadcrumbs
-    Plug 'folke/neodev.nvim'
+-- LSP utils
+Plug 'neovim/nvim-lspconfig'
+Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' -- diagnostic lines
+Plug 'simrat39/rust-tools.nvim'
+Plug 'lukas-reineke/lsp-format.nvim' -- auto format
+Plug 'SmiteshP/nvim-navic' -- breadcrumbs
+Plug 'folke/neodev.nvim'
 
-    -- completion
-    Plug 'onsails/lspkind-nvim'
-    Plug 'hrsh7th/cmp-vsnip'
-    Plug 'hrsh7th/vim-vsnip'
-    Plug 'hrsh7th/cmp-nvim-lsp'
-    Plug 'hrsh7th/cmp-buffer'
-    Plug 'hrsh7th/cmp-path'
-    Plug 'hrsh7th/cmp-nvim-lua'
-    Plug 'hrsh7th/nvim-cmp'
+-- completion
+Plug 'onsails/lspkind-nvim'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'hrsh7th/nvim-cmp'
 
-    -- git
-    Plug 'lewis6991/gitsigns.nvim'
-    Plug('akinsho/git-conflict.nvim', "{ 'tag': 'v1.0.0' }")
+-- git
+Plug 'lewis6991/gitsigns.nvim'
+Plug('akinsho/git-conflict.nvim', "{ 'tag': 'v1.0.0' }")
 
-    -- word/range highlighting
-    Plug 'NvChad/nvim-colorizer.lua' -- hex color highlighter
-    Plug 'winston0410/cmd-parser.nvim' -- required for range-highlight
-    Plug 'winston0410/range-highlight.nvim' -- highlights range entered in cmdline
-    Plug 'folke/todo-comments.nvim' -- higlight todo comments
-    Plug 'RRethy/vim-illuminate' -- highlight word under cursor
+-- word/range highlighting
+Plug 'NvChad/nvim-colorizer.lua' -- hex color highlighter
+Plug 'winston0410/cmd-parser.nvim' -- required for range-highlight
+Plug 'winston0410/range-highlight.nvim' -- highlights range entered in cmdline
+Plug 'folke/todo-comments.nvim' -- higlight todo comments
+Plug 'RRethy/vim-illuminate' -- highlight word under cursor
 
-    -- UI improvements
-    Plug 'nvim-lualine/lualine.nvim' -- statusline
-    Plug 'kyazdani42/nvim-web-devicons' -- statusline icons
-    Plug 'folke/which-key.nvim' -- show key mapping hints
-    Plug 'stevearc/dressing.nvim' -- better select/input menus
-    Plug 'rcarriga/nvim-notify' -- better notifications
-    Plug 'lewis6991/hover.nvim' -- better hover
+-- UI improvements
+Plug 'nvim-lualine/lualine.nvim' -- statusline
+Plug 'kyazdani42/nvim-web-devicons' -- statusline icons
+Plug 'folke/which-key.nvim' -- show key mapping hints
+Plug 'stevearc/dressing.nvim' -- better select/input menus
+Plug 'rcarriga/nvim-notify' -- better notifications
+Plug 'lewis6991/hover.nvim' -- better hover
 
-    -- theming
-    Plug 'projekt0n/github-nvim-theme' -- github colors
-    Plug 'xiyaowong/nvim-transparent'
+-- theming
+Plug 'projekt0n/github-nvim-theme' -- github colors
+Plug 'xiyaowong/nvim-transparent'
 
-    -- other
-    Plug 'LnL7/vim-nix' -- nix language support
-    Plug 'Saecki/crates.nvim' -- cargo file support
-    Plug 'mcauley-penney/tidy.nvim' -- trim whitespace
-    Plug 'tpope/vim-eunuch' -- unix commands in vim
-    Plug 'mfussenegger/nvim-dap' -- debugging
-    Plug 'rcarriga/nvim-dap-ui' -- debugging
-    Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
+-- other
+Plug 'LnL7/vim-nix' -- nix language support
+Plug 'Saecki/crates.nvim' -- cargo file support
+Plug 'mcauley-penney/tidy.nvim' -- trim whitespace
+Plug 'tpope/vim-eunuch' -- unix commands in vim
+Plug 'mfussenegger/nvim-dap' -- debugging
+Plug 'rcarriga/nvim-dap-ui' -- debugging
+Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
+Plug 'stevearc/aerial.nvim'
 vim.cmd.call "plug#end()"
 
 ------------------------
 --- General settings ---
 ------------------------
-vim.o.number = true  -- enable line numbers
-vim.o.ignorecase = true  -- when searching
-vim.o.smartcase = true  -- don't ignore case if search string contains uppercase letters
-vim.o.compatible = false  -- disable vi compatibility
-vim.o.incsearch = true  -- incremental searching
-vim.o.visualbell = true  -- disable bleeping
-vim.o.expandtab = true  -- insert spaces with tab
-vim.o.tabstop = 4  -- width of tab
-vim.o.shiftwidth = 4  -- width of indent
-vim.o.ruler = true  -- cursor position in the status line
-vim.o.cursorline = true  -- highlight line with cursor
-vim.o.autoindent = true  -- apply indentation of the previous line
-vim.o.smartindent = true  -- indent based on syntax
-vim.o.hlsearch = false  -- do not highlight all search matches
-vim.o.virtualedit = 'all'  -- allow virtual editing
-vim.o.backspace = 'indent,eol,start'  -- backspace anything in insert mode
-vim.o.mouse = 'a'  -- mouse support
-vim.o.autochdir = true  -- change working dir to buffer dir
-vim.o.completeopt = 'menuone,noselect'  -- required for nvim-cmp
-vim.o.timeoutlen = 250  -- mapping timeout (which-key shows up after it)
-vim.o.hidden = true  -- switch between buffers without saving
-vim.o.undofile = true  -- persistent undo
-vim.o.backup = false  -- disable backup
+vim.o.number = true -- enable line numbers
+vim.o.ignorecase = true -- when searching
+vim.o.smartcase = true -- don't ignore case if search string contains uppercase letters
+vim.o.compatible = false -- disable vi compatibility
+vim.o.incsearch = true -- incremental searching
+vim.o.visualbell = true -- disable bleeping
+vim.o.expandtab = true -- insert spaces with tab
+vim.o.tabstop = 4 -- width of tab
+vim.o.shiftwidth = 4 -- width of indent
+vim.o.ruler = true -- cursor position in the status line
+vim.o.cursorline = true -- highlight line with cursor
+vim.o.autoindent = true -- apply indentation of the previous line
+vim.o.smartindent = true -- indent based on syntax
+vim.o.hlsearch = false -- do not highlight all search matches
+vim.o.virtualedit = 'all' -- allow virtual editing
+vim.o.backspace = 'indent,eol,start' -- backspace anything in insert mode
+vim.o.mouse = 'a' -- mouse support
+vim.o.autochdir = true -- change working dir to buffer dir
+vim.o.completeopt = 'menuone,noselect' -- required for nvim-cmp
+vim.o.timeoutlen = 250 -- mapping timeout (which-key shows up after it)
+vim.o.hidden = true -- switch between buffers without saving
+vim.o.undofile = true -- persistent undo
+vim.o.backup = false -- disable backup
 vim.o.writebackup = false
-vim.o.scrolloff = 10  -- keep cursor 10 lines from screen edge
-vim.o.termguicolors = true  -- prevent warning about opacity changes
+vim.o.scrolloff = 10 -- keep cursor 10 lines from screen edge
+vim.o.termguicolors = true -- prevent warning about opacity changes
 
 vim.g.mapleader = ';'
 vim.g.maplocalleader = ';'
@@ -182,10 +183,10 @@ vim.cmd.vnoremap '> >gv'
 --- This function is taken from https://github.com/norcalli/nvim_utils
 function nvim_create_augroups(definitions)
     for group_name, definition in pairs(definitions) do
-        vim.api.nvim_command('augroup '..group_name)
+        vim.api.nvim_command('augroup ' .. group_name)
         vim.api.nvim_command('autocmd!')
         for _, def in ipairs(definition) do
-            local command = table.concat(vim.tbl_flatten{'autocmd', def}, ' ')
+            local command = table.concat(vim.tbl_flatten { 'autocmd', def }, ' ')
             vim.api.nvim_command(command)
         end
         vim.api.nvim_command('augroup END')
@@ -195,20 +196,45 @@ end
 local autocmds = {
     reload_vimrc = {
         -- Reload vim config automatically
-        {"BufWritePost",[[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]};
-    };
+        { "BufWritePost", [[$MYVIMC nested source $MYVIMRC | redraw]] },
+    },
     restore_cursor = {
-        { 'BufRead', '*', [[call setpos(".", getpos("'\""))]] };
-    };
+        { 'BufRead', '*', [[call setpos(".", getpos("'\""))]] },
+    },
     resize_windows_proportionally = {
-        { "VimResized", "*", ":wincmd =" };
-    };
+        { "VimResized", "*", ":wincmd =" },
+    },
     toggle_search_highlighting = {
-        { "InsertEnter", "*", "setlocal nohlsearch" };
-    };
+        { "InsertEnter", "*", "setlocal nohlsearch" },
+    },
 }
 
 nvim_create_augroups(autocmds)
+
+--vim.cmd.au "FileType dapui_watches setlocal winbar=Watches"
+--vim.cmd.au "FileType dapui_stacks setlocal winbar=Stacks"
+--vim.cmd.au "FileType dapui_breakpoints setlocal winbar=Breakpoints"
+--vim.cmd.au "FileType dapui_scopes setlocal winbar=Scopes"
+--vim.cmd.au "FileType dapui_console setlocal winbar=Console"
+--vim.cmd.au "FileType dap-repl setlocal winbar=REPL"
+
+
+vim.api.nvim_create_autocmd({ "FileType"}, {
+    pattern = {'dapui_watches'},
+  callback = function()
+    --local winbar_filetype_exclude = {
+    --}
+
+    --if vim.tbl_contains(winbar_filetype_exclude, vim.bo.filetype) then
+    --  vim.opt_local.winbar = nil
+    --  return
+    --end
+    vim.opt_local.winbar = 'Watches'
+  end,
+})
+
+vim.api.nvim_create_autocmd({'FileType'}, {pattern = {'dapui_stacks'}, callback = function() vim.opt_local.winbar = 'Stacks' end})
+
 -- autocommands END
 
 -------------------
@@ -216,7 +242,7 @@ nvim_create_augroups(autocmds)
 -------------------
 
 vim.cmd.au 'BufRead,BufNewFile *.md setlocal textwidth=80'
-vim.cmd.colorscheme 'github_dark'  -- after lualine setup
+vim.cmd.colorscheme 'github_light' -- after lualine setup
 
 --------------------------
 --- Snippet navigation ---
@@ -285,38 +311,38 @@ telescope_builtin = require 'telescope.builtin'
 telescope_utils = require 'telescope.utils'
 
 wk.register({
-        ['/'] = { telescope_builtin.current_buffer_fuzzy_find, "Find in current file" },
-        ['?'] = { telescope_builtin.live_grep, "Find in files" },
-        b = { function() telescope_builtin.buffers{ignore_current_buffer=true, sort_mru=true} end, "Buffers" },
-        d = { vim.diagnostic.open_float, "Show this diagnostic" },
-        D = { telescope_builtin.diagnostics, "All diagnostics" },
-        f = {
-            name = "File",
-            f = { function() telescope.extensions.file_browser.file_browser { respect_gitignore = false } end, "Browse files" },
-            F = { function() telescope_builtin.find_files { hidden = true, follow = true } end, "Find file" },
-            r = { telescope_builtin.oldfiles, "Recent files" },
-        },
-        g = {
-            name = "Git",
-            c = { telescope_builtin.git_bcommits, "Current file history" },
-            C = { telescope_builtin.git_commits, "Repo history" },
-            f = { telescope_builtin.git_files, "Find file" },
-            g = { telescope.extensions.repo.repo, "Repositories" },
-        },
-        G = {
-            name = "GitHub",
-            a = { telescope.extensions.gh.issues, "Action runs" },
-            i = { telescope.extensions.gh.issues, "Issues" },
-            p = { telescope.extensions.gh.pull_request, "Pull requests" },
-            x = { telescope.extensions.gh.gist, "Gist" },
-        },
-        p = { telescope_builtin.registers, "Paste" },
-        q = { ':qa<CR>', 'Quit' },
-        Q = { ':qa!<CR>', 'Force quit' },
-        w = { ':w<CR>', 'Write current file' },
-        W = { ':wa<CR>', 'Write all open files' },
-        ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
+    ['/'] = { telescope_builtin.current_buffer_fuzzy_find, "Find in current file" },
+    ['?'] = { telescope_builtin.live_grep, "Find in files" },
+    b = { function() telescope_builtin.buffers { ignore_current_buffer = true, sort_mru = true } end, "Buffers" },
+    d = { vim.diagnostic.open_float, "Show this diagnostic" },
+    D = { telescope_builtin.diagnostics, "All diagnostics" },
+    f = {
+        name = "File",
+        f = { function() telescope.extensions.file_browser.file_browser { respect_gitignore = false } end, "Browse files" },
+        F = { function() telescope_builtin.find_files { hidden = true, follow = true } end, "Find file" },
+        r = { telescope_builtin.oldfiles, "Recent files" },
     },
+    g = {
+        name = "Git",
+        c = { telescope_builtin.git_bcommits, "Current file history" },
+        C = { telescope_builtin.git_commits, "Repo history" },
+        f = { telescope_builtin.git_files, "Find file" },
+        g = { telescope.extensions.repo.repo, "Repositories" },
+    },
+    G = {
+        name = "GitHub",
+        a = { telescope.extensions.gh.issues, "Action runs" },
+        i = { telescope.extensions.gh.issues, "Issues" },
+        p = { telescope.extensions.gh.pull_request, "Pull requests" },
+        x = { telescope.extensions.gh.gist, "Gist" },
+    },
+    p = { telescope_builtin.registers, "Paste" },
+    q = { ':qa<CR>', 'Quit' },
+    Q = { ':qa!<CR>', 'Force quit' },
+    w = { ':w<CR>', 'Write current file' },
+    W = { ':wa<CR>', 'Write all open files' },
+    ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
+},
     { prefix = '<leader>' })
 
 ------------------
@@ -361,24 +387,26 @@ end
 -- enable completion capabilities for LSP
 local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
 
-function setup_lsp_common(client, bufnr)
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function setup_lsp_common(client, bufnr)
     require 'illuminate'.on_attach(client)
     if client.server_capabilities.documentSymbolProvider then
         require 'nvim-navic'.attach(client, bufnr)
-        vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+        vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
     end
 end
 
-require("neodev").setup({
-  -- add any options here, or leave empty to use the default settings
-})
-
--- then setup your lsp server as usual
-local lspconfig = require('lspconfig')
-
-
 local lspconfig = require 'lspconfig'
-for _, server in pairs { "clangd", "gopls", "hls", "pylsp", "tsserver", "verible" } do
+for _, server in pairs { "clangd", "gopls", "hls", "tsserver", "verible" } do
     lspconfig[server].setup {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
@@ -390,22 +418,41 @@ for _, server in pairs { "clangd", "gopls", "hls", "pylsp", "tsserver", "verible
     }
 end
 
-require("neodev").setup({
-  -- add any options here, or leave empty to use the default settings
-})
+lspconfig.pylsp.setup {
+    --cmd = { 'python', '-m', 'cProfile', '-o', '/home/krzysztof/pylsp-profile', '-m', 'pylsp' },
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+        client.server_capabilities.semanticTokensProvider = nil
+        require 'lsp-format'.on_attach(client)
+        if client.server_capabilities.documentSymbolProvider then
+            require 'nvim-navic'.attach(client, bufnr)
+            vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+        end
+    end,
+    settings = {
+        pylsp = {
+            plugins = {
+                pylsp_mypy = {
+                    enabled = true,
+                }
+            }
+        }
+    }
+}
 
--- then setup your lsp server as usual
-local lspconfig = require('lspconfig')
+require("neodev").setup({
+    -- add any options here, or leave empty to use the default settings
+})
 
 -- example to setup lua_ls and enable call snippets
 lspconfig.lua_ls.setup({
-  settings = {
-    Lua = {
-      completion = {
-        callSnippet = "Replace"
-      }
+    settings = {
+        Lua = {
+            completion = {
+                callSnippet = "Replace"
+            }
+        }
     }
-  }
 })
 
 -- Rust
@@ -483,29 +530,29 @@ require 'gitsigns'.setup {
     numhl = true,
     current_line_blame = true,
     on_attach = function(bufnr)
-         wk.register({
-                [']h'] = { ':Gitsigns next_hunk<CR>', "Next hunk" },
-                ['[h'] = { ':Gitsigns prev_hunk<CR>', "Previous hunk" },
-            })
         wk.register({
-                g = {
-                    b = { ':Gitsigns blame_line<CR>', "Blame line" },
-                    d = { ':Gitsigns toggle_deleted<CR>', "Toggle deleted hunks" },
-                    p = { ':Gitsigns preview_hunk<CR>', "Preview hunk" },
-                    r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
-                    s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
-                    S = { ':Gitsigns undo_stage_hunk<CR>', "Undo stage hunk" },
-                    v = { ':<C-U>Gitsigns select_hunk<CR>', "Select hunk" },
-                },
+            [']h'] = { ':Gitsigns next_hunk<CR>', "Next hunk" },
+            ['[h'] = { ':Gitsigns prev_hunk<CR>', "Previous hunk" },
+        })
+        wk.register({
+            g = {
+                b = { ':Gitsigns blame_line<CR>', "Blame line" },
+                d = { ':Gitsigns toggle_deleted<CR>', "Toggle deleted hunks" },
+                p = { ':Gitsigns preview_hunk<CR>', "Preview hunk" },
+                r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
+                s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
+                S = { ':Gitsigns undo_stage_hunk<CR>', "Undo stage hunk" },
+                v = { ':<C-U>Gitsigns select_hunk<CR>', "Select hunk" },
             },
+        },
             { prefix = '<leader>' })
         -- TODO: fix leader/these mappings in visual mode
         wk.register({
-                g = {
-                    r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
-                    s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
-                },
+            g = {
+                r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
+                s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
             },
+        },
             {
                 mode = 'v',
                 prefix = '<leader>',
@@ -526,6 +573,11 @@ require 'git-conflict'.setup {
 --- Lualine ---
 ---------------
 require 'lualine'.setup {
+    options = {
+        disabled_filetypes = {
+            statusline = {'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console', 'dap-repl'},
+        },
+    },
     sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff" },
@@ -540,7 +592,7 @@ require 'lualine'.setup {
 --- Notify ---
 --------------
 local notify = require 'notify'
-notify.setup()
+notify.setup { background_colour = "#00000000", }
 
 -- set the default notify handler to the notify plugin
 vim.notify = function(msg, ...)
@@ -555,11 +607,11 @@ end
 vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     local lvl = ({
-        "ERROR",
-        "WARN",
-        "INFO",
-        "DEBUG",
-    })[result.type]
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG",
+        })[result.type]
     notify(result.message, lvl, {
         title = "LSP | " .. client.name,
         timeout = 10000,
@@ -584,29 +636,29 @@ hover.setup {
 }
 
 wk.register({
-        a = { vim.lsp.buf.code_action, "Code action" },
-        F = { vim.lsp.buf.format, "Format current file" },
-        h = { hover.hover, "Show symbol info" },
-        H = { hover.hover_select, "Show symbol info (select)" },
-        k = { vim.lsp.buf.signature_help, "Show signature" },
-        r = { vim.lsp.buf.rename, "Rename symbol" },
-        s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
-        S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
-    },
-    { prefix = '<leader>' })
+    a = { vim.lsp.buf.code_action, "Code action" },
+    F = { vim.lsp.buf.format, "Format current file" },
+    h = { hover.hover, "Show symbol info" },
+    H = { hover.hover_select, "Show symbol info (select)" },
+    k = { vim.lsp.buf.signature_help, "Show signature" },
+    r = { vim.lsp.buf.rename, "Rename symbol" },
+    s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
+    S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
+},
+    { prefix = '<leader>', mode = { 'n', 'v' } })
 
 wk.register({
-        g = {
-            c = { telescope_builtin.lsp_incoming_calls, "Caller" },
-            C = { telescope_builtin.lsp_outgoing_calls, "Callee" },
-            d = { telescope_builtin.lsp_definitions, "Definition" },
-            D = { vim.lsp.buf.declaration, "Declaration" },
-            t = { telescope_builtin.lsp_type_definitions, "Type definition" },
-            r = { telescope_builtin.lsp_references, "Reference" },
-            i = { telescope_builtin.lsp_implementations, "Implementation" },
-            o = { ':ClangdSwitchSourceHeader<CR>', "Source/header" },
-        },
-    })
+    g = {
+        c = { telescope_builtin.lsp_incoming_calls, "Caller" },
+        C = { telescope_builtin.lsp_outgoing_calls, "Callee" },
+        d = { telescope_builtin.lsp_definitions, "Definition" },
+        D = { vim.lsp.buf.declaration, "Declaration" },
+        t = { telescope_builtin.lsp_type_definitions, "Type definition" },
+        r = { telescope_builtin.lsp_references, "Reference" },
+        i = { telescope_builtin.lsp_implementations, "Implementation" },
+        o = { ':ClangdSwitchSourceHeader<CR>', "Source/header" },
+    },
+})
 
 -------------
 --- Other ---
@@ -614,7 +666,7 @@ wk.register({
 require 'colorizer'.setup()
 require 'range-highlight'.setup()
 require 'todo-comments'.setup()
-require 'dressing'.setup{
+require 'dressing'.setup {
     input = {
         override = function(conf)
             conf.col = -1
@@ -626,3 +678,114 @@ require 'dressing'.setup{
 require 'transparent'.setup { enable = true }
 require 'tidy'.setup()
 require 'guess-indent'.setup()
+
+require('aerial').setup({
+    -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+    on_attach = function(bufnr)
+        -- Jump forwards/backwards with '{' and '}'
+        vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr })
+        vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr })
+    end
+})
+
+wk.register({
+    t = { '<cmd>AerialToggle!<CR>', "Symbol tree" }
+},
+    { prefix = '<leader>' })
+
+
+
+
+
+
+require 'dap'.adapters.lldb = {
+    type = "executable",
+    command = "lldb-vscode",
+    name = "lldb",
+}
+
+local function get_workspace_root()
+    return vim.lsp.buf.list_workspace_folders()[1]
+end
+
+local function get_remote_urls()
+    local remotes = telescope_utils.get_os_command_output({ 'git', 'remote' })
+    if #remotes == 0 then
+        return nil
+    end
+    local urls = {}
+    for _, remote in ipairs(remotes) do
+        local url = telescope_utils.get_os_command_output({ 'git', 'remote', 'get-url', remote })[1]
+        urls[url] = true
+    end
+    return urls
+end
+
+local dap = require('dap')
+dap.configurations.cpp = {
+    {
+        name = 'Attach',
+        type = 'lldb',
+        request = 'attach',
+        pid = require'dap.utils'.pick_process,
+        args = {},
+    },
+    {
+        name = 'Launch',
+        type = 'lldb',
+        request = 'launch',
+        program = function()
+            local remotes = get_remote_urls()
+            if not remotes then return nil end
+            if remotes["git@github.com:verilator/verilator.git"] then
+                print(get_workspace_root() .. '/bin/verilator_bin_dbg')
+
+                return get_workspace_root() .. '/bin/verilator_bin_dbg'
+            else
+                print('not verilator')
+                for _, remote in ipairs(remotes) do
+                    print(remote)
+                end
+            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = true,
+        args = {},
+    },
+}
+
+dap.configurations.rust = {
+    {
+        name = 'Attach',
+        type = 'lldb',
+        request = 'attach',
+        pid = require'dap.utils'.pick_process,
+        args = {},
+    },
+    {
+        name = 'Launch',
+        type = 'lldb',
+        request = 'launch',
+        program = function()
+            return require'rust-tools'.debuggables.debuggables()
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = true,
+        args = {},
+    },
+}
+
+dap.configurations.c = dap.configurations.cpp
+
+local dapui = require'dapui'
+dapui.setup{}
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
