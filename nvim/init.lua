@@ -20,7 +20,6 @@ Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug('nvim-telescope/telescope-fzf-native.nvim', "{'do': 'make'}")
 Plug 'nvim-telescope/telescope-ui-select.nvim'
 Plug 'nvim-telescope/telescope-github.nvim'
-Plug 'nvim-telescope/telescope-dap.nvim'
 Plug 'cljoly/telescope-repo.nvim'
 Plug 'crispgm/telescope-heading.nvim'
 
@@ -69,197 +68,29 @@ Plug 'lewis6991/hover.nvim' -- better hover
 Plug 'projekt0n/github-nvim-theme' -- github colors
 Plug 'xiyaowong/nvim-transparent'
 
+-- debugging
+Plug 'mfussenegger/nvim-dap' -- debugging integration
+Plug 'rcarriga/nvim-dap-ui' -- debug UI
+Plug 'theHamsta/nvim-dap-virtual-text' -- display variable values in virtual text
+
 -- other
 Plug 'LnL7/vim-nix' -- nix language support
 Plug 'Saecki/crates.nvim' -- cargo file support
 Plug 'mcauley-penney/tidy.nvim' -- trim whitespace
 Plug 'tpope/vim-eunuch' -- unix commands in vim
-Plug 'mfussenegger/nvim-dap' -- debugging
-Plug 'rcarriga/nvim-dap-ui' -- debugging
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
 Plug 'stevearc/aerial.nvim'
 vim.cmd.call "plug#end()"
 
-------------------------
---- General settings ---
-------------------------
-vim.o.number = true -- enable line numbers
-vim.o.ignorecase = true -- when searching
-vim.o.smartcase = true -- don't ignore case if search string contains uppercase letters
-vim.o.compatible = false -- disable vi compatibility
-vim.o.incsearch = true -- incremental searching
-vim.o.visualbell = true -- disable bleeping
-vim.o.expandtab = true -- insert spaces with tab
-vim.o.tabstop = 4 -- width of tab
-vim.o.shiftwidth = 4 -- width of indent
-vim.o.ruler = true -- cursor position in the status line
-vim.o.cursorline = true -- highlight line with cursor
-vim.o.autoindent = true -- apply indentation of the previous line
-vim.o.smartindent = true -- indent based on syntax
-vim.o.hlsearch = false -- do not highlight all search matches
-vim.o.virtualedit = 'all' -- allow virtual editing
-vim.o.backspace = 'indent,eol,start' -- backspace anything in insert mode
-vim.o.mouse = 'a' -- mouse support
-vim.o.autochdir = true -- change working dir to buffer dir
-vim.o.completeopt = 'menuone,noselect' -- required for nvim-cmp
-vim.o.timeoutlen = 250 -- mapping timeout (which-key shows up after it)
-vim.o.hidden = true -- switch between buffers without saving
-vim.o.undofile = true -- persistent undo
-vim.o.backup = false -- disable backup
-vim.o.writebackup = false
-vim.o.scrolloff = 10 -- keep cursor 10 lines from screen edge
-vim.o.termguicolors = true -- prevent warning about opacity changes
+---------------
 
-vim.g.mapleader = ';'
-vim.g.maplocalleader = ';'
+require 'vim-options'.set()
+require 'vim-mappings'.set()
+require 'autocmds'.setup()
 
-----------------
---- Mappings ---
-----------------
-
--- browse headings
-vim.cmd.nnoremap 'gh :Telescope heading<CR>'
-
--- use system clilpbard by default
-vim.cmd.nnoremap 'y "+y'
-vim.cmd.nnoremap 'yy "+yy'
-vim.cmd.nnoremap 'p "+p'
-vim.cmd.nnoremap 'P "+P'
-vim.cmd.nnoremap 'd "+d'
-vim.cmd.nnoremap 'dd "+dd'
-vim.cmd.nnoremap 'x "_x'
-vim.cmd.nnoremap 'X "_dd'
-
--- use system clilpboard by default, and
--- replace currently selected text with default register
--- without yanking it
-vim.cmd.vnoremap 'y "+ygv'
-vim.cmd.vnoremap 'p "_d"+P'
-vim.cmd.vnoremap 'P "_d"+P'
-vim.cmd.vnoremap 'd "+d'
-vim.cmd.vnoremap 'x "_x'
-vim.cmd.vnoremap 'X "_x'
-
--- do not insert on o/O
-vim.cmd.nnoremap 'o o<esc>'
-vim.cmd.nnoremap 'O O<esc>'
-
--- redo on U
-vim.cmd.nnoremap 'U <C-r><esc>'
-
--- move up/down on visual lines
-vim.cmd.nnoremap "<expr> j v:count ? 'j' : 'gj'"
-vim.cmd.nnoremap "<expr> k v:count ? 'k' : 'gk'"
-
--- window managment with the alt key
-vim.cmd.nnoremap '<M-q> <C-w>q'
-vim.cmd.nnoremap '<M-c> <C-w>s'
-vim.cmd.nnoremap '<M-v> <C-w>v'
-vim.cmd.nnoremap '<M-h> <C-w>h'
-vim.cmd.nnoremap '<M-j> <C-w>j'
-vim.cmd.nnoremap '<M-k> <C-w>k'
-vim.cmd.nnoremap '<M-l> <C-w>l'
-vim.cmd.nnoremap '<M-S-h> <C-w><S-h>'
-vim.cmd.nnoremap '<M-S-j> <C-w><S-j>'
-vim.cmd.nnoremap '<M-S-k> <C-w><S-k>'
-vim.cmd.nnoremap '<M-S-l> <C-w><S-l>'
-
--- faster scrolling
-vim.cmd.noremap 'J <C-e><C-e>'
-vim.cmd.noremap 'K <C-y><C-y>'
-
--- move through jump history
-vim.cmd.noremap 'H <C-o>'
-vim.cmd.noremap 'L <C-i>'
-
--- make < > shifts keep selection
-vim.cmd.vnoremap '< <gv'
-vim.cmd.vnoremap '> >gv'
-
---------------------
---- Autocommands ---
---------------------
-
---- This function is taken from https://github.com/norcalli/nvim_utils
-function nvim_create_augroups(definitions)
-    for group_name, definition in pairs(definitions) do
-        vim.api.nvim_command('augroup ' .. group_name)
-        vim.api.nvim_command('autocmd!')
-        for _, def in ipairs(definition) do
-            local command = table.concat(vim.tbl_flatten { 'autocmd', def }, ' ')
-            vim.api.nvim_command(command)
-        end
-        vim.api.nvim_command('augroup END')
-    end
-end
-
-local autocmds = {
-    reload_vimrc = {
-        -- Reload vim config automatically
-        { "BufWritePost", [[$MYVIMC nested source $MYVIMRC | redraw]] },
-    },
-    restore_cursor = {
-        { 'BufRead', '*', [[call setpos(".", getpos("'\""))]] },
-    },
-    resize_windows_proportionally = {
-        { "VimResized", "*", ":wincmd =" },
-    },
-    toggle_search_highlighting = {
-        { "InsertEnter", "*", "setlocal nohlsearch" },
-    },
-}
-
-nvim_create_augroups(autocmds)
-
---vim.cmd.au "FileType dapui_watches setlocal winbar=Watches"
---vim.cmd.au "FileType dapui_stacks setlocal winbar=Stacks"
---vim.cmd.au "FileType dapui_breakpoints setlocal winbar=Breakpoints"
---vim.cmd.au "FileType dapui_scopes setlocal winbar=Scopes"
---vim.cmd.au "FileType dapui_console setlocal winbar=Console"
---vim.cmd.au "FileType dap-repl setlocal winbar=REPL"
-
-
-vim.api.nvim_create_autocmd({ "FileType"}, {
-    pattern = {'dapui_watches'},
-  callback = function()
-    --local winbar_filetype_exclude = {
-    --}
-
-    --if vim.tbl_contains(winbar_filetype_exclude, vim.bo.filetype) then
-    --  vim.opt_local.winbar = nil
-    --  return
-    --end
-    vim.opt_local.winbar = 'Watches'
-  end,
-})
-
-vim.api.nvim_create_autocmd({'FileType'}, {pattern = {'dapui_stacks'}, callback = function() vim.opt_local.winbar = 'Stacks' end})
-
--- autocommands END
-
--------------------
---- Line length ---
--------------------
-
-vim.cmd.au 'BufRead,BufNewFile *.md setlocal textwidth=80'
-vim.cmd.colorscheme 'github_light' -- after lualine setup
-
---------------------------
---- Snippet navigation ---
---------------------------
-
-vim.cmd.imap "<expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'"
-vim.cmd.smap "<expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'"
-vim.cmd.imap "<expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'"
-vim.cmd.smap "<expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'"
-vim.cmd.imap "<expr> <M-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<M-l>'"
-vim.cmd.smap "<expr> <M-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<M-l>'"
-vim.cmd.imap "<expr> <M-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<M-h>'"
-vim.cmd.smap "<expr> <M-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<M-h>'"
-
------------------
---- Which-key ---
------------------
+------------------
+--- Keymapping ---
+------------------
 local wk = require 'which-key'
 wk.setup {
     window = {
@@ -272,10 +103,19 @@ wk.setup {
     },
 }
 
+wk.register({
+    q = { ':qa<CR>', 'Quit' },
+    Q = { ':qa!<CR>', 'Force quit' },
+    w = { ':w<CR>', 'Write current file' },
+    W = { ':wa<CR>', 'Write all open files' },
+    ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
+},
+    { prefix = '<leader>' })
+
 -----------------
 --- Telescope ---
 -----------------
-telescope = require 'telescope'
+local telescope = require 'telescope'
 telescope.setup {
     defaults = {
         -- switch between horizontal/vertical layout based on window size
@@ -305,17 +145,13 @@ telescope.load_extension 'ui-select'
 telescope.load_extension 'gh'
 telescope.load_extension 'repo'
 telescope.load_extension 'heading'
-telescope.load_extension 'dap'
 
-telescope_builtin = require 'telescope.builtin'
-telescope_utils = require 'telescope.utils'
+local telescope_builtin = require 'telescope.builtin'
 
 wk.register({
     ['/'] = { telescope_builtin.current_buffer_fuzzy_find, "Find in current file" },
     ['?'] = { telescope_builtin.live_grep, "Find in files" },
     b = { function() telescope_builtin.buffers { ignore_current_buffer = true, sort_mru = true } end, "Buffers" },
-    d = { vim.diagnostic.open_float, "Show this diagnostic" },
-    D = { telescope_builtin.diagnostics, "All diagnostics" },
     f = {
         name = "File",
         f = { function() telescope.extensions.file_browser.file_browser { respect_gitignore = false } end, "Browse files" },
@@ -324,345 +160,23 @@ wk.register({
     },
     g = {
         name = "Git",
-        c = { telescope_builtin.git_bcommits, "Current file history" },
-        C = { telescope_builtin.git_commits, "Repo history" },
-        f = { telescope_builtin.git_files, "Find file" },
         g = { telescope.extensions.repo.repo, "Repositories" },
     },
-    G = {
-        name = "GitHub",
-        a = { telescope.extensions.gh.issues, "Action runs" },
-        i = { telescope.extensions.gh.issues, "Issues" },
-        p = { telescope.extensions.gh.pull_request, "Pull requests" },
-        x = { telescope.extensions.gh.gist, "Gist" },
-    },
     p = { telescope_builtin.registers, "Paste" },
-    q = { ':qa<CR>', 'Quit' },
-    Q = { ':qa!<CR>', 'Force quit' },
-    w = { ':w<CR>', 'Write current file' },
-    W = { ':wa<CR>', 'Write all open files' },
-    ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
 },
     { prefix = '<leader>' })
 
-------------------
---- Spellcheck ---
-------------------
-vim.opt.spell = true
-vim.opt.spelllang = { 'en_us', 'pl' }
+-----------------
 
-------------------
---- Treesitter ---
-------------------
-require 'nvim-treesitter.configs'.setup {
-    ensure_installed = {
-        "bash",
-        "c",
-        "cpp",
-        "css",
-        "glsl",
-        "go",
-        "haskell",
-        "html",
-        "javascript",
-        "lua",
-        "python",
-        "regex",
-        "rust",
-        "typescript",
-        "zig",
-    },
-    highlight = { enable = true },
-}
+require 'syntax'.setup()
+require 'langservers'.setup(wk)
+require 'completion'.setup()
+require 'git'.setup(wk)
+require 'statusline'.setup()
+require 'notifications'.setup()
 
------------
---- LSP ---
------------
--- pretty LSP diagnostics icons
-for icon_name, icon in pairs { Error = " ", Warning = " ", Hint = " ", Information = " " } do
-    local hl = "LspDiagnosticsSign" .. icon_name
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+vim.cmd.colorscheme 'github_dark' -- after lualine setup (may not be needed?)
 
--- enable completion capabilities for LSP
-local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
-
-local function has_value (tab, val)
-    for index, value in ipairs(tab) do
-        if value == val then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function setup_lsp_common(client, bufnr)
-    require 'illuminate'.on_attach(client)
-    if client.server_capabilities.documentSymbolProvider then
-        require 'nvim-navic'.attach(client, bufnr)
-        vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
-    end
-end
-
-local lspconfig = require 'lspconfig'
-for _, server in pairs { "clangd", "gopls", "hls", "tsserver", "verible" } do
-    lspconfig[server].setup {
-        capabilities = capabilities,
-        on_attach = function(client, bufnr)
-            if server ~= "clangd" and server ~= "verible" then
-                require 'lsp-format'.on_attach(client)
-            end
-            setup_lsp_common(client, bufnr)
-        end,
-    }
-end
-
-lspconfig.pylsp.setup {
-    --cmd = { 'python', '-m', 'cProfile', '-o', '/home/krzysztof/pylsp-profile', '-m', 'pylsp' },
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        client.server_capabilities.semanticTokensProvider = nil
-        require 'lsp-format'.on_attach(client)
-        if client.server_capabilities.documentSymbolProvider then
-            require 'nvim-navic'.attach(client, bufnr)
-            vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
-        end
-    end,
-    settings = {
-        pylsp = {
-            plugins = {
-                pylsp_mypy = {
-                    enabled = true,
-                }
-            }
-        }
-    }
-}
-
-require("neodev").setup({
-    -- add any options here, or leave empty to use the default settings
-})
-
--- example to setup lua_ls and enable call snippets
-lspconfig.lua_ls.setup({
-    settings = {
-        Lua = {
-            completion = {
-                callSnippet = "Replace"
-            }
-        }
-    }
-})
-
--- Rust
--- (this sets up rust-analyzer, so don't do it above)
-require 'rust-tools'.setup {
-    tools = {
-        inlay_hints = {
-            highlight = 'LineNr',
-        },
-    },
-    server = {
-        settings = {
-            ["rust-analyzer"] = {
-                cargo = {
-                    features = 'all',
-                },
-            },
-        },
-        capabilities = capabilities,
-        on_attach = function(client, bufnr)
-            require 'lsp-format'.on_attach(client)
-            setup_lsp_common(client, bufnr)
-        end,
-    },
-}
-require 'crates'.setup()
-
--- LSP diagnostic lines
-require 'lsp_lines'.setup()
-
-local lines_enabled = true
-function toggle_lines()
-    lines_enabled = not lines_enabled
-    vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
-end
-
-wk.register { ['<leader>j'] = { toggle_lines, "Show diagnostic lines" } }
-toggle_lines()
-
-------------------------
---- cmp (completion) ---
-------------------------
-local cmp = require 'cmp'
-cmp.setup {
-    sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "path" },
-        { name = "buffer" },
-        { name = "nvim_lua" },
-        { name = "vsnip" },
-        { name = "crates" },
-    }, {
-        { name = "buffer" },
-    }),
-    snippet = {
-        expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body)
-        end,
-    },
-    mapping = {
-        ["<M-j>"] = cmp.mapping.select_next_item(),
-        ["<M-k>"] = cmp.mapping.select_prev_item(),
-        ["<M-Space>"] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping.confirm { select = true },
-    },
-    formatting = {
-        format = require 'lspkind'.cmp_format(),
-    },
-}
-
------------
---- Git ---
------------
-require 'gitsigns'.setup {
-    numhl = true,
-    current_line_blame = true,
-    on_attach = function(bufnr)
-        wk.register({
-            [']h'] = { ':Gitsigns next_hunk<CR>', "Next hunk" },
-            ['[h'] = { ':Gitsigns prev_hunk<CR>', "Previous hunk" },
-        })
-        wk.register({
-            g = {
-                b = { ':Gitsigns blame_line<CR>', "Blame line" },
-                d = { ':Gitsigns toggle_deleted<CR>', "Toggle deleted hunks" },
-                p = { ':Gitsigns preview_hunk<CR>', "Preview hunk" },
-                r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
-                s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
-                S = { ':Gitsigns undo_stage_hunk<CR>', "Undo stage hunk" },
-                v = { ':<C-U>Gitsigns select_hunk<CR>', "Select hunk" },
-            },
-        },
-            { prefix = '<leader>' })
-        -- TODO: fix leader/these mappings in visual mode
-        wk.register({
-            g = {
-                r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },
-                s = { ':Gitsigns stage_hunk<CR>', "Stage hunk" },
-            },
-        },
-            {
-                mode = 'v',
-                prefix = '<leader>',
-            })
-    end
-}
-
-require 'git-conflict'.setup {
-    default_mappings = true,
-    disable_diagnostics = true,
-    highlights = {
-        incoming = "DiffText",
-        current = "DiffAdd",
-    },
-}
-
----------------
---- Lualine ---
----------------
-require 'lualine'.setup {
-    options = {
-        disabled_filetypes = {
-            statusline = {'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console', 'dap-repl'},
-        },
-    },
-    sections = {
-        lualine_a = { "mode" },
-        lualine_b = { "branch", "diff" },
-        lualine_c = { "filename", { "diagnostics", sources = { "nvim_diagnostic" } } },
-        lualine_x = { "filetype" },
-        lualine_y = { "encoding", "fileformat" },
-        lualine_z = { "progress", "location" },
-    },
-}
-
---------------
---- Notify ---
---------------
-local notify = require 'notify'
-notify.setup { background_colour = "#00000000", }
-
--- set the default notify handler to the notify plugin
-vim.notify = function(msg, ...)
-    -- ignore this message
-    if msg:match "warning: multiple different client offset_encodings" then
-        return
-    end
-    notify(msg, ...)
-end
-
--- LSP messages as notifications
-vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
-    local client = vim.lsp.get_client_by_id(ctx.client_id)
-    local lvl = ({
-            "ERROR",
-            "WARN",
-            "INFO",
-            "DEBUG",
-        })[result.type]
-    notify(result.message, lvl, {
-        title = "LSP | " .. client.name,
-        timeout = 10000,
-        keep = function()
-            return lvl == "ERROR" or lvl == "WARN"
-        end,
-    })
-end
-
--------------
---- Hover ---
--------------
-hover = require 'hover'
-hover.setup {
-    init = function()
-        require 'hover.providers.lsp'
-        require 'hover.providers.gh'
-        require 'hover.providers.gh_user'
-        require 'hover.providers.man'
-        require 'hover.providers.dictionary'
-    end,
-}
-
-wk.register({
-    a = { vim.lsp.buf.code_action, "Code action" },
-    F = { vim.lsp.buf.format, "Format current file" },
-    h = { hover.hover, "Show symbol info" },
-    H = { hover.hover_select, "Show symbol info (select)" },
-    k = { vim.lsp.buf.signature_help, "Show signature" },
-    r = { vim.lsp.buf.rename, "Rename symbol" },
-    s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
-    S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
-},
-    { prefix = '<leader>', mode = { 'n', 'v' } })
-
-wk.register({
-    g = {
-        c = { telescope_builtin.lsp_incoming_calls, "Caller" },
-        C = { telescope_builtin.lsp_outgoing_calls, "Callee" },
-        d = { telescope_builtin.lsp_definitions, "Definition" },
-        D = { vim.lsp.buf.declaration, "Declaration" },
-        t = { telescope_builtin.lsp_type_definitions, "Type definition" },
-        r = { telescope_builtin.lsp_references, "Reference" },
-        i = { telescope_builtin.lsp_implementations, "Implementation" },
-        o = { ':ClangdSwitchSourceHeader<CR>', "Source/header" },
-    },
-})
-
--------------
---- Other ---
--------------
 require 'colorizer'.setup()
 require 'range-highlight'.setup()
 require 'todo-comments'.setup()
@@ -679,113 +193,14 @@ require 'transparent'.setup { enable = true }
 require 'tidy'.setup()
 require 'guess-indent'.setup()
 
-require('aerial').setup({
-    -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+local aerial = require 'aerial'
+aerial.setup({
     on_attach = function(bufnr)
-        -- Jump forwards/backwards with '{' and '}'
-        vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr })
-        vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr })
+        wk.register({
+            t = { aerial.toggle, "Symbol tree" }
+        },
+            { prefix = '<leader>', buffer = bufnr })
     end
 })
 
-wk.register({
-    t = { '<cmd>AerialToggle!<CR>', "Symbol tree" }
-},
-    { prefix = '<leader>' })
-
-
-
-
-
-
-require 'dap'.adapters.lldb = {
-    type = "executable",
-    command = "lldb-vscode",
-    name = "lldb",
-}
-
-local function get_workspace_root()
-    return vim.lsp.buf.list_workspace_folders()[1]
-end
-
-local function get_remote_urls()
-    local remotes = telescope_utils.get_os_command_output({ 'git', 'remote' })
-    if #remotes == 0 then
-        return nil
-    end
-    local urls = {}
-    for _, remote in ipairs(remotes) do
-        local url = telescope_utils.get_os_command_output({ 'git', 'remote', 'get-url', remote })[1]
-        urls[url] = true
-    end
-    return urls
-end
-
-local dap = require('dap')
-dap.configurations.cpp = {
-    {
-        name = 'Attach',
-        type = 'lldb',
-        request = 'attach',
-        pid = require'dap.utils'.pick_process,
-        args = {},
-    },
-    {
-        name = 'Launch',
-        type = 'lldb',
-        request = 'launch',
-        program = function()
-            local remotes = get_remote_urls()
-            if not remotes then return nil end
-            if remotes["git@github.com:verilator/verilator.git"] then
-                print(get_workspace_root() .. '/bin/verilator_bin_dbg')
-
-                return get_workspace_root() .. '/bin/verilator_bin_dbg'
-            else
-                print('not verilator')
-                for _, remote in ipairs(remotes) do
-                    print(remote)
-                end
-            end
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-        end,
-        cwd = '${workspaceFolder}',
-        stopOnEntry = true,
-        args = {},
-    },
-}
-
-dap.configurations.rust = {
-    {
-        name = 'Attach',
-        type = 'lldb',
-        request = 'attach',
-        pid = require'dap.utils'.pick_process,
-        args = {},
-    },
-    {
-        name = 'Launch',
-        type = 'lldb',
-        request = 'launch',
-        program = function()
-            return require'rust-tools'.debuggables.debuggables()
-        end,
-        cwd = '${workspaceFolder}',
-        stopOnEntry = true,
-        args = {},
-    },
-}
-
-dap.configurations.c = dap.configurations.cpp
-
-local dapui = require'dapui'
-dapui.setup{}
-dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
-end
-dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
-end
+require 'debugging'.setup(wk)
