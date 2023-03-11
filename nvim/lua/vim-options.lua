@@ -24,6 +24,7 @@ function M.set()
     vim.o.autochdir = true -- change working dir to buffer dir
     vim.o.completeopt = 'menuone,noselect' -- required for nvim-cmp
     vim.o.timeoutlen = 250 -- mapping timeout (which-key shows up after it)
+    vim.o.updatetime = 250
     vim.o.hidden = true -- switch between buffers without saving
     vim.o.undofile = true -- persistent undo
     vim.o.backup = false -- disable backup

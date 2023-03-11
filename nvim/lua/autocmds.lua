@@ -75,42 +75,69 @@ function M.setup()
         end,
     })
 
+    -- set no statusline on Aerial buffers,
+    vim.api.nvim_create_autocmd({ 'FileType' },
+        {
+            group = augroup('aerial_statusline'),
+            pattern = { 'aerial' },
+            callback = function()
+                vim.opt_local.laststatus = 0
+            end
+        })
+    -- set no statusline on DAP buffers,
     -- set winbars in DAP buffers (does not seem to work)
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dapui_watches' },
-            callback = function() vim.opt_local.winbar = 'Watches' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'Watches'
+            end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dapui_stacks' },
-            callback = function() vim.opt_local.winbar = 'Stacks' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'Stacks' end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dapui_breakpoints' },
-            callback = function() vim.opt_local.winbar = 'Breakpoints' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'Breakpoints'
+            end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dapui_scopes' },
-            callback = function() vim.opt_local.winbar = 'Scopes' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'Scopes'
+            end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dapui_console' },
-            callback = function() vim.opt_local.winbar = 'Console' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'Console'
+            end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_winbars'),
+            group = augroup('dapui_no_winbars_no_status'),
             pattern = { 'dap-repl' },
-            callback = function() vim.opt_local.winbar = 'REPL' end
+            callback = function()
+                vim.opt_local.laststatus = 0
+                vim.opt_local.winbar = 'REPL'
+            end
         })
 end
 

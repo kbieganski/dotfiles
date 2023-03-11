@@ -23,31 +23,40 @@ Plug 'nvim-telescope/telescope-github.nvim'
 Plug 'cljoly/telescope-repo.nvim'
 Plug 'crispgm/telescope-heading.nvim'
 
--- syntax highlighting
+-- syntax highlighting and other stuff
 Plug('nvim-treesitter/nvim-treesitter', "{'do': ':TSUpdate'}")
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'code-biscuits/nvim-biscuits' -- closing bracket/paren/tag annotations
 
 -- LSP utils
 Plug 'neovim/nvim-lspconfig'
 Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' -- diagnostic lines
-Plug 'simrat39/rust-tools.nvim'
+Plug 'simrat39/rust-tools.nvim' -- Rust-specific plugin
 Plug 'lukas-reineke/lsp-format.nvim' -- auto format
 Plug 'SmiteshP/nvim-navic' -- breadcrumbs
-Plug 'folke/neodev.nvim'
+Plug 'folke/neodev.nvim' -- LSP for neovim config/plugin dev
+Plug 'kosayoda/nvim-lightbulb' -- code action lightbulb
+Plug 'smjonas/inc-rename.nvim' -- incremental renaming
+Plug 'j-hui/fidget.nvim' -- progress info
+Plug 'jubnzv/virtual-types.nvim' -- code lens types
 
 -- completion
 Plug 'onsails/lspkind-nvim'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
+Plug 'f3fora/cmp-spell'
 
 -- git
 Plug 'lewis6991/gitsigns.nvim'
-Plug('akinsho/git-conflict.nvim', "{ 'tag': 'v1.0.0' }")
+Plug 'akinsho/git-conflict.nvim'
+Plug 'ruifm/gitlinker.nvim'
 
 -- word/range highlighting
 Plug 'NvChad/nvim-colorizer.lua' -- hex color highlighter
@@ -67,19 +76,27 @@ Plug 'lewis6991/hover.nvim' -- better hover
 -- theming
 Plug 'projekt0n/github-nvim-theme' -- github colors
 Plug 'xiyaowong/nvim-transparent'
+Plug 'zbirenbaum/neodim'
+Plug 'sunjon/Shade.nvim'
 
 -- debugging
 Plug 'mfussenegger/nvim-dap' -- debugging integration
 Plug 'rcarriga/nvim-dap-ui' -- debug UI
 Plug 'theHamsta/nvim-dap-virtual-text' -- display variable values in virtual text
 
+-- copilot
+Plug 'https://github.com/zbirenbaum/copilot.lua'
+Plug 'https://github.com/zbirenbaum/copilot-cmp'
+
 -- other
 Plug 'LnL7/vim-nix' -- nix language support
 Plug 'Saecki/crates.nvim' -- cargo file support
-Plug 'mcauley-penney/tidy.nvim' -- trim whitespace
+--Plug 'mcauley-penney/tidy.nvim' -- trim whitespace
+Plug 'lewis6991/spaceless.nvim' -- trim whitespace
 Plug 'tpope/vim-eunuch' -- unix commands in vim
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
 Plug 'stevearc/aerial.nvim'
+Plug('toppair/peek.nvim', "{'do': 'deno task --quiet build:fast'}")
 vim.cmd.call "plug#end()"
 
 ---------------
@@ -118,6 +135,7 @@ wk.register({
 local telescope = require 'telescope'
 telescope.setup {
     defaults = {
+        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
         -- switch between horizontal/vertical layout based on window size
         layout_strategy = "flex",
         layout_config = {
@@ -168,6 +186,8 @@ wk.register({
 
 -----------------
 
+vim.cmd.colorscheme 'github_light'
+
 require 'syntax'.setup()
 require 'langservers'.setup(wk)
 require 'completion'.setup()
@@ -175,7 +195,6 @@ require 'git'.setup(wk)
 require 'statusline'.setup()
 require 'notifications'.setup()
 
-vim.cmd.colorscheme 'github_dark' -- after lualine setup (may not be needed?)
 
 require 'colorizer'.setup()
 require 'range-highlight'.setup()
@@ -189,18 +208,35 @@ require 'dressing'.setup {
         end,
     },
 }
+require 'neodim'.setup()
 require 'transparent'.setup { enable = true }
-require 'tidy'.setup()
+--require 'tidy'.setup()
+require 'spaceless'.setup()
 require 'guess-indent'.setup()
+require 'peek'.setup()
+require 'shade'.setup { overlay_opacity = 80 }
+require 'fidget'.setup()
+require 'nvim-biscuits'.setup { cursor_line_only = true,
+    default_config = {
+        prefix_string = " 📎 "
+    },
+}
 
 local aerial = require 'aerial'
-aerial.setup({
+aerial.setup{
+    layout = {
+        preserve_equality = true,
+    },
+    attach_mode = 'window',
+    close_automatic_events = {'switch_buffer', 'unsupported'},
+    highlight_on_hover = true,
     on_attach = function(bufnr)
         wk.register({
             t = { aerial.toggle, "Symbol tree" }
         },
             { prefix = '<leader>', buffer = bufnr })
-    end
-})
+    end,
+    open_automatic = true,
+}
 
-require 'debugging'.setup(wk)
+require 'debugging'.setup()

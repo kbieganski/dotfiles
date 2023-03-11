@@ -9,6 +9,10 @@ function M.setup(wk)
     require 'gitsigns'.setup {
         numhl = true,
         current_line_blame = true,
+        current_line_blame_opts = {
+            virt_text_pos = 'right_align',
+            ignore_whitespace = true,
+        },
         on_attach = function(bufnr)
             wk.register({
                 [']h'] = { ':Gitsigns next_hunk<CR>', "Next hunk" },
@@ -63,6 +67,8 @@ function M.setup(wk)
             current = "DiffAdd",
         },
     }
+
+    require 'gitlinker'.setup()
 end
 
 return M

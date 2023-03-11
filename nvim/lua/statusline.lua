@@ -8,7 +8,7 @@ function M.setup()
     require 'lualine'.setup {
         options = {
             disabled_filetypes = {
-                statusline = { 'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console', 'dap-repl' },
+                statusline = { 'aerial', 'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console', 'dap-repl' },
             },
         },
         sections = {

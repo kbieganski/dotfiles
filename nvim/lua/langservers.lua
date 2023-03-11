@@ -30,41 +30,49 @@ function M.setup(wk)
     local telescope_builtin = require 'telescope.builtin'
     local function on_attach(opts)
         opts = opts or {}
+        if opts.virtual_types == nil then opts.virtual_types = true end
         return function(client, bufnr)
             require 'illuminate'.on_attach(client)
             if opts.autoformat then
                 require 'lsp-format'.on_attach(client)
+            end
+            if opts.virtual_types then
+                require 'virtualtypes'.on_attach(client, bufnr)
             end
             if client.server_capabilities.documentSymbolProvider then
                 require 'nvim-navic'.attach(client, bufnr)
                 vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
             end
             wk.register({
-                d = { vim.diagnostic.open_float, "Show this diagnostic" },
-                D = { telescope_builtin.diagnostics, "All diagnostics" },
-            },
+                    [']d'] = { vim.diagnostic.goto_next, "Next diagnostic" },
+                    ['[d'] = { vim.diagnostic.goto_prev, "Previous diagnostic" },
+            }, { buffer = bufnr })
+            wk.register({
+                    d = { vim.diagnostic.open_float, "Show this diagnostic" },
+                    D = { telescope_builtin.diagnostics, "All diagnostics" },
+                },
                 { prefix = '<leader>', buffer = bufnr })
             wk.register({
-                a = { vim.lsp.buf.code_action, "Code action" },
-                F = { vim.lsp.buf.format, "Format current file" },
-            },
+                    a = { vim.lsp.buf.code_action, "Code action" },
+                    F = { vim.lsp.buf.format, "Apply formatting" },
+                },
                 { mode = { 'n', 'v' }, prefix = '<leader>', buffer = bufnr })
             local dap = require 'dap'
             wk.register({
-                x = {
-                    b = { dap.toggle_breakpoint, "Breakpoint" },
-                    c = { dap.continue, "Continue" },
-                    j = { dap.step_into, "Step into" },
-                    k = { dap.step_out, "Step out" },
-                    l = { dap.step_over, "Step over" },
+                    x = {
+                        b = { dap.toggle_breakpoint, "Breakpoint" },
+                        c = { dap.continue, "Continue" },
+                        j = { dap.step_into, "Step into" },
+                        k = { dap.step_out, "Step out" },
+                        l = { dap.step_over, "Step over" },
+                    },
+                    h = { hover.hover, "Show symbol info" },
+                    H = { hover.hover_select, "Show symbol info (select)" },
+                    k = { vim.lsp.buf.signature_help, "Show signature" },
+                    r = { ":IncRename ", "Rename symbol" },
+                    s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
+                    S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
                 },
-                h = { hover.hover, "Show symbol info" },
-                H = { hover.hover_select, "Show symbol info (select)" },
-                k = { vim.lsp.buf.signature_help, "Show signature" },
-                r = { vim.lsp.buf.rename, "Rename symbol" },
-                s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
-                S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
-            },
                 { mode = 'n', prefix = '<leader>', buffer = bufnr })
             wk.register({
                 g = {
@@ -84,7 +92,21 @@ function M.setup(wk)
     -- enable completion capabilities for LSP
     local capabilities = require 'completion'.capabilities()
 
+    local lsp_configs = require('lspconfig.configs')
+
+    lsp_configs.prosemd = {
+        default_config = {
+            cmd = { vim.fn.expand("$HOME/.cargo/bin/prosemd-lsp"), "--stdio" },
+            filetypes = { 'markdown', 'gitcommit' },
+            root_dir = function(fname)
+                return require 'lspconfig.util'.find_git_ancestor(fname) or vim.fn.getcwd()
+            end,
+            settings = {},
+        }
+    }
+
     local lspconfig = require 'lspconfig'
+    lspconfig.prosemd.setup{}
     for _, server in pairs { 'gopls', 'hls', 'tsserver', 'verible' } do
         lspconfig[server].setup {
             capabilities = capabilities,
@@ -95,7 +117,7 @@ function M.setup(wk)
     lspconfig.clangd.setup {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
-            on_attach { autoformat = false } (client, bufnr)
+            on_attach { autoformat = false, virtual_types = false } (client, bufnr)
             wk.register({
                 g = {
                     o = { ':ClangdSwitchSourceHeader<CR>', "Source/header" },
@@ -125,7 +147,7 @@ function M.setup(wk)
 
     -- example to setup lua_ls and enable call snippets
     lspconfig.lua_ls.setup {
-        on_attach = on_attach { autoformat = true },
+        on_attach = on_attach { autoformat = false },
         settings = {
             Lua = {
                 completion = {
@@ -161,20 +183,26 @@ function M.setup(wk)
         },
         server = {
             settings = {
-                ["rust-analyzer"] = {
+                    ["rust-analyzer"] = {
                     cargo = {
                         features = 'all',
+                    },
+                },
+                procMacro = {
+                    enable = true,
+                    attributes = {
+                        enable = true,
                     },
                 },
             },
             capabilities = capabilities,
             on_attach = function(client, bufnr)
-                on_attach { autoformat = true } (client, bufnr)
+                on_attach { autoformat = true, virtual_types = false } (client, bufnr)
                 wk.register({
-                    x = {
-                        x = { require 'rust-tools'.debuggables.debuggables, "Debuggables" },
+                        x = {
+                            x = { require 'rust-tools'.debuggables.debuggables, "Debuggables" },
+                        },
                     },
-                },
                     { prefix = '<leader>', buffer = bufnr })
             end,
         },
@@ -184,6 +212,9 @@ function M.setup(wk)
     -- LSP diagnostic lines
     require 'lsp_lines'.setup()
     M.toggle_lines()
+
+    require 'inc_rename'.setup { input_buffer_type = 'dressing' }
+    require 'nvim-lightbulb'.setup {autocmd = {enabled = true}}
 end
 
 return M
