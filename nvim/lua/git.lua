@@ -6,13 +6,10 @@ local M = {}
 function M.setup(wk)
     local telescope = require 'telescope'
     local telescope_builtin = require 'telescope.builtin'
-    require 'gitsigns'.setup {
+    local gitsigns = require 'gitsigns'
+    gitsigns.setup {
         numhl = true,
-        current_line_blame = true,
-        current_line_blame_opts = {
-            virt_text_pos = 'right_align',
-            ignore_whitespace = true,
-        },
+        current_line_blame = false,
         on_attach = function(bufnr)
             wk.register({
                 [']h'] = { ':Gitsigns next_hunk<CR>', "Next hunk" },
@@ -24,7 +21,7 @@ function M.setup(wk)
                     c = { telescope_builtin.git_bcommits, "Current file history" },
                     C = { telescope_builtin.git_commits, "Repo history" },
                     f = { telescope_builtin.git_files, "Find file" },
-                    b = { ':Gitsigns blame_line<CR>', "Blame line" },
+                    b = { function() gitsigns.blame_line{ full = true } end, "Blame line" },
                     d = { ':Gitsigns toggle_deleted<CR>', "Toggle deleted hunks" },
                     p = { ':Gitsigns preview_hunk<CR>', "Preview hunk" },
                     r = { ':Gitsigns reset_hunk<CR>', "Reset hunk" },

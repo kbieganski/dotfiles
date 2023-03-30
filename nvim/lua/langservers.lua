@@ -107,7 +107,7 @@ function M.setup(wk)
 
     local lspconfig = require 'lspconfig'
     lspconfig.prosemd.setup{}
-    for _, server in pairs { 'gopls', 'hls', 'tsserver', 'verible' } do
+    for _, server in pairs { 'gopls', 'hls', 'tsserver' } do
         lspconfig[server].setup {
             capabilities = capabilities,
             on_attach = on_attach { autoformat = true },
@@ -124,6 +124,11 @@ function M.setup(wk)
                 },
             }, { buffer = bufnr })
         end,
+    }
+
+    lspconfig.verible.setup {
+        capabilities = capabilities,
+        on_attach = on_attach { autoformat = false },
     }
 
     lspconfig.pylsp.setup {
@@ -211,6 +216,7 @@ function M.setup(wk)
 
     -- LSP diagnostic lines
     require 'lsp_lines'.setup()
+    M.toggle_lines()
     M.toggle_lines()
 
     require 'inc_rename'.setup { input_buffer_type = 'dressing' }

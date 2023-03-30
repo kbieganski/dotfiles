@@ -6,6 +6,7 @@ DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
 plugins=(colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh-syntax-highlighting)
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
 setopt extendedglob      # Regular expressions with *
 setopt nocaseglob        # Case insensitive globbing
@@ -49,26 +50,36 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ~='cd ~'
 
-alias l='/bin/ls -F --color=auto'
-alias ls='/bin/ls -F --color=auto'
-alias ll='/bin/ls -lFh --color=auto'
-alias la='/bin/ls -lAFh --color=auto'
-alias lr='/bin/ls -tRFh --color=auto'
-alias lfil='/bin/ls -lFh --color=auto | grep "^-" --color=never'
-alias ldir='/bin/ls -lFh --color=auto | grep "^d" --color=never'
+EXA_FLAGS=()
+alias l='ls'
+alias ls='exa --classify --group-directories-first --git --icons --time-style long-iso'
+alias la='ls --all'
+alias ll='ls --long'
+alias lla='ls --long --all'
+alias lr='ls --recurse'
+alias lra='ls --recurse --all'
+alias lt='ls --tree'
+alias lta='ls --tree --all'
+alias llr='ls --long --recurse'
+alias llra='ls --long --recurse --all'
+alias llt='ls --long --tree'
+alias llta='ls --long --tree --all'
 
-alias df='/bin/df -h'
-alias du='/bin/du -h'
+alias du='dust'
+alias df='duf'
 
-alias ffil='find . -type f -name'
-alias fdir='find . -type d -name'
+alias find='fd'
+alias fdi='fd -I'
 
 alias c='clear'
 alias h='history'
 
 alias term='kill'
 alias kill='kill -9'
-alias pl='ps axo pid,user,args,pcpu,pmem'
+alias ps='procs'
+alias pt='procs --tree'
+alias pw='procs --watch'
+alias pwt='procs --watch --tree'
 alias uptime='uptime -p'
 alias free='free -h'
 alias e='exit'
@@ -76,7 +87,9 @@ alias q='exit'
 
 alias cp='/bin/cp -ivr'
 alias mv='/bin/mv -iv'
-alias rm='/bin/rm -ivrf'
+alias rm='/bin/rm -ivr'
+alias rip='rip --graveyard $HOME/trash'
+alias r='rip'
 
 alias ln='/bin/ln -s'
 alias hln='/bin/ln'
@@ -89,7 +102,6 @@ alias pm='pacman --color=auto'
 alias makepkg='makepkg -is'
 alias mp='makepkg -is'
 
-alias shutdown='/bin/shutdown now'
 alias suspend='systemctl suspend'
 
 alias vim='nvim'
@@ -98,3 +110,5 @@ export VISUAL=nvim
 export EDITOR=nvim
 
 eval "$(starship init zsh)"
+
+source $HOME/.config/broot/launcher/bash/br

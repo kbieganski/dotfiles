@@ -26,7 +26,6 @@ Plug 'crispgm/telescope-heading.nvim'
 -- syntax highlighting and other stuff
 Plug('nvim-treesitter/nvim-treesitter', "{'do': ':TSUpdate'}")
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-Plug 'code-biscuits/nvim-biscuits' -- closing bracket/paren/tag annotations
 
 -- LSP utils
 Plug 'neovim/nvim-lspconfig'
@@ -95,7 +94,7 @@ Plug 'Saecki/crates.nvim' -- cargo file support
 Plug 'lewis6991/spaceless.nvim' -- trim whitespace
 Plug 'tpope/vim-eunuch' -- unix commands in vim
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
-Plug 'stevearc/aerial.nvim'
+Plug 'simrat39/symbols-outline.nvim'
 Plug('toppair/peek.nvim', "{'do': 'deno task --quiet build:fast'}")
 vim.cmd.call "plug#end()"
 
@@ -210,33 +209,16 @@ require 'dressing'.setup {
 }
 require 'neodim'.setup()
 require 'transparent'.setup { enable = true }
---require 'tidy'.setup()
 require 'spaceless'.setup()
 require 'guess-indent'.setup()
 require 'peek'.setup()
 require 'shade'.setup { overlay_opacity = 80 }
 require 'fidget'.setup()
-require 'nvim-biscuits'.setup { cursor_line_only = true,
-    default_config = {
-        prefix_string = " 📎 "
-    },
-}
 
-local aerial = require 'aerial'
-aerial.setup{
-    layout = {
-        preserve_equality = true,
+require 'symbols-outline'.setup()
+wk.register({
+        t = { require 'symbols-outline'.toggle_outline, "Symbol tree" }
     },
-    attach_mode = 'window',
-    close_automatic_events = {'switch_buffer', 'unsupported'},
-    highlight_on_hover = true,
-    on_attach = function(bufnr)
-        wk.register({
-            t = { aerial.toggle, "Symbol tree" }
-        },
-            { prefix = '<leader>', buffer = bufnr })
-    end,
-    open_automatic = true,
-}
+    { prefix = '<leader>' })
 
 require 'debugging'.setup()

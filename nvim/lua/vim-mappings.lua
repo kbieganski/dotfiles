@@ -7,29 +7,18 @@ function M.set()
     -- browse headings
     vim.cmd.nnoremap 'gh :Telescope heading<CR>'
 
-    -- use system clilpbard by default
-    vim.cmd.nnoremap 'y "+y'
-    vim.cmd.nnoremap 'yy "+yy'
-    vim.cmd.nnoremap 'p "+p'
-    vim.cmd.nnoremap 'P "+P'
-    vim.cmd.nnoremap 'd "+d'
-    vim.cmd.nnoremap 'dd "+dd'
+    -- delete without yanking with x/X
     vim.cmd.nnoremap 'x "_x'
     vim.cmd.nnoremap 'X "_dd'
-
-    -- use system clilpboard by default, and
-    -- replace currently selected text with default register
-    -- without yanking it
-    vim.cmd.vnoremap 'y "+ygv'
-    vim.cmd.vnoremap 'p "_d"+P'
-    vim.cmd.vnoremap 'P "_d"+P'
-    vim.cmd.vnoremap 'd "+d'
     vim.cmd.vnoremap 'x "_x'
-    vim.cmd.vnoremap 'X "_x'
+    vim.cmd.vnoremap 'X "_dd'
 
-    -- do not insert on o/O
-    vim.cmd.nnoremap 'o o<esc>'
-    vim.cmd.nnoremap 'O O<esc>'
+    -- replace without yanking the replaced text
+    vim.cmd.vnoremap 'p pgvy'
+
+    -- newline in insert mode
+    vim.cmd.nnoremap '<M-o> o<esc>k'
+    vim.cmd.nnoremap '<M-O> O<esc>j'
 
     -- redo on U
     vim.cmd.nnoremap 'U <C-r><esc>'

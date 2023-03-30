@@ -4,6 +4,8 @@
 local M = {}
 
 function M.set()
+    vim.o.autowrite = true -- autosave on close
+    vim.o.clipboard = 'unnamedplus' -- use system clipboard
     vim.o.number = true -- enable line numbers
     vim.o.ignorecase = true -- when searching
     vim.o.smartcase = true -- don't ignore case if search string contains uppercase letters
@@ -22,7 +24,7 @@ function M.set()
     vim.o.backspace = 'indent,eol,start' -- backspace anything in insert mode
     vim.o.mouse = 'a' -- mouse support
     vim.o.autochdir = true -- change working dir to buffer dir
-    vim.o.completeopt = 'menuone,noselect' -- required for nvim-cmp
+    vim.o.pumheight = 10 -- limit shown completion items
     vim.o.timeoutlen = 250 -- mapping timeout (which-key shows up after it)
     vim.o.updatetime = 250
     vim.o.hidden = true -- switch between buffers without saving

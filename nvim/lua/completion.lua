@@ -11,6 +11,7 @@ function M.setup()
     local cmp = require 'cmp'
     local lsp_cmp_format = require 'lspkind'.cmp_format { mode = 'symbol' }
     cmp.setup {
+        preselect = cmp.PreselectMode.None,
         sources = cmp.config.sources({
             { name = "nvim_lsp" },
             { name = "nvim_lsp_signature_help" },
@@ -40,24 +41,19 @@ function M.setup()
                 ["<M-j>"] = cmp.mapping.select_next_item(),
                 ["<M-k>"] = cmp.mapping.select_prev_item(),
                 ["<M-Space>"] = cmp.mapping.complete(),
-            -- From the cmp wiki:
-            -- If nothing is selected (including preselections) add a newline as usual.
-            -- If something has explicitly been selected by the user, select it.
-                ["<CR>"] = cmp.mapping({
-                i = function(fallback)
-                    if cmp.visible() and cmp.get_active_entry() then
-                        cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-                    else
-                        fallback()
-                    end
-                end,
-                s = cmp.mapping.confirm({ select = true }),
-                c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-            }),
+                ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
         },
         formatting = {
             format =
                 function(entry, vim_item)
+                    CMP_WIDTH = 80 -- unknown item kinds will blow this, but let's deal with it once it happens
+                    local abbr = vim.fn.strcharpart(vim_item.abbr, 0, CMP_WIDTH - 1)
+                    if #abbr < #vim_item.abbr then
+                        vim_item.abbr = abbr .. '…'
+                    end
+                    if #vim_item.abbr < CMP_WIDTH then
+                        vim_item.abbr = vim_item.abbr .. (' '):rep(CMP_WIDTH - #abbr - 1)
+                    end
                     if vim_item.kind == 'Copilot' then
                         vim_item.kind = ''
                         return vim_item
@@ -76,8 +72,11 @@ function M.setup()
         experimental = { ghost_text = true },
     }
 
-    cmp.setup.cmdline('/', {
-        mapping = cmp.mapping.preset.cmdline(),
+    cmp.setup.cmdline({'/', '?'}, {
+        preselect = cmp.PreselectMode.None,
+        mapping = cmp.mapping.preset.cmdline{
+            ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+        },
         sources = {
             { name = 'buffer' }
         }
@@ -85,7 +84,10 @@ function M.setup()
 
     -- `:` cmdline setup.
     cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
+        preselect = cmp.PreselectMode.None,
+        mapping = cmp.mapping.preset.cmdline{
+            ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+        },
         sources = cmp.config.sources({
             { name = 'path' }
         }, {
