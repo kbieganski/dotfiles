@@ -27,7 +27,7 @@ function M.set()
     vim.cmd.nnoremap "<expr> j v:count ? 'j' : 'gj'"
     vim.cmd.nnoremap "<expr> k v:count ? 'k' : 'gk'"
 
-    -- window managment with the alt key
+    -- window managment with the alt and ctrl keys
     vim.cmd.nnoremap '<M-q> <C-w>q'
     vim.cmd.nnoremap '<M-c> <C-w>s'
     vim.cmd.nnoremap '<M-v> <C-w>v'
@@ -35,10 +35,11 @@ function M.set()
     vim.cmd.nnoremap '<M-j> <C-w>j'
     vim.cmd.nnoremap '<M-k> <C-w>k'
     vim.cmd.nnoremap '<M-l> <C-w>l'
-    vim.cmd.nnoremap '<M-S-h> <C-w><S-h>'
-    vim.cmd.nnoremap '<M-S-j> <C-w><S-j>'
-    vim.cmd.nnoremap '<M-S-k> <C-w><S-k>'
-    vim.cmd.nnoremap '<M-S-l> <C-w><S-l>'
+    -- these use ctrl, it's not perfect but this is to avoid conflict with tmux
+    vim.cmd.nnoremap '<C-h> <C-w><S-h>'
+    vim.cmd.nnoremap '<C-j> <C-w><S-j>'
+    vim.cmd.nnoremap '<C-k> <C-w><S-k>'
+    vim.cmd.nnoremap '<C-l> <C-w><S-l>'
 
     -- faster scrolling
     vim.cmd.noremap 'J <C-e><C-e>'

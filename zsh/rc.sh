@@ -44,6 +44,7 @@ source $ZSH/oh-my-zsh.sh
 
 export EDITOR=nvim
 
+alias cd=z
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -110,5 +111,10 @@ export VISUAL=nvim
 export EDITOR=nvim
 
 eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
 
 source $HOME/.config/broot/launcher/bash/br
+
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+  exec tmux
+fi

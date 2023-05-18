@@ -22,9 +22,8 @@ function M.setup(wk)
     }
 
     -- pretty LSP diagnostics icons
-    for icon_name, icon in pairs { Error = " ", Warning = " ", Hint = " ", Information = " " } do
-        local hl = "LspDiagnosticsSign" .. icon_name
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+    for name, icon in pairs { Error = " ", Warn = " ", Hint = " ", Info = " " } do
+        vim.fn.sign_define('DiagnosticSign' .. name, { text = icon, texthl = 'Diagnostic' .. name })
     end
 
     local telescope_builtin = require 'telescope.builtin'
@@ -57,19 +56,11 @@ function M.setup(wk)
                     F = { vim.lsp.buf.format, "Apply formatting" },
                 },
                 { mode = { 'n', 'v' }, prefix = '<leader>', buffer = bufnr })
-            local dap = require 'dap'
             wk.register({
-                    x = {
-                        b = { dap.toggle_breakpoint, "Breakpoint" },
-                        c = { dap.continue, "Continue" },
-                        j = { dap.step_into, "Step into" },
-                        k = { dap.step_out, "Step out" },
-                        l = { dap.step_over, "Step over" },
-                    },
                     h = { hover.hover, "Show symbol info" },
                     H = { hover.hover_select, "Show symbol info (select)" },
                     k = { vim.lsp.buf.signature_help, "Show signature" },
-                    r = { ":IncRename ", "Rename symbol" },
+                    r = { vim.lsp.buf.rename, "Rename symbol" },
                     s = { telescope_builtin.lsp_document_symbols, "Find symbol" },
                     S = { telescope_builtin.lsp_workspace_symbols, "Find workspace symbol" },
                 },
@@ -219,7 +210,6 @@ function M.setup(wk)
     M.toggle_lines()
     M.toggle_lines()
 
-    require 'inc_rename'.setup { input_buffer_type = 'dressing' }
     require 'nvim-lightbulb'.setup {autocmd = {enabled = true}}
 end
 

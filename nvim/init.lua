@@ -35,7 +35,6 @@ Plug 'lukas-reineke/lsp-format.nvim' -- auto format
 Plug 'SmiteshP/nvim-navic' -- breadcrumbs
 Plug 'folke/neodev.nvim' -- LSP for neovim config/plugin dev
 Plug 'kosayoda/nvim-lightbulb' -- code action lightbulb
-Plug 'smjonas/inc-rename.nvim' -- incremental renaming
 Plug 'j-hui/fidget.nvim' -- progress info
 Plug 'jubnzv/virtual-types.nvim' -- code lens types
 
@@ -74,7 +73,7 @@ Plug 'lewis6991/hover.nvim' -- better hover
 
 -- theming
 Plug 'projekt0n/github-nvim-theme' -- github colors
-Plug 'xiyaowong/nvim-transparent'
+Plug 'rose-pine/neovim'
 Plug 'zbirenbaum/neodim'
 Plug 'sunjon/Shade.nvim'
 
@@ -96,10 +95,12 @@ Plug 'tpope/vim-eunuch' -- unix commands in vim
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
 Plug 'simrat39/symbols-outline.nvim'
 Plug('toppair/peek.nvim', "{'do': 'deno task --quiet build:fast'}")
+Plug 'folke/persistence.nvim'
 vim.cmd.call "plug#end()"
 
 ---------------
 
+require 'persistence'.setup()
 require 'vim-options'.set()
 require 'vim-mappings'.set()
 require 'autocmds'.setup()
@@ -139,8 +140,8 @@ telescope.setup {
         layout_strategy = "flex",
         layout_config = {
             flex = { flip_columns = 240 },
-            vertical = { width = 0.8, height = 0.9 },
-            horizontal = { width = 0.6, height = 0.9 },
+            vertical = { width = 0.9, height = 0.9 },
+            horizontal = { width = 0.9, height = 0.9 },
         },
         mappings = {
             i = {
@@ -180,6 +181,7 @@ wk.register({
         g = { telescope.extensions.repo.repo, "Repositories" },
     },
     p = { telescope_builtin.registers, "Paste" },
+    [';'] = { telescope_builtin.resume, "Last picker" },
 },
     { prefix = '<leader>' })
 
@@ -208,11 +210,10 @@ require 'dressing'.setup {
     },
 }
 require 'neodim'.setup()
-require 'transparent'.setup { enable = true }
 require 'spaceless'.setup()
 require 'guess-indent'.setup()
 require 'peek'.setup()
-require 'shade'.setup { overlay_opacity = 80 }
+require 'shade'.setup { overlay_opacity = 90 }
 require 'fidget'.setup()
 
 require 'symbols-outline'.setup()
@@ -221,4 +222,9 @@ wk.register({
     },
     { prefix = '<leader>' })
 
-require 'debugging'.setup()
+require 'debugging'.setup(wk)
+
+require 'persistence'.load{
+    last=true,
+    options = { "buffers", "tabpages", "winsize" },
+}
