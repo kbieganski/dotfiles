@@ -95,12 +95,10 @@ Plug 'tpope/vim-eunuch' -- unix commands in vim
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
 Plug 'simrat39/symbols-outline.nvim'
 Plug('toppair/peek.nvim', "{'do': 'deno task --quiet build:fast'}")
-Plug 'folke/persistence.nvim'
 vim.cmd.call "plug#end()"
 
 ---------------
 
-require 'persistence'.setup()
 require 'vim-options'.set()
 require 'vim-mappings'.set()
 require 'autocmds'.setup()
@@ -223,8 +221,3 @@ wk.register({
     { prefix = '<leader>' })
 
 require 'debugging'.setup(wk)
-
-require 'persistence'.load{
-    last=true,
-    options = { "buffers", "tabpages", "winsize" },
-}
