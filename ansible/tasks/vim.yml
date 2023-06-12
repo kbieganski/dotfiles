@@ -1,10 +1,9 @@
 - name: Install Neovim utils
   pacman:
     name:
-      - fd
-      - ripgrep
-      - zk
+      - fzf
   become: true
+
 - name: Install Neovim
   pacman: name=neovim
   become: true

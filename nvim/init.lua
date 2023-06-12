@@ -185,7 +185,7 @@ wk.register({
 
 -----------------
 
-vim.cmd.colorscheme 'github_light'
+vim.cmd.colorscheme 'rose-pine-moon'
 
 require 'syntax'.setup()
 require 'langservers'.setup(wk)

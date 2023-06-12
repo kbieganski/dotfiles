@@ -3,6 +3,7 @@
     name:
       - openssh
       - sshfs
+      - mosh
       - keychain
   become: true
 - name: Ensure SSH service is enabled and running

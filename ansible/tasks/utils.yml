@@ -2,11 +2,15 @@
   pacman:
     name:
       - man
-      - screen
+      - man-pages
+      - tealdeer
+      - tmux
+      - zellij
       - lsof
       - expect
       - inotify-tools
       - psmisc
+      - procs
       - sysstat
       - procps-ng
       - htop
@@ -21,13 +25,57 @@
       - git-delta
       - wget
       - bat
+      - fd
+      - ripgrep
+      - choose
+      - hck
+      - zellij
+      - sd
+      - sad
+      - tree
+      - mcfly
+      - dust
+      - duf
+      - exa
+      - zoxide
+      - broot
+      - github-cli
+      - xplr
+      - dog
+      - bottom
+      - below
+      - entr
+      - tokei
+      - pv
+      - up
+      - xh
+      - xsv
+      - jq
+      - jc
+      - jo
+      - gron
+      - yq
+      - plocate
+      - moreutils
+      - hexyl
+      - mtr
+      - bandwhich
   become: true
+- name: Install utils from cargo
+  pip:
+    name:
+      - erdtree
+      - rm-improved
+      - flcones
+      - rnr
+      - stringsext
 - name: Install utils from pip
   pip:
     name:
       - ranger-fm
       - udiskie
       - passhole
+      - grip
     extra_args: --user
 - name: Create symlink for phmenu
   file:

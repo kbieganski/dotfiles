@@ -36,7 +36,7 @@ function M.setup(wk)
                 require 'lsp-format'.on_attach(client)
             end
             if opts.virtual_types then
-                require 'virtualtypes'.on_attach(client, bufnr)
+                --require 'virtualtypes'.on_attach(client, bufnr)
             end
             if client.server_capabilities.documentSymbolProvider then
                 require 'nvim-navic'.attach(client, bufnr)
@@ -174,7 +174,7 @@ function M.setup(wk)
     require 'rust-tools'.setup {
         tools = {
             inlay_hints = {
-                highlight = 'LineNr',
+                highlight = 'NonText',
             },
         },
         server = {

@@ -6,7 +6,9 @@
       - libc++
       - libc++abi
       - cmake
+      - remake
       - ccache
       - boost
       - bear
+      - mold
   become: true

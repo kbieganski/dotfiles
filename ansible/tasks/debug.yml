@@ -8,7 +8,9 @@
       - ltrace
       - linux-tools
   become: true
-- name: Download gdb-dashboard
-  get_url:
-    url: https://git.io/.gdbinit
-    dest: ~/.gdbinit
+- name: Install debugging tools from AUR
+  aur: name={{item}}
+  with_items:
+    - uftrace
+  become: true
+  become_user: aur
