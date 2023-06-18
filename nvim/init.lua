@@ -95,6 +95,7 @@ Plug 'tpope/vim-eunuch' -- unix commands in vim
 Plug 'NMAC427/guess-indent.nvim' -- guess indentation from file
 Plug 'simrat39/symbols-outline.nvim'
 Plug('toppair/peek.nvim', "{'do': 'deno task --quiet build:fast'}")
+Plug 'mickael-menu/zk-nvim'
 vim.cmd.call "plug#end()"
 
 ---------------

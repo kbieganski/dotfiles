@@ -211,6 +211,26 @@ function M.setup(wk)
     M.toggle_lines()
 
     require 'nvim-lightbulb'.setup {autocmd = {enabled = true}}
+    require 'zk'.setup()
+    wk.register({
+            n = {
+                name = "Notes",
+                n = { ":ZkNew { title = vim.fn.input('Title: ') }<CR>", "New" },
+                b = { ':ZkBacklinks<CR>', "Backlinks" },
+                i = { ':ZkInsertLink<CR>', "Insert link" },
+                f = { ":ZkNotes { sort = { 'modified' } }<CR>", "Find" },
+                t = { ":ZkTags<CR>", "Tags" },
+            },
+        },
+        { prefix = '<leader>' })
+    wk.register({
+            n = {
+                name = "Notes",
+                n = { ":'<,'>ZkNewFromContentSelection { title = vim.fn.input('Title: ') }<CR>", "New from selection" },
+                f = { ":'<,'>ZkMatch<CR>", "Find selection" },
+            },
+        },
+        { mode = 'v', prefix = '<leader>' })
 end
 
 return M
