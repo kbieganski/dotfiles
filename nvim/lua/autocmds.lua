@@ -1,39 +1,32 @@
---------------------
---- Autocommands ---
---------------------
-
+-- Autocommands
 local M = {}
 
 function M.setup()
-    local function augroup(name)
-        return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
-    end
-
     -- Check if we need to reload the file when it changed
-    vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
-        group = augroup("checktime"),
-        command = "checktime",
+    vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
+        group = vim.api.nvim_create_augroup('checktime', { clear = true }),
+        command = 'checktime',
     })
 
     -- Highlight on yank
-    vim.api.nvim_create_autocmd("TextYankPost", {
-        group = augroup("highlight_yank"),
+    vim.api.nvim_create_autocmd('TextYankPost', {
+        group = vim.api.nvim_create_augroup('highlight_yank', { clear = true }),
         callback = function()
             vim.highlight.on_yank()
         end,
     })
 
     -- resize splits if window got resized
-    vim.api.nvim_create_autocmd({ "VimResized" }, {
-        group = augroup("resize_splits"),
+    vim.api.nvim_create_autocmd({ 'VimResized' }, {
+        group = vim.api.nvim_create_augroup('resize_splits', { clear = true }),
         callback = function()
-            vim.cmd("tabdo wincmd =")
+            vim.cmd('tabdo wincmd =')
         end,
     })
 
     -- go to last loc when opening a buffer
-    vim.api.nvim_create_autocmd("BufReadPost", {
-        group = augroup("last_loc"),
+    vim.api.nvim_create_autocmd('BufReadPost', {
+        group = vim.api.nvim_create_augroup('last_loc', { clear = true }),
         callback = function()
             local mark = vim.api.nvim_buf_get_mark(0, '"')
             local lcount = vim.api.nvim_buf_line_count(0)
@@ -44,30 +37,30 @@ function M.setup()
     })
 
     -- close some filetypes with <q>
-    vim.api.nvim_create_autocmd("FileType", {
-        group = augroup("close_with_q"),
+    vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('close_with_q', { clear = true }),
         pattern = {
-            "PlenaryTestPopup",
-            "help",
-            "lspinfo",
-            "man",
-            "notify",
-            "qf",
-            "query", -- :InspectTree
-            "spectre_panel",
-            "startuptime",
-            "tsplayground",
+            'PlenaryTestPopup',
+            'help',
+            'lspinfo',
+            'man',
+            'notify',
+            'qf',
+            'query', -- :InspectTree
+            'spectre_panel',
+            'startuptime',
+            'tsplayground',
         },
         callback = function(event)
             vim.bo[event.buf].buflisted = false
-            vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+            vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = event.buf, silent = true })
         end,
     })
 
     -- wrap and check for spell in text filetypes
-    vim.api.nvim_create_autocmd("FileType", {
-        group = augroup("wrap_spell"),
-        pattern = { "gitcommit", "markdown" },
+    vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('wrap_spell', { clear = true }),
+        pattern = { 'gitcommit', 'markdown' },
         callback = function()
             vim.opt_local.wrap = true
             vim.opt_local.spell = true
@@ -75,68 +68,53 @@ function M.setup()
         end,
     })
 
-    -- set no statusline on Aerial buffers,
-    vim.api.nvim_create_autocmd({ 'FileType' },
-        {
-            group = augroup('aerial_statusline'),
-            pattern = { 'aerial' },
-            callback = function()
-                vim.opt_local.laststatus = 0
-            end
-        })
     -- set no statusline on DAP buffers,
-    -- set winbars in DAP buffers (does not seem to work)
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dapui_watches' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'Watches'
             end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dapui_stacks' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'Stacks' end
+            end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dapui_breakpoints' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'Breakpoints'
             end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dapui_scopes' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'Scopes'
             end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dapui_console' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'Console'
             end
         })
     vim.api.nvim_create_autocmd({ 'FileType' },
         {
-            group = augroup('dapui_no_winbars_no_status'),
+            group = vim.api.nvim_create_augroup('dapui_no_status', { clear = true }),
             pattern = { 'dap-repl' },
             callback = function()
                 vim.opt_local.laststatus = 0
-                vim.opt_local.winbar = 'REPL'
             end
         })
 end
