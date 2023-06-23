@@ -70,6 +70,7 @@ Plug 'folke/which-key.nvim' -- show key mapping hints
 Plug 'stevearc/dressing.nvim' -- better select/input menus
 Plug 'rcarriga/nvim-notify' -- better notifications
 Plug 'lewis6991/hover.nvim' -- better hover
+Plug('amrbashir/nvim-docs-view', "{ 'on': 'DocsViewToggle'}")
 
 -- theming
 Plug 'projekt0n/github-nvim-theme' -- github colors
@@ -222,3 +223,7 @@ wk.register({
     { prefix = '<leader>' })
 
 require 'debugging'.setup(wk)
+require 'docs-view'.setup {
+    position = "top",
+    width = 20,
+}

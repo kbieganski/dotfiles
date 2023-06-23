@@ -19,6 +19,8 @@ function M.setup(wk)
             require 'hover.providers.man'
             require 'hover.providers.dictionary'
         end,
+        preview_window = true,
+        title = false,
     }
 
     -- pretty LSP diagnostics icons
