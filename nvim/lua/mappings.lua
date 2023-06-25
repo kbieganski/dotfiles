@@ -41,8 +41,8 @@ function M.set()
     vim.cmd [[noremap K <C-y><C-y>]]
 
     -- move through jump history
-    vim.cmd [[noremap [[H <C-o>]]
-    vim.cmd [[noremap [[L <C-i>]]
+    vim.cmd [[noremap H <C-o>]]
+    vim.cmd [[noremap L <C-i>]]
 
     -- make < > shifts keep selection
     vim.cmd [[vnoremap < <gv]]
