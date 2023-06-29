@@ -21,6 +21,7 @@ return {
                     w = { ':w<CR>', 'Write current file' },
                     W = { ':wa<CR>', 'Write all open files' },
                     ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
+                    x = { ':bn<CR>:bd#<CR>', 'Close buffer' },
                 },
                 { prefix = '<leader>' })
         end,

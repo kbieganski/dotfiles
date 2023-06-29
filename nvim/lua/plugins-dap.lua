@@ -4,7 +4,7 @@ return {
         config = function()
             local dap = require 'dap'
             require 'which-key'.register({
-                    x = {
+                    ['<CR>'] = {
                         name = 'Debug',
                         b = { dap.toggle_breakpoint, 'Breakpoint' },
                         c = { dap.continue, 'Continue' },

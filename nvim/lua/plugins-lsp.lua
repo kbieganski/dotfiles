@@ -223,8 +223,8 @@ return {
                     on_attach = function(client, bufnr)
                         on_attach { autoformat = true, virtual_types = false } (client, bufnr)
                         require 'which-key'.register({
-                                x = {
-                                    x = { require 'rust-tools'.debuggables.debuggables, 'Debuggables' },
+                                ['<CR>'] = {
+                                    ['<CR>'] = { require 'rust-tools'.debuggables.debuggables, 'Debuggables' },
                                 },
                             },
                             { prefix = '<leader>', buffer = bufnr })
