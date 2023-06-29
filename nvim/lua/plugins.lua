@@ -288,13 +288,15 @@ return {
             require 'which-key'.register({
                     n = {
                         name = 'Notes',
-                        p = { function()
-                            if peek.is_open() then
-                                peek.open()
-                            else
-                                peek.close()
-                            end
-                        end, 'Preview' },
+                        p = {
+                            function()
+                                if peek.is_open() then
+                                    peek.close()
+                                else
+                                    peek.open()
+                                end
+                            end,
+                            'Preview' },
                     },
                 },
                 { prefix = '<leader>' })
