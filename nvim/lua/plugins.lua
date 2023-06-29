@@ -264,7 +264,9 @@ return {
     },
     {
         'sunjon/Shade.nvim',
-        opts = {}
+        opts = {
+            overlay_opacity = 80,
+        },
     },
     { import = 'plugins-dap' },
     'LnL7/vim-nix',                 -- nix language support
@@ -278,8 +280,25 @@ return {
     },
     {
         'toppair/peek.nvim',
+        dependencies = { 'which-key.nvim', },
         build = 'deno task --quiet build:fast',
-        opts = {},
+        config = function()
+            local peek = require 'peek'
+            peek.setup { theme = 'light' }
+            require 'which-key'.register({
+                    n = {
+                        name = 'Notes',
+                        p = { function()
+                            if peek.is_open() then
+                                peek.open()
+                            else
+                                peek.close()
+                            end
+                        end, 'Preview' },
+                    },
+                },
+                { prefix = '<leader>' })
+        end,
     },
     {
         'folke/edgy.nvim',
@@ -289,7 +308,6 @@ return {
             vim.opt.splitkeep = 'screen'
         end,
         config = function()
-            local wk = require 'which-key'
             require 'edgy'.setup {
                 animate = { enabled = false },
                 exit_when_last = true,
@@ -310,7 +328,7 @@ return {
                 },
             }
             local symbols_outline = require 'symbols-outline'
-            wk.register({
+            require 'which-key'.register({
                     t = { function()
                         vim.cmd [[DocsViewToggle]]
                         symbols_outline.toggle_outline()
@@ -333,5 +351,11 @@ return {
             },
             'folke/which-key.nvim',
         },
+    },
+    {
+        'numToStr/Navigator.nvim',
+        config = function()
+            require('Navigator').setup()
+        end,
     },
 }

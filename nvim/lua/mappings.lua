@@ -26,15 +26,14 @@ function M.set()
     vim.cmd [[nnoremap <M-q> <C-w>q]]
     vim.cmd [[nnoremap <M-c> <C-w>s]]
     vim.cmd [[nnoremap <M-v> <C-w>v]]
-    vim.cmd [[nnoremap <M-h> <C-w>h]]
-    vim.cmd [[nnoremap <M-j> <C-w>j]]
-    vim.cmd [[nnoremap <M-k> <C-w>k]]
-    vim.cmd [[nnoremap <M-l> <C-w>l]]
-    -- these use ctrl, it's not perfect but this is to avoid conflict with tmux
-    vim.cmd [[nnoremap <C-h> <C-w><S-h>]]
-    vim.cmd [[nnoremap <C-j> <C-w><S-j>]]
-    vim.cmd [[nnoremap <C-k> <C-w><S-k>]]
-    vim.cmd [[nnoremap <C-l> <C-w><S-l>]]
+    vim.cmd [[nnoremap <M-h> :NavigatorLeft<CR>]]
+    vim.cmd [[nnoremap <M-j> :NavigatorDown<CR>]]
+    vim.cmd [[nnoremap <M-k> :NavigatorUp<CR>]]
+    vim.cmd [[nnoremap <M-l> :NavigatorRight<CR>]]
+    vim.cmd [[nnoremap <M-H> <C-w><S-h>]]
+    vim.cmd [[nnoremap <M-J> <C-w><S-j>]]
+    vim.cmd [[nnoremap <M-K> <C-w><S-k>]]
+    vim.cmd [[nnoremap <M-L> <C-w><S-l>]]
 
     -- faster scrolling
     vim.cmd [[noremap J <C-e><C-e>]]
