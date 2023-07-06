@@ -77,14 +77,14 @@ return {
             wk.register({
                     g = {
                         name = 'Git',
-                        l = { function() gitlinker.get_buf_range_url('n') end, 'Get link to line' },
+                        y = { function() gitlinker.get_buf_range_url('n') end, 'Get link to line' },
                     },
                 },
                 { mode = 'n', prefix = '<leader>' })
             wk.register({
                     g = {
                         name = 'Git',
-                        l = { function() gitlinker.get_buf_range_url('v') end, 'Get link to line range' },
+                        y = { function() gitlinker.get_buf_range_url('v') end, 'Get link to line range' },
                     },
                 },
                 { mode = 'v', prefix = '<leader>' })
