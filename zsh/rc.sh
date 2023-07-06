@@ -1,9 +1,10 @@
 export ZSH=~/.oh-my-zsh
+theme.sh/bin/theme.sh github-light
 COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh-syntax-highlighting)
+plugins=(bazel colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh-syntax-highlighting)
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
 setopt extendedglob      # Regular expressions with *
