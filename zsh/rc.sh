@@ -121,3 +121,5 @@ if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] &&
        exec tmux new
    fi
 fi
+
+export ZK_NOTEBOOK_DIR=~/notes/
