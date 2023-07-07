@@ -19,8 +19,12 @@ function M.set()
     vim.cmd [[nnoremap U <C-r><esc>]]
 
     -- move up/down on visual lines
-    vim.cmd [[nnoremap <expr> j v:count ? 'j' : 'gj']]
-    vim.cmd [[nnoremap <expr> k v:count ? 'k' : 'gk']]
+    vim.cmd [[noremap <expr> j v:count ? 'j' : 'gj']]
+    vim.cmd [[noremap <expr> k v:count ? 'k' : 'gk']]
+
+    -- move selected lines up/down
+    vim.cmd [[vnoremap J :m '>+1<CR>gv=gv]]
+    vim.cmd [[vnoremap K :m '<-2<CR>gv=gv]]
 
     -- window managment with the alt and ctrl keys
     vim.cmd [[nnoremap <M-q> <C-w>q]]
@@ -36,8 +40,8 @@ function M.set()
     vim.cmd [[nnoremap <M-L> <C-w><S-l>]]
 
     -- faster scrolling
-    vim.cmd [[noremap J <C-e><C-e>]]
-    vim.cmd [[noremap K <C-y><C-y>]]
+    vim.cmd [[nnoremap J <C-e><C-e>]]
+    vim.cmd [[nnoremap K <C-y><C-y>]]
 
     -- move through jump history
     vim.cmd [[noremap H <C-o>]]
