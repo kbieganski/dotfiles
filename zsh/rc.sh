@@ -1,5 +1,4 @@
 export ZSH=~/.oh-my-zsh
-theme.sh/bin/theme.sh github-light
 COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
