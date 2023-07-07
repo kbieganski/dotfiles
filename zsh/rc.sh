@@ -114,7 +114,7 @@ eval "$(zoxide init zsh)"
 
 source $HOME/.config/broot/launcher/bash/br
 
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && [[ -z $LOGIN_SHELL ]]; then
    if tmux ls; then
        exec tmux attach
    else
