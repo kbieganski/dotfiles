@@ -40,8 +40,8 @@ function M.set()
     vim.cmd [[nnoremap <M-L> <C-w><S-l>]]
 
     -- faster scrolling
-    vim.cmd [[nnoremap J <C-e><C-e>]]
-    vim.cmd [[nnoremap K <C-y><C-y>]]
+    vim.cmd [[nnoremap J 2j2<C-e>]]
+    vim.cmd [[nnoremap K 2k2<C-y>]]
 
     -- move through jump history
     vim.cmd [[noremap H <C-o>]]

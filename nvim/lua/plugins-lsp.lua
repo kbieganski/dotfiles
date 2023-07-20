@@ -1,4 +1,9 @@
 local lines_enabled = false
+
+local function configure_lsp_lines()
+    vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
+end
+
 local function on_attach(opts)
     local telescope_builtin = require 'telescope.builtin'
     local wk = require 'which-key'
@@ -51,9 +56,10 @@ local function on_attach(opts)
         wk.register({
             ['<leader>j'] = { function()
                 lines_enabled = not lines_enabled
-                vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
+                configure_lsp_lines()
             end, 'Show diagnostic lines' }
         }, { buffer = bufnr })
+        configure_lsp_lines()
     end
 end
 
@@ -65,7 +71,7 @@ return {
             { 'folke/neoconf.nvim', cmd = 'Neoconf', opts = {} },
             { 'folke/neodev.nvim',  opts = {} },                                           -- LSP for neovim config/plugin dev
             'jubnzv/virtual-types.nvim',                                                   -- code lens types
-            { 'j-hui/fidget.nvim',                            tag = 'legacy', opts = {} }, -- progress info
+            --{ 'j-hui/fidget.nvim',                            tag = 'legacy', opts = {} }, -- progress info
             { 'kosayoda/nvim-lightbulb',                      opts = {} },                 -- code action lightbulb
             { 'SmiteshP/nvim-navic',                          opts = {} },                 -- breadcrumbs
             { 'lukas-reineke/lsp-format.nvim',                opts = {} },                 -- auto format
@@ -121,6 +127,10 @@ return {
                         },
                     }, { buffer = bufnr })
                 end,
+                cmd = {
+                    "clangd",
+                    "--offset-encoding=utf-16",
+                },
             }
 
             lspconfig.verible.setup {

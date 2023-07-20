@@ -60,7 +60,14 @@ return {
     {
         'akinsho/git-conflict.nvim',
         opts = {
-            default_mappings = true,
+            default_mappings = {
+                ours = '<leader>gco',
+                theirs = '<leader>gct',
+                none = '<leader>gc0',
+                both = '<leader>gcb',
+                next = ']x',
+                prev = '[x',
+            },
             disable_diagnostics = true,
             highlights = {
                 incoming = 'DiffText',
