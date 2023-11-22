@@ -12,7 +12,8 @@ function M.setup()
     vim.api.nvim_create_autocmd('TextYankPost', {
         group = vim.api.nvim_create_augroup('highlight_yank', { clear = true }),
         callback = function()
-            vim.highlight.on_yank()
+            -- silent! to workaround bug with virtual text
+            vim.cmd('silent! lua vim.highlight.on_yank()')
         end,
     })
 

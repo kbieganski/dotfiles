@@ -69,14 +69,14 @@ return {
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             { 'folke/neoconf.nvim', cmd = 'Neoconf', opts = {} },
-            { 'folke/neodev.nvim',  opts = {} },                                           -- LSP for neovim config/plugin dev
-            'jubnzv/virtual-types.nvim',                                                   -- code lens types
+            { 'folke/neodev.nvim',  opts = {} },                           -- LSP for neovim config/plugin dev
+            'jubnzv/virtual-types.nvim',                                   -- code lens types
             --{ 'j-hui/fidget.nvim',                            tag = 'legacy', opts = {} }, -- progress info
-            { 'kosayoda/nvim-lightbulb',                      opts = {} },                 -- code action lightbulb
-            { 'SmiteshP/nvim-navic',                          opts = {} },                 -- breadcrumbs
-            { 'lukas-reineke/lsp-format.nvim',                opts = {} },                 -- auto format
-            { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },                 -- diagnostic lines
-            'RRethy/vim-illuminate',                                                       -- highlight word under cursor
+            { 'kosayoda/nvim-lightbulb',                      opts = {} }, -- code action lightbulb
+            { 'SmiteshP/nvim-navic',                          opts = {} }, -- breadcrumbs
+            { 'lukas-reineke/lsp-format.nvim',                opts = {} }, -- auto format
+            { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} }, -- diagnostic lines
+            'RRethy/vim-illuminate',                                       -- highlight word under cursor
             {
                 'mickael-menu/zk-nvim',
                 config = function()
@@ -212,7 +212,7 @@ return {
             require 'rust-tools'.setup {
                 tools = {
                     inlay_hints = {
-                        highlight = 'NonText',
+                        only_current_line = true,
                     },
                 },
                 server = {

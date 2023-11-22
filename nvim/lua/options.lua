@@ -33,6 +33,7 @@ function M.set()
     vim.o.scrolloff = 10                  -- keep cursor 10 lines from screen edge
     vim.o.termguicolors = true            -- prevent warning about opacity changes
     vim.opt.spelllang = { 'en_us', 'pl' } -- check English and Polish spelling
+    vim.opt.spell = true
 
     vim.g.mapleader = ';'
     vim.g.maplocalleader = ';'

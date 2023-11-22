@@ -50,6 +50,7 @@ return {
                             ["]a"] = { query = { "@assignment.inner" }, },
                             ["]p"] = { query = { "@parameter.inner" }, },
                             ["]i"] = { query = { "@conditional.outer", "@loop.outer" }, },
+                            ["]s"] = { query = { "@statement.outer" }, },
                             ["]t"] = { query = { "@*.inner" }, },
                         },
                         goto_next_end = {
@@ -68,6 +69,7 @@ return {
                             ["[a"] = { query = { "@assignment.inner" }, },
                             ["[p"] = { query = { "@parameter.inner" }, },
                             ["[i"] = { query = { "@conditional.outer", "@loop.outer" }, },
+                            ["[s"] = { query = { "@statement.outer" }, },
                             ["[t"] = { query = { "@.*.inner" }, },
                         },
                         goto_previous_end = {
@@ -108,7 +110,8 @@ return {
                             ["ib"] = { query = "@block.inner", desc = "a block" },
                             ["ic"] = { query = "@class.inner", desc = "a class" },
                             ["im"] = { query = { "@function.inner", "@class.inner" }, desc = "a class or function" },
-                            ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+                            ["as"] = "@statement.inner",
+                            ["aS"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
                         },
                         selection_modes = {
                             ['@function.outer'] = 'V',
