@@ -25,18 +25,18 @@ function M.set()
     vim.o.autochdir = true                -- change working dir to buffer dir
     vim.o.pumheight = 10                  -- limit shown completion items
     vim.o.timeoutlen = 250                -- mapping timeout (which-key shows up after it)
-    vim.o.updatetime = 250
+    vim.o.updatetime = 1000
     vim.o.hidden = true                   -- switch between buffers without saving
     vim.o.undofile = true                 -- persistent undo
     vim.o.backup = false                  -- disable backup
     vim.o.writebackup = false
     vim.o.scrolloff = 10                  -- keep cursor 10 lines from screen edge
     vim.o.termguicolors = true            -- prevent warning about opacity changes
-    vim.opt.spelllang = { 'en_us', 'pl' } -- check English and Polish spelling
-    vim.opt.spell = true
+    vim.o.spelllang = 'en_us,pl'          -- check English and Polish spelling
+    vim.o.spell = true
 
-    vim.g.mapleader = ';'
-    vim.g.maplocalleader = ';'
+    vim.g.mapleader = ' '
+    vim.g.maplocalleader = '\r'
 end
 
 return M

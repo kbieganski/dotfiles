@@ -13,7 +13,7 @@ return {
                         l = { dap.step_over, 'Step over' },
                     },
                 },
-                { mode = 'n', prefix = '<leader>' })
+                { mode = 'n', prefix = '<localleader>' })
 
             dap.adapters.lldb = {
                 type = 'executable',

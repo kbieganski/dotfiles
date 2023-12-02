@@ -18,11 +18,11 @@ return {
                     wk.register({
                             g = {
                                 name = 'Git',
-                                c = { telescope_builtin.git_bcommits, 'Current file history' },
-                                C = { telescope_builtin.git_commits, 'Repo history' },
-                                f = { telescope_builtin.git_files, 'Find file' },
                                 b = { function() gitsigns.blame_line { full = true } end, 'Blame line' },
+                                c = { telescope_builtin.git_bcommits, 'File commits' },
                                 d = { ':Gitsigns toggle_deleted<CR>', 'Toggle deleted hunks' },
+                                f = { telescope_builtin.git_files, 'Find file' },
+                                h = { telescope_builtin.git_status, 'Repo hunks' },
                                 p = { ':Gitsigns preview_hunk<CR>', 'Preview hunk' },
                                 r = { ':Gitsigns reset_hunk<CR>', 'Reset hunk' },
                                 s = { ':Gitsigns stage_hunk<CR>', 'Stage hunk' },
@@ -61,10 +61,10 @@ return {
         'akinsho/git-conflict.nvim',
         opts = {
             default_mappings = {
-                ours = '<leader>gco',
-                theirs = '<leader>gct',
-                none = '<leader>gc0',
-                both = '<leader>gcb',
+                ours = '<leader>gxo',
+                theirs = '<leader>gxt',
+                none = '<leader>gxn',
+                both = '<leader>gxb',
                 next = ']x',
                 prev = '[x',
             },

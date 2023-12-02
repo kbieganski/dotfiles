@@ -1,10 +1,11 @@
 local lines_enabled = false
 
 local function configure_lsp_lines()
-    vim.diagnostic.config { virtual_lines = lines_enabled, virtual_text = not lines_enabled }
+    vim.diagnostic.config { virtual_lines = lines_enabled }
 end
 
 local function on_attach(opts)
+    vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
     local wk = require 'which-key'
     opts = opts or {}
@@ -28,20 +29,22 @@ local function on_attach(opts)
         wk.register({
                 d = { vim.diagnostic.open_float, 'Show this diagnostic' },
                 D = { telescope_builtin.diagnostics, 'All diagnostics' },
+                h = { vim.lsp.buf.hover, 'Hover' },
+                o = { require 'symbols-outline'.toggle_outline, 'Symbol outilne' }
             },
-            { prefix = '<leader>', buffer = bufnr })
+            { prefix = '<localleader>', buffer = bufnr })
         wk.register({
                 a = { vim.lsp.buf.code_action, 'Code action' },
-                F = { vim.lsp.buf.format, 'Apply formatting' },
+                f = { vim.lsp.buf.format, 'Apply formatting' },
             },
-            { mode = { 'n', 'v' }, prefix = '<leader>', buffer = bufnr })
+            { mode = { 'n', 'v' }, prefix = '<localleader>', buffer = bufnr })
         wk.register({
                 k = { vim.lsp.buf.signature_help, 'Show signature' },
                 r = { vim.lsp.buf.rename, 'Rename symbol' },
                 s = { telescope_builtin.lsp_document_symbols, 'Find symbol' },
                 S = { telescope_builtin.lsp_workspace_symbols, 'Find workspace symbol' },
             },
-            { mode = 'n', prefix = '<leader>', buffer = bufnr })
+            { mode = 'n', prefix = '<localleader>', buffer = bufnr })
         wk.register({
             g = {
                 c = { telescope_builtin.lsp_incoming_calls, 'Caller' },
@@ -54,7 +57,7 @@ local function on_attach(opts)
             },
         }, { buffer = bufnr })
         wk.register({
-            ['<leader>j'] = { function()
+            ['<localleader>j'] = { function()
                 lines_enabled = not lines_enabled
                 configure_lsp_lines()
             end, 'Show diagnostic lines' }
@@ -71,8 +74,7 @@ return {
             { 'folke/neoconf.nvim', cmd = 'Neoconf', opts = {} },
             { 'folke/neodev.nvim',  opts = {} },                           -- LSP for neovim config/plugin dev
             'jubnzv/virtual-types.nvim',                                   -- code lens types
-            --{ 'j-hui/fidget.nvim',                            tag = 'legacy', opts = {} }, -- progress info
-            { 'kosayoda/nvim-lightbulb',                      opts = {} }, -- code action lightbulb
+            'kosayoda/nvim-lightbulb',                                     -- code action lightbulb
             { 'SmiteshP/nvim-navic',                          opts = {} }, -- breadcrumbs
             { 'lukas-reineke/lsp-format.nvim',                opts = {} }, -- auto format
             { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} }, -- diagnostic lines
@@ -84,6 +86,10 @@ return {
                 end
             },
             'hrsh7th/cmp-nvim-lsp',
+            {
+                'simrat39/symbols-outline.nvim',
+                opts = { autofold_depth = 2 }
+            },
             'folke/which-key.nvim',
         },
         config = function()
@@ -181,7 +187,8 @@ return {
                 },
             }
 
-            require 'nvim-lightbulb'.setup { autocmd = { enabled = true } }
+            require 'nvim-lightbulb'.setup { sign = { enabled = false }, virtual_text = { enabled = true }, autocmd = {
+                enabled = true } }
             local wk = require 'which-key'
             wk.register({
                     n = {
@@ -193,7 +200,7 @@ return {
                         t = { ':ZkTags<CR>', 'Tags' },
                     },
                 },
-                { prefix = '<leader>' })
+                { prefix = '<localleader>' })
             wk.register({
                     n = {
                         name = 'Notes',
@@ -202,7 +209,7 @@ return {
                         f = { ":'<,'>ZkMatch<CR>", 'Find selection' },
                     },
                 },
-                { mode = 'v', prefix = '<leader>' })
+                { mode = 'v', prefix = '<localleader>' })
         end
     },
     {
@@ -237,10 +244,17 @@ return {
                                     ['<CR>'] = { require 'rust-tools'.debuggables.debuggables, 'Debuggables' },
                                 },
                             },
-                            { prefix = '<leader>', buffer = bufnr })
+                            { prefix = '<localleader>', buffer = bufnr })
                     end,
                 },
             }
+            local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+            function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+                opts = opts or {}
+                opts.border = opts.border or 'single'
+                opts.max_width = opts.max_width or 60
+                return orig_util_open_floating_preview(contents, syntax, opts, ...)
+            end
         end,
         dependencies = { 'neovim/nvim-lspconfig' },
     },

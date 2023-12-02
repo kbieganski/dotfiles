@@ -26,18 +26,24 @@ function M.set()
     vim.cmd [[vnoremap J :m '>+1<CR>gv=gv]]
     vim.cmd [[vnoremap K :m '<-2<CR>gv=gv]]
 
-    -- window managment with the alt and ctrl keys
-    vim.cmd [[nnoremap <M-q> <C-w>q]]
-    vim.cmd [[nnoremap <M-c> <C-w>s]]
-    vim.cmd [[nnoremap <M-v> <C-w>v]]
-    vim.cmd [[nnoremap <M-h> :NavigatorLeft<CR>]]
-    vim.cmd [[nnoremap <M-j> :NavigatorDown<CR>]]
-    vim.cmd [[nnoremap <M-k> :NavigatorUp<CR>]]
-    vim.cmd [[nnoremap <M-l> :NavigatorRight<CR>]]
+    -- window management with the alt and ctrl keys
+    vim.cmd [[nnoremap <silent> <M-q> :clo<CR>]]
+    vim.cmd [[nnoremap <silent> <M-c> :sp<CR>]]
+    vim.cmd [[nnoremap <silent> <M-v> :vsp<CR>]]
+    vim.cmd [[nnoremap <silent> <M-h> :NavigatorLeft<CR>]]
+    vim.cmd [[nnoremap <silent> <M-j> :NavigatorDown<CR>]]
+    vim.cmd [[nnoremap <silent> <M-k> :NavigatorUp<CR>]]
+    vim.cmd [[nnoremap <silent> <M-l> :NavigatorRight<CR>]]
     vim.cmd [[nnoremap <M-H> <C-w><S-h>]]
     vim.cmd [[nnoremap <M-J> <C-w><S-j>]]
     vim.cmd [[nnoremap <M-K> <C-w><S-k>]]
     vim.cmd [[nnoremap <M-L> <C-w><S-l>]]
+
+    -- tab management
+    vim.cmd [[nnoremap <silent> <C-t> :tabnew<CR>]]
+    vim.cmd [[nnoremap <silent> <C-w> :tabclose<CR>]]
+    vim.cmd [[nnoremap <silent> <C-j> :tabnext<CR>]]
+    vim.cmd [[nnoremap <silent> <C-k> :tabprev<CR>]]
 
     -- faster scrolling
     vim.cmd [[nnoremap J 2j2<C-e>]]

@@ -2,6 +2,7 @@
 require 'options'.set()
 require 'mappings'.set()
 require 'autocmds'.setup()
+require 'statuscol'.setup()
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
