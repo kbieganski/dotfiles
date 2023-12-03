@@ -23,7 +23,7 @@ return {
                     'verilog',
                     'zig',
                 },
-                highlight = { enable = true },
+                highlight = { enable = false },
             }
         end,
         build = ':TSUpdate',

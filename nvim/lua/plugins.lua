@@ -317,7 +317,7 @@ return {
             end
         end,
         keys = {
-            { '<leader>d', ':lua toggle_venn()<CR>', desc = 'Toggle venn' },
+            { '<leader>d', ':lua toggle_venn()<CR>', desc = 'Toggle diagram drawing' },
         },
     },
 }
