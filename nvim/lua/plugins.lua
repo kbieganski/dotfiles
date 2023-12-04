@@ -5,24 +5,20 @@ return {
         config = function()
             local wk = require 'which-key'
             wk.setup {
-                plugins = { spelling = true },
                 window = {
-                    border = "single",
+                    border = 'single',
                     margin = { 4, 4, 4, 4 },
                     padding = { 1, 1, 1, 1 },
                 },
                 layout = {
-                    align = "center",
+                    align = 'center',
                 },
             }
             wk.register({
-                    q = { ':qa<CR>', 'Quit' },
-                    Q = { ':qa!<CR>', 'Force quit' },
-                    w = { ':w<CR>', 'Write current file' },
-                    W = { ':wa<CR>', 'Write all open files' },
-                    ['<M-w>'] = { ':w !sudo tee %<CR>', 'Write current file (sudo)' },
-                    bx = { ':bn<CR>:bd#<CR>', 'Close buffer' },
-                    bX = { ':bn<CR>:bd#!<CR>', 'Force close buffer' },
+                    b = { 'Buffers' },
+                    g = { 'Git' },
+                    G = { 'GitHub' },
+                    n = { 'Notes' },
                 },
                 { prefix = '<leader>' })
         end,
@@ -30,10 +26,7 @@ return {
     {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            'folke/which-key.nvim',
-        },
+        dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
             local telescope = require 'telescope'
             telescope.setup {
@@ -58,43 +51,49 @@ return {
                     hijack_netrw = true,
                 },
             }
-
-            local tscp_builtin = require 'telescope.builtin'
-
-            require 'which-key'.register({
-                    ['/'] = { tscp_builtin.current_buffer_fuzzy_find, 'Find in current file' },
-                    ['?'] = { tscp_builtin.live_grep, 'Find in files' },
-                    b = { 'Buffers' },
-                    b = { function() tscp_builtin.buffers { ignore_current_buffer = true, sort_mru = true } end, 'Switch buffer' },
-                    h = { tscp_builtin.help_tags, 'Help' },
-                    j = { tscp_builtin.jumplist, 'Browse jumps' },
-                    l = { tscp_builtin.resume, 'Last picker' },
-                    p = { tscp_builtin.registers, 'Paste' },
-                    r = { tscp_builtin.oldfiles, 'Recent files' },
-                    s = { function() tscp_builtin.find_files { hidden = true, follow = true } end, 'Find file' },
-                },
-                { prefix = '<leader>' })
-        end
+        end,
+        keys = {
+            {
+                '<leader>/',
+                function() require 'telescope.builtin'.current_buffer_fuzzy_find() end,
+                desc = 'Find in current file'
+            },
+            { '<leader>?', function() require 'telescope.builtin'.live_grep() end, desc = 'Find in files' },
+            {
+                '<leader>bb',
+                function() require 'telescope.builtin'.buffers { ignore_current_buffer = true, sort_mru = true } end,
+                desc = 'Switch buffer'
+            },
+            { '<leader>h', function() require 'telescope.builtin'.help_tags() end, desc = 'Help' },
+            { '<leader>j', function() require 'telescope.builtin'.jumplist() end,  desc = 'Browse jumps' },
+            { '<leader>l', function() require 'telescope.builtin'.resume() end,    desc = 'Last picker' },
+            { '<leader>p', function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
+            { '<leader>r', function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
+            {
+                '<leader>s',
+                function() require 'telescope.builtin'.find_files { hidden = true, follow = true } end,
+                desc = 'Find file'
+            },
+        },
     },
     {
         'nvim-telescope/telescope-file-browser.nvim',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim', 'folke/which-key.nvim' },
+        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
         config = function()
-            local telescope = require 'telescope'
-            telescope.load_extension 'file_browser'
-            require 'which-key'.register({
-                    f = {
-                        function() telescope.extensions.file_browser.file_browser { respect_gitignore = false } end,
-                        'Browse files' },
-                },
-                { prefix = '<leader>' })
-        end
+            require 'telescope'.load_extension 'file_browser'
+        end,
+        keys = {
+            {
+                '<leader>f',
+                function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
+                desc = 'Browse files'
+            },
+        },
     },
     {
         'nvim-telescope/telescope-fzf-native.nvim',
         build =
         'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
-
         dependencies = { 'nvim-telescope/telescope.nvim' },
         config = function()
             require 'telescope'.load_extension 'fzf'
@@ -106,58 +105,47 @@ return {
         config = function()
             require 'telescope'.load_extension 'gh'
         end,
+        keys = {
+            { '<leader>Ga', function() require 'telescope'.extensions.gh.run() end,          desc = 'Action runs' },
+            { '<leader>Gg', function() require 'telescope'.extensions.gh.gist() end,         desc = 'Gist' },
+            { '<leader>Gi', function() require 'telescope'.extensions.gh.issues() end,       desc = 'Issues' },
+            { '<leader>Gp', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'Pull requests' },
+        },
     },
     {
         'cljoly/telescope-repo.nvim',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim', 'folke/which-key.nvim' },
+        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
         config = function()
-            local telescope = require 'telescope'
-            telescope.load_extension 'repo'
-            require 'which-key'.register({
-                    g = {
-                        name = 'Git',
-                        g = { telescope.extensions.repo.repo, 'Repositories' },
-                    },
-                },
-                { prefix = '<leader>' })
+            require 'telescope'.load_extension 'repo'
         end,
+        keys = {
+            { '<leader>gg', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
+        },
     },
     {
-        "debugloop/telescope-undo.nvim",
+        'debugloop/telescope-undo.nvim',
         dependencies = { -- note how they're inverted to above example
             {
-                "nvim-telescope/telescope.nvim",
-                dependencies = { "nvim-lua/plenary.nvim" },
+                'nvim-telescope/telescope.nvim',
+                dependencies = { 'nvim-lua/plenary.nvim' },
             },
         },
         keys = {
-            { -- lazy style key map
-                "<leader>u",
-                "<cmd>Telescope undo<cr>",
-                desc = "undo history",
+            {
+                '<leader>u',
+                function() require 'telescope'.extensions.undo.list() end,
+                desc = 'undo history',
             },
         },
-        opts = {
-            -- don't use `defaults = { }` here, do this in the main telescope spec
-            extensions = {
-                undo = {
-                    -- telescope-undo.nvim config, see below
-                },
-                -- no other extensions here, they can have their own spec too
-            },
-        },
-        config = function(_, opts)
-            -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
-            -- configs for us. We won't use data, as everything is in it's own namespace (telescope
-            -- defaults, as well as each extension).
-            require("telescope").setup(opts)
-            require("telescope").load_extension("undo")
+        opts = {},
+        config = function()
+            require 'telescope'.load_extension('undo')
         end,
     },
     -- syntax highlighting and awareness
     { import = 'plugins-ts' },
     { import = 'plugins-lsp' },
-    { 'Saecki/crates.nvim',  opts = {} }, -- cargo file support
+    { 'Saecki/crates.nvim',  ft = 'toml', opts = {} }, -- cargo file support
     { import = 'plugins-cmp' },
     { import = 'plugins-git' },
     {
@@ -190,7 +178,7 @@ return {
                     lualine_b = { 'branch', 'diff' },
                     lualine_c = { 'filename', { 'diagnostics', sources = { 'nvim_diagnostic' } } },
                     lualine_x = { 'filetype' },
-                    lualine_y = { 'encoding', 'fileformat',  },
+                    lualine_y = { 'encoding', 'fileformat', },
                     lualine_z = { 'progress', 'location' },
                 },
             }
@@ -238,13 +226,13 @@ return {
     {
         'rose-pine/neovim',
         lazy = false,
-        priority = 1001,
         config = function()
             vim.cmd [[colorscheme rose-pine-moon]]
         end,
     },
     {
         'levouh/tint.nvim',
+        event = 'WinEnter',
         opts = {
             tint = -10,
             saturation = 0.9,
@@ -262,25 +250,25 @@ return {
     },
     {
         'toppair/peek.nvim',
-        dependencies = { 'which-key.nvim', },
         build = 'deno task --quiet build:fast',
         config = function()
-            local peek = require 'peek'
-            peek.setup { theme = 'dark' }
-            require 'which-key'.register({
-                    v = {
-                        function()
-                            if peek.is_open() then
-                                peek.close()
-                            else
-                                vim.fn.system('i3-msg split horizontal')
-                                peek.open()
-                            end
-                        end,
-                        'Preview' },
-                },
-                { prefix = '<leader>' })
+            require 'peek'.setup { theme = 'dark' }
         end,
+        keys = {
+            {
+                '<leader>v',
+                function()
+                    local peek = require 'peek'
+                    if peek.is_open() then
+                        peek.close()
+                    else
+                        vim.fn.system('i3-msg split horizontal')
+                        peek.open()
+                    end
+                end,
+                desc = 'Preview'
+            },
+        },
     },
     {
         'numToStr/Navigator.nvim',
@@ -291,29 +279,28 @@ return {
     {
         'jbyuki/venn.nvim',
         config = function()
-            vim.b.venn_enabled = false
             function _G.toggle_venn()
                 if not vim.b.venn_enabled then
                     vim.b.venn_enabled = true
                     vim.cmd [[setlocal ve=all]]
-                    vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", { noremap = true, silent = true })
-                    vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", { noremap = true, silent = true })
-                    vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", { noremap = true, silent = true })
-                    vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", { noremap = true, silent = true })
-                    vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", { noremap = true, silent = true })
+                    vim.keymap.set('n', 'J', '<C-v>j:VBox<CR>', { buffer = true, silent = true })
+                    vim.keymap.set('n', 'K', '<C-v>k:VBox<CR>', { buffer = true, silent = true })
+                    vim.keymap.set('n', 'H', '<C-v>h:VBox<CR>', { buffer = true, silent = true })
+                    vim.keymap.set('n', 'L', '<C-v>l:VBox<CR>', { buffer = true, silent = true })
+                    vim.keymap.set('v', 'f', ':VBox<CR>', { buffer = true, silent = true })
                 else
-                    vim.cmd [[setlocal ve=]]
-                    vim.api.nvim_buf_del_keymap(0, "n", "H")
-                    vim.api.nvim_buf_del_keymap(0, "n", "J")
-                    vim.api.nvim_buf_del_keymap(0, "n", "K")
-                    vim.api.nvim_buf_del_keymap(0, "n", "L")
-                    vim.api.nvim_buf_del_keymap(0, "v", "f")
                     vim.b.venn_enabled = false
+                    vim.cmd [[setlocal ve=]]
+                    vim.keymap.del('n', 'J', { buffer = true })
+                    vim.keymap.del('n', 'K', { buffer = true })
+                    vim.keymap.del('n', 'H', { buffer = true })
+                    vim.keymap.del('n', 'L', { buffer = true })
+                    vim.keymap.del('v', 'f', { buffer = true })
                 end
             end
         end,
         keys = {
-            { '<leader>d', ':lua toggle_venn()<CR>', desc = 'Toggle diagram drawing' },
+            { '<leader>d', ':lua toggle_venn()<CR>', desc = 'Toggle diagram drawing', silent = true },
         },
     },
 }

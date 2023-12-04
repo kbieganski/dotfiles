@@ -1,28 +1,13 @@
+LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'query',
+    'regex', 'rust', 'typescript', 'verilog', 'zig' }
 -- Tree-sitter plugins
 return {
     {
         'nvim-treesitter/nvim-treesitter',
+        ft = LANGS,
         config = function()
             require 'nvim-treesitter.configs'.setup {
-                ensure_installed = {
-                    'bash',
-                    'c',
-                    'cpp',
-                    'css',
-                    'glsl',
-                    'go',
-                    'haskell',
-                    'html',
-                    'javascript',
-                    'lua',
-                    'python',
-                    'query',
-                    'regex',
-                    'rust',
-                    'typescript',
-                    'verilog',
-                    'zig',
-                },
+                ensure_installed = LANGS,
                 highlight = { enable = true },
             }
         end,
@@ -30,12 +15,14 @@ return {
     },
     {
         "kylechui/nvim-surround",
-        opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
+        ft = LANGS,
+        opts = {},
     },
     {
         'nvim-treesitter/nvim-treesitter-textobjects',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        ft = LANGS,
         config = function()
             require 'nvim-treesitter.configs'.setup {
                 textobjects = {

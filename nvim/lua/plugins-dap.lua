@@ -3,18 +3,6 @@ return {
         'mfussenegger/nvim-dap', -- debugging integration
         config = function()
             local dap = require 'dap'
-            require 'which-key'.register({
-                    ['<CR>'] = {
-                        name = 'Debug',
-                        b = { dap.toggle_breakpoint, 'Breakpoint' },
-                        c = { dap.continue, 'Continue' },
-                        j = { dap.step_into, 'Step into' },
-                        k = { dap.step_out, 'Step out' },
-                        l = { dap.step_over, 'Step over' },
-                    },
-                },
-                { mode = 'n', prefix = '<localleader>' })
-
             dap.adapters.lldb = {
                 type = 'executable',
                 command = 'lldb-vscode',
@@ -129,64 +117,9 @@ return {
 
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp
-        end,
-        dependencies = { 'nvim-telescope/telescope.nvim', 'folke/which-key.nvim' },
-    },
-    {
-        'rcarriga/nvim-dap-ui', -- debug UI
-        config = function()
-            local dap = require 'dap'
+
             local dapui = require 'dapui'
-            dapui.setup {
-                controls = {
-                    element = 'repl',
-                    enabled = true,
-                    icons = {
-                        disconnect = '⏹️',
-                        pause = '⏸️',
-                        play = '▶️',
-                        run_last = '↺',
-                        step_back = '↖️',
-                        step_into = '↘️',
-                        step_out = '↗️',
-                        step_over = '↴',
-                        terminate = '❌'
-                    }
-                },
-                expand_lines = false,
-                icons = {
-                    collapsed = '+',
-                    current_frame = '*',
-                    expanded = '-'
-                },
-                layouts = { {
-                    elements = { {
-                        id = 'scopes',
-                        size = 0.35
-                    }, {
-                        id = 'breakpoints',
-                        size = 0.15
-                    }, {
-                        id = 'stacks',
-                        size = 0.35
-                    }, {
-                        id = 'watches',
-                        size = 0.15
-                    } },
-                    position = 'left',
-                    size = 60
-                }, {
-                    elements = { {
-                        id = 'repl',
-                        size = 0.5
-                    }, {
-                        id = 'console',
-                        size = 0.5
-                    } },
-                    position = 'bottom',
-                    size = 10
-                } },
-            }
+
             dap.listeners.after.event_initialized['dapui_config'] = dapui.open
             dap.listeners.before.event_terminated['dapui_config'] = dapui.close
             dap.listeners.before.event_exited['dapui_config'] = dapui.close
@@ -212,11 +145,72 @@ return {
             vim.api.nvim_set_hl(0, 'DapUIDecoration', { link = 'DapUIBreakpointsPath' })
             vim.api.nvim_set_hl(0, 'DapUIModifiedValue', { link = 'Number' })
         end,
-        dependencies = { 'mfussenegger/nvim-dap' },
-    },
-    {
-        'theHamsta/nvim-dap-virtual-text', -- display variable values in virtual text
-        dependencies = { 'mfussenegger/nvim-dap' },
-        opts = {},
+        dependencies = { 'nvim-telescope/telescope.nvim',
+            {
+                'rcarriga/nvim-dap-ui',
+                opts = {
+                    controls = {
+                        element = 'repl',
+                        enabled = true,
+                        icons = {
+                            disconnect = '⏹️',
+                            pause = '⏸️',
+                            play = '▶️',
+                            run_last = '↺',
+                            step_back = '↖️',
+                            step_into = '↘️',
+                            step_out = '↗️',
+                            step_over = '↴',
+                            terminate = '❌'
+                        }
+                    },
+                    expand_lines = false,
+                    icons = {
+                        collapsed = '+',
+                        current_frame = '*',
+                        expanded = '-'
+                    },
+                    layouts = { {
+                        elements = { {
+                            id = 'scopes',
+                            size = 0.35
+                        }, {
+                            id = 'breakpoints',
+                            size = 0.15
+                        }, {
+                            id = 'stacks',
+                            size = 0.35
+                        }, {
+                            id = 'watches',
+                            size = 0.15
+                        } },
+                        position = 'left',
+                        size = 60
+                    }, {
+                        elements = { {
+                            id = 'repl',
+                            size = 0.5
+                        }, {
+                            id = 'console',
+                            size = 0.5
+                        } },
+                        position = 'bottom',
+                        size = 10
+                    } },
+                }
+            },
+            {
+                'theHamsta/nvim-dap-virtual-text', -- display variable values in virtual text
+                dependencies = { 'mfussenegger/nvim-dap' },
+                opts = {},
+            }
+        },
+        keys = {
+            { '<localleader>db', function() require 'dap'.toggle_breakpoint() end, desc = 'Breakpoint' },
+            { '<localleader>dc', function() require 'dap'.continue() end,          desc = 'Continue' },
+            { '<localleader>dj', function() require 'dap'.step_into() end,         desc = 'Step into' },
+            { '<localleader>dk', function() require 'dap'.step_out() end,          desc = 'Step out' },
+            { '<localleader>dl', function() require 'dap'.step_over() end,         desc = 'Step over' },
+        },
     },
 }
