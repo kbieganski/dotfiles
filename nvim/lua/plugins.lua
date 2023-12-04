@@ -244,10 +244,6 @@ return {
         end,
     },
     {
-        'zbirenbaum/neodim',
-        opts = {}
-    },
-    {
         'levouh/tint.nvim',
         opts = {
             tint = -10,
