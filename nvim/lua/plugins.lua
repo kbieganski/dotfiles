@@ -53,6 +53,7 @@ return {
             }
         end,
         keys = {
+            { '<leader>`', function() require 'telescope.builtin'.marks() end,  desc = 'Marks' },
             {
                 '<leader>/',
                 function() require 'telescope.builtin'.current_buffer_fuzzy_find() end,
@@ -275,6 +276,10 @@ return {
         config = function()
             require 'Navigator'.setup {}
         end,
+    },
+    {
+        'chentoast/marks.nvim',
+        opts = {},
     },
     {
         'jbyuki/venn.nvim',

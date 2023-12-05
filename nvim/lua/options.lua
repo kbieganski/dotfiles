@@ -34,6 +34,8 @@ function M.set()
     vim.o.termguicolors = true            -- prevent warning about opacity changes
     vim.o.spelllang = 'en_us,pl'          -- check English and Polish spelling
     vim.o.spell = true
+    vim.o.foldlevelstart = 6
+    vim.o.foldenable = true
 end
 
 return M

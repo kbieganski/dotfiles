@@ -1,11 +1,5 @@
-local lines_enabled = false
-
-local function configure_lsp_lines()
-    vim.diagnostic.config { virtual_lines = lines_enabled }
-end
-
 local function on_attach(opts)
-    vim.diagnostic.config { virtual_text = false }
+    vim.diagnostic.config { virtual_text = false, virtual_lines = false }
     local telescope_builtin = require 'telescope.builtin'
     opts = opts or {}
     if opts.virtual_types == nil then opts.virtual_types = true end
@@ -62,8 +56,8 @@ local function on_attach(opts)
         vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations,
             { buffer = bufnr, silent = true, desc = 'Implementation' })
         vim.keymap.set('n', '<localleader>j', function()
-            lines_enabled = not lines_enabled
-            configure_lsp_lines()
+            vim.g.lines_enabled = not vim.g.lines_enabled
+            vim.diagnostic.config { virtual_lines = vim.g.lines_enabled }
         end, { buffer = bufnr, silent = true, desc = 'Show diagnostic lines' })
     end
 end

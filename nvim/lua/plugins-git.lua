@@ -12,6 +12,7 @@ return {
                 on_attach = function(bufnr)
                     vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })
                     vim.keymap.set('n', '[h', gitsigns.prev_hunk, { buffer = bufnr, desc = 'Previous hunk' })
+                    vim.keymap.set('n', '<leader>gb', gitsigns.blame_line, { buffer = bufnr, desc = 'Blame line' })
                     vim.keymap.set('n', '<leader>gc', telescope_builtin.git_bcommits,
                         { buffer = bufnr, desc = 'File commits' })
                     vim.keymap.set('n', '<leader>gd', gitsigns.toggle_deleted,
