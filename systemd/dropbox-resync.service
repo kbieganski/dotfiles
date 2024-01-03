@@ -1,6 +1,0 @@
- [Unit]
-Description=rclone bisync for Dropbox
-
-[Service]
-Type=oneshot
-ExecStart=rclone bisync dropbox: {{DROPBOX_DIR}} --resync

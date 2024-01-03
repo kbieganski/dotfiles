@@ -1,4 +1,18 @@
 -- Plugins
+
+local function get_visual_selection()
+    if vim.api.nvim_get_mode().mode ~= 'v' then
+        return ''
+    else
+        local _, ls, cs = unpack(vim.fn.getpos('v'))
+        local _, le, ce = unpack(vim.fn.getpos('.'))
+        ls = ls - 1; le = le - 1; cs = cs - 1; ce = ce - 1
+        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le), math.min(cs, ce), math.max(ls, le), math.max(cs, ce),
+            {})
+        return table.concat(lines, ' ')
+    end
+end
+
 return {
     {
         'folke/which-key.nvim',
@@ -53,13 +67,25 @@ return {
             }
         end,
         keys = {
-            { '<leader>`', function() require 'telescope.builtin'.marks() end,  desc = 'Marks' },
+            { '<leader>`', function() require 'telescope.builtin'.marks() end, desc = 'Marks' },
             {
                 '<leader>/',
-                function() require 'telescope.builtin'.current_buffer_fuzzy_find() end,
+                function()
+                    local selection = get_visual_selection()
+                    require 'telescope.builtin'.current_buffer_fuzzy_find({ default_text = selection })
+                end,
+                mode = { 'n', 'v' },
                 desc = 'Find in current file'
             },
-            { '<leader>?', function() require 'telescope.builtin'.live_grep() end, desc = 'Find in files' },
+            {
+                '<leader>?',
+                function()
+                    local selection = get_visual_selection()
+                    require 'telescope.builtin'.live_grep({ default_text = selection })
+                end,
+                mode = { 'n', 'v' },
+                desc = 'Find in files'
+            },
             {
                 '<leader>bb',
                 function() require 'telescope.builtin'.buffers { ignore_current_buffer = true, sort_mru = true } end,

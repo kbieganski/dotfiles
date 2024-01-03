@@ -13,4 +13,15 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Setup plugins
-require 'lazy'.setup('plugins')
+require 'lazy'.setup 'plugins'
+
+
+-- TODO:
+-- Finish setting up zk
+-- Set up lazy loading for plugins
+-- Set up DAP configs
+-- Figure out a good debug flow
+-- Fix missing required fields in TS config and CMP config
+-- Free keys: Mark keys ` ' m
+--            Unused: \
+--            Potentially usless: z s S

@@ -108,6 +108,10 @@ alias vim='nvim'
 export VISUAL=nvim
 export EDITOR=nvim
 
+export TERMINAL=kitty
+
+alias lf='\cd "$(\lf -print-last-dir "$@")"'
+
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
@@ -120,5 +124,3 @@ if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] &&
        exec tmux new
    fi
 fi
-
-export ZK_NOTEBOOK_DIR=~/notes/

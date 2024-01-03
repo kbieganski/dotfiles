@@ -70,6 +70,24 @@ function M.set()
     vim.keymap.set('n', '<leader><C-w>', ':w !sudo tee %<CR>', { silent = true, desc = 'Write current file (sudo)' })
     vim.keymap.set('n', '<leader>bx', ':bn<CR>:bd#<CR>', { silent = true, desc = 'Close buffer' })
     vim.keymap.set('n', '<leader>bX', ':bn<CR>:bd#!<CR>', { silent = true, desc = 'Force close buffer' })
+
+    -- Rename current file
+    vim.keymap.set('n', '<leader>R', function()
+        local filename = vim.api.nvim_buf_get_name(0)
+        vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
+            if new_filename == '' then
+                return
+            end
+            if vim.fn.filereadable(filename) == 1 then
+                vim.cmd.write(new_filename)
+                vim.cmd.bdelete(1)
+                vim.cmd.edit(new_filename)
+                vim.fn.delete(filename)
+            else
+                vim.api.nvim_buf_set_name(0, new_filename)
+            end
+        end)
+    end, { silent = true, desc = 'Rename current file' })
 end
 
 return M

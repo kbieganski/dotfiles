@@ -36,6 +36,7 @@ function M.set()
     vim.o.spell = true
     vim.o.foldlevelstart = 6
     vim.o.foldenable = true
+    vim.wo.conceallevel = 2
 end
 
 return M

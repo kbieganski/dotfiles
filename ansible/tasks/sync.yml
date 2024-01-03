@@ -1,5 +1,5 @@
-- name: Install rclone
+- name: Install syncthing
   pacman:
     name:
-      - nextcloud-client
+      - syncthing
 

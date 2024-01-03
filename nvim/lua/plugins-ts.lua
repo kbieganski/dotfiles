@@ -1,4 +1,4 @@
-LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'query',
+LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline', 'python', 'query',
     'regex', 'rust', 'typescript', 'verilog', 'zig' }
 -- Tree-sitter plugins
 return {
@@ -123,16 +123,4 @@ return {
             }
         end
     },
-    {
-        'kevinhwang91/nvim-ufo',
-        dependencies = { 'kevinhwang91/promise-async', 'nvim-treesitter/nvim-treesitter' },
-        ft = LANGS,
-        config = function()
-            require 'ufo'.setup {
-                provider_selector = function()
-                    return { 'treesitter', 'indent' }
-                end
-            }
-        end,
-    }
 }

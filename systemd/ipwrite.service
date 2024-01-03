@@ -1,7 +1,0 @@
-[Unit]
-Description=Updates IP address in a file stored in the cloud
-After=google-drive.service dropbox.service
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh {{DOTFILES_DIR}}/bin/ipwrite {{GOOGLE_DRIVE_DIR}} {{DROPBOX_DIR}}

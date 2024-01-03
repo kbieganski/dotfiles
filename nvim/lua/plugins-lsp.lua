@@ -1,3 +1,27 @@
+local function InsertMarkdownURL()
+    local url = vim.fn.getreg "+"
+    if url == "" then return end
+    local cmd = "curl -L " .. vim.fn.shellescape(url) .. " 2>/dev/null"
+    local handle = io.popen(cmd)
+    if not handle then return end
+    local html = handle:read "*a"
+    handle:close()
+    local title = ""
+    local pattern = "<title>(.-)</title>"
+    local m = string.match(html, pattern)
+    if m then title = m end
+    if title ~= "" then
+        local pos = vim.api.nvim_win_get_cursor(0)[2]
+        local line = vim.api.nvim_get_current_line()
+        local markdownLink = "[" .. title .. "](" .. url .. ")"
+        local new_line = line:sub(0, pos) .. markdownLink .. line:sub(pos + 1)
+        vim.api.nvim_set_current_line(new_line)
+    else
+        print("Title not found for link")
+    end
+end
+
+
 local function on_attach(opts)
     vim.diagnostic.config { virtual_text = false, virtual_lines = false }
     local telescope_builtin = require 'telescope.builtin'
@@ -67,22 +91,14 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'folke/neoconf.nvim',                           cmd = 'Neoconf', lazy = true, opts = {} },
-            { 'folke/neodev.nvim',                            lazy = true,     opts = {} }, -- LSP for neovim config/plugin dev
-            { 'jubnzv/virtual-types.nvim',                    lazy = true },                -- code lens types
-            { 'kosayoda/nvim-lightbulb',                      lazy = true },                -- code action lightbulb
-            { 'SmiteshP/nvim-navic',                          lazy = true,     opts = {} }, -- breadcrumbs
-            { 'lukas-reineke/lsp-format.nvim',                lazy = true,     opts = {} }, -- auto format
-            { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', lazy = true,     opts = {} }, -- diagnostic lines
-            { 'RRethy/vim-illuminate',                        lazy = true },                -- highlight word under cursor
-            {
-                'mickael-menu/zk-nvim',
-                lazy = true,
-                config = function()
-                    require 'zk'.setup()
-                end
-            },
-            { 'hrsh7th/cmp-nvim-lsp', lazy = true },
+            { 'folke/neodev.nvim',                            lazy = true, opts = {} }, -- LSP for neovim config/plugin dev
+            { 'jubnzv/virtual-types.nvim',                    lazy = true },            -- code lens types
+            { 'kosayoda/nvim-lightbulb',                      lazy = true },            -- code action lightbulb
+            { 'SmiteshP/nvim-navic',                          lazy = true, opts = {} }, -- breadcrumbs
+            { 'lukas-reineke/lsp-format.nvim',                lazy = true, opts = {} }, -- auto format
+            { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', lazy = true, opts = {} }, -- diagnostic lines
+            { 'RRethy/vim-illuminate',                        lazy = true },            -- highlight word under cursor
+            { 'hrsh7th/cmp-nvim-lsp',                         lazy = true },
             {
                 'simrat39/symbols-outline.nvim',
                 lazy = true,
@@ -100,19 +116,14 @@ return {
 
             local lsp_configs = require 'lspconfig.configs'
 
-            lsp_configs.prosemd = {
-                default_config = {
-                    cmd = { vim.fn.expand('$HOME/.cargo/bin/prosemd-lsp'), '--stdio' },
-                    filetypes = { 'markdown', 'gitcommit' },
-                    root_dir = function(fname)
-                        return require 'lspconfig.util'.find_git_ancestor(fname) or vim.fn.getcwd()
-                    end,
-                    settings = {},
-                }
-            }
-
             local lspconfig = require 'lspconfig'
-            lspconfig.prosemd.setup {}
+
+            lspconfig.marksman.setup {
+                on_attach = function(client, bufnr)
+                    on_attach {} (client, bufnr)
+                    vim.keymap.set('n', '<localleader>p', InsertMarkdownURL, { silent = true, desc = 'Paste link' })
+                end }
+
             for _, server in pairs { 'gopls', 'hls', 'tsserver' } do
                 lspconfig[server].setup {
                     capabilities = capabilities,
@@ -152,6 +163,11 @@ return {
                 }
             }
 
+            lspconfig.zls.setup {
+                capabilities = capabilities,
+                on_attach = on_attach { autoformat = false },
+            }
+
             require 'neodev'.setup {}
 
             lspconfig.lua_ls.setup {
@@ -183,21 +199,6 @@ return {
 
             require 'nvim-lightbulb'.setup { sign = { enabled = false }, virtual_text = { enabled = true }, autocmd = {
                 enabled = true } }
-
-            vim.keymap.set('n', '<leader>nn', ':ZkNew { title = vim.fn.input("Title: ") }<CR>',
-                { silent = true, desc = 'New note' })
-            vim.keymap.set('n', '<leader>nf', ':ZkNotes { sort = { "modified" } }<CR>',
-                { silent = true, desc = 'Find note' })
-            vim.keymap.set('n', '<leader>nb', ':ZkBacklinks<CR>',
-                { silent = true, desc = 'Backlinks' })
-            vim.keymap.set('n', '<leader>ni', ':ZkInsertLink<CR>',
-                { silent = true, desc = 'Insert link' })
-            vim.keymap.set('n', '<leader>nt', ':ZkTags<CR>',
-                { silent = true, desc = 'Tags' })
-            vim.keymap.set('v', '<leader>nn', ":'<,'>ZkNewFromContentSelection { title = vim.fn.input('Title: ') }<CR>",
-                { silent = true, desc = 'New note from selection' })
-            vim.keymap.set('v', '<leader>nm', ':ZkMatch<CR>',
-                { silent = true, desc = 'Find note from selection' })
         end,
         filetype = { 'c', 'cpp', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'rust', 'typescript' },
     },
