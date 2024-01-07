@@ -67,7 +67,7 @@ return {
             }
         end,
         keys = {
-            { '<leader>`', function() require 'telescope.builtin'.marks() end, desc = 'Marks' },
+            { '<leader>`', function() require 'telescope.builtin'.marks() end,     desc = 'Marks' },
             {
                 '<leader>/',
                 function()
