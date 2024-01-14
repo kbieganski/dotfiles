@@ -4,6 +4,12 @@ require 'mappings'.set()
 require 'autocmds'.setup()
 require 'colorscheme'.setup()
 
+vim.filetype.add {
+    extension = {
+        templ = 'templ'
+    },
+}
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

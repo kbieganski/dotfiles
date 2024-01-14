@@ -1,5 +1,5 @@
-LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline', 'python', 'query',
-    'regex', 'rust', 'typescript', 'verilog', 'zig' }
+LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline',
+    'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
 -- Tree-sitter plugins
 return {
     {

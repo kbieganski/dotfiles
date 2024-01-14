@@ -114,8 +114,6 @@ return {
             -- enable completion capabilities for LSP
             local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
 
-            local lsp_configs = require 'lspconfig.configs'
-
             local lspconfig = require 'lspconfig'
 
             lspconfig.marksman.setup {
@@ -124,7 +122,7 @@ return {
                     vim.keymap.set('n', '<localleader>p', InsertMarkdownURL, { silent = true, desc = 'Paste link' })
                 end }
 
-            for _, server in pairs { 'gopls', 'hls', 'tsserver' } do
+            for _, server in pairs { 'gopls', 'hls', 'tsserver', 'templ' } do
                 lspconfig[server].setup {
                     capabilities = capabilities,
                     on_attach = on_attach { autoformat = true },
