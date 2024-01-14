@@ -306,7 +306,8 @@ return {
             function _G.toggle_venn()
                 if not vim.b.venn_enabled then
                     vim.b.venn_enabled = true
-                    vim.cmd [[setlocal ve=all]]
+                    vim.b.virtualedit_old = vim.opt_local.virtualedit:get()
+                    vim.opt_local.virtualedit = 'all'
                     vim.keymap.set('n', 'J', '<C-v>j:VBox<CR>', { buffer = true, silent = true })
                     vim.keymap.set('n', 'K', '<C-v>k:VBox<CR>', { buffer = true, silent = true })
                     vim.keymap.set('n', 'H', '<C-v>h:VBox<CR>', { buffer = true, silent = true })
@@ -314,7 +315,7 @@ return {
                     vim.keymap.set('v', 'f', ':VBox<CR>', { buffer = true, silent = true })
                 else
                     vim.b.venn_enabled = false
-                    vim.cmd [[setlocal ve=]]
+                    vim.opt_local.virtualedit = vim.b.virtualedit_old
                     vim.keymap.del('n', 'J', { buffer = true })
                     vim.keymap.del('n', 'K', { buffer = true })
                     vim.keymap.del('n', 'H', { buffer = true })
