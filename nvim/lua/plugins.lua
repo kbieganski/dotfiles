@@ -251,18 +251,11 @@ return {
         },
     },
     {
-        'rose-pine/neovim',
-        lazy = false,
-        config = function()
-            vim.cmd [[colorscheme rose-pine-moon]]
-        end,
-    },
-    {
         'levouh/tint.nvim',
         event = 'WinEnter',
         opts = {
-            tint = -10,
-            saturation = 0.9,
+            tint = -20,
+            saturation = 0,
         },
     },
     { import = 'plugins-dap' },
