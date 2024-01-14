@@ -27,10 +27,10 @@
     src: "{{DOTFILES_DIR}}/zsh/rc.sh"
     dest: ~/.zshrc
     state: link
-- name: Create symlink for Zsh theme
+- name: Create symlink for Starship config
   file:
-    src: "{{DOTFILES_DIR}}/zsh/theme.sh"
-    dest: ~/.oh-my-zsh/themes/kb.zsh-theme
+    src: "{{DOTFILES_DIR}}/starship.toml"
+    dest: ~/.config/starship.toml
     state: link
 - name: Change user shell to Zsh
   user:
