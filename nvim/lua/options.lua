@@ -37,6 +37,8 @@ function M.set()
     vim.o.foldlevelstart = 6
     vim.o.foldenable = true
     vim.wo.conceallevel = 2
+    vim.opt.signcolumn = 'yes:3'
+    --vim.opt.statuscolumn = "%=%{v:virtnum < 1 ? (v:relnum ? v:relnum : v:lnum < 10 ? v:lnum . '  ' : v:lnum) : ''}%=%s"
 end
 
 return M

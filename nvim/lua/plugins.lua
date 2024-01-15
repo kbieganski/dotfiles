@@ -325,7 +325,7 @@ return {
             end
         end,
         keys = {
-            { '<leader>d', ':lua toggle_venn()<CR>', desc = 'Toggle diagram drawing', silent = true },
+            { '<leader>d', function() toggle_venn() end, desc = 'Toggle diagram drawing', silent = true },
         },
     },
 }
