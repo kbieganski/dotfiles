@@ -43,9 +43,9 @@ local function on_attach(opts)
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
-        vim.keymap.set('n', '<localleader>d', vim.diagnostic.open_float,
+        vim.keymap.set('n', '<localleader>e', vim.diagnostic.open_float,
             { buffer = bufnr, silent = true, desc = 'Line diagnostics' })
-        vim.keymap.set('n', '<localleader>D', telescope_builtin.diagnostics,
+        vim.keymap.set('n', '<localleader>E', telescope_builtin.diagnostics,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })
         vim.keymap.set('n', '<localleader>h', vim.lsp.buf.hover,
             { buffer = bufnr, silent = true, desc = 'Hover' })

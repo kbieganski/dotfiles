@@ -5,6 +5,14 @@ function M.set()
     vim.g.mapleader = ' '
     vim.g.maplocalleader = '\r'
 
+    -- remap Ctrl-C to Esc, so that InsertLeave gets triggered
+    vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
+
+    -- unmap useless stuff
+    vim.keymap.set('n', 'J', function() end, { silent = true })
+    vim.keymap.set('n', 'K', function() end, { silent = true })
+    vim.keymap.set('n', 's', function() end, { silent = true })
+
     -- delete without yanking with x/X
     vim.keymap.set('n', 'x', '"_x', { silent = true })
     vim.keymap.set('n', 'X', '"_dd', { silent = true })
@@ -47,16 +55,16 @@ function M.set()
     -- tab management
     vim.keymap.set('n', '<C-t>', ':tabnew<CR>', { silent = true })
     vim.keymap.set('n', '<C-w>', ':tabclose<CR>', { silent = true })
-    vim.keymap.set('n', '<C-j>', ':tabnext<CR>', { silent = true })
-    vim.keymap.set('n', '<C-k>', ':tabprev<CR>', { silent = true })
+    vim.keymap.set('n', '<C-tab>', ':tabnext<CR>', { silent = true })
+    vim.keymap.set('n', '<C-S-tab>', ':tabprev<CR>', { silent = true })
 
     -- faster scrolling
-    vim.keymap.set('n', 'J', '2<C-e>', { silent = true })
-    vim.keymap.set('n', 'K', '2<C-y>', { silent = true })
+    vim.keymap.set('n', '<C-j>', '2<C-e>2j', { silent = true })
+    vim.keymap.set('n', '<C-k>', '2<C-y>2k', { silent = true })
 
     -- move through jump history
-    vim.keymap.set('n', 'H', '<C-o>', { silent = true })
-    vim.keymap.set('n', 'L', '<C-i>', { silent = true })
+    vim.keymap.set('n', '<C-h>', '<C-o>', { silent = true })
+    vim.keymap.set('n', '<C-l>', '<C-i>', { silent = true })
 
     -- make < > shifts keep selection
     vim.keymap.set('v', '<', '<gv', { silent = true })
