@@ -7,20 +7,22 @@ function M.setup()
         inactive_bg = '#000000',
         active_bg = '#111111',
         cursorline = '#222222',
-        lineno = '#444444',
+        reference = '#333333',
+        visual = '#444444',
+        lineno = '#555555',
         comment = '#777777',
         delimiter = '#888888',
         preproc = '#999999',
         operator = '#aaaaaa',
         constant = '#bbbbbb',
         type = '#cccccc',
-        special = '#dddddd',
+        normal = '#dddddd',
         identifier = '#eeeeee',
-        normal = '#eeeeee',
+        special = '#ffffff',
         green = '#44ff88',
-        red = '#ff4488',
-        blue = '#2244ff',
-        yellow = '#eeee22'
+        red = '#ff5577',
+        blue = '#00aaff',
+        yellow = '#ffcc00'
     }
 
     for hi, def in pairs(vim.api.nvim_get_hl(0, {})) do
@@ -33,7 +35,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'NormalNC', {  })
     vim.api.nvim_set_hl(0, 'CursorLine', { bg = colors.cursorline })
 
-    vim.api.nvim_set_hl(0, 'Visual', { bg = colors.blue })
+    vim.api.nvim_set_hl(0, 'Visual', { bg = colors.visual })
 
     vim.api.nvim_set_hl(0, 'Keyword', { bold = true })
     vim.api.nvim_set_hl(0, 'Conditional', { link = 'Keyword' })
@@ -42,6 +44,8 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'Type', { fg = colors.type })
     vim.api.nvim_set_hl(0, 'Identifier', { fg = colors.identifier })
     vim.api.nvim_set_hl(0, 'Constant', { italic = true, fg = colors.constant })
+    vim.api.nvim_set_hl(0, 'Tag', { link = 'Constant' })
+    vim.api.nvim_set_hl(0, 'Label', { link = 'Constant' })
     vim.api.nvim_set_hl(0, 'PreProc', { fg = colors.preproc })
 
     vim.api.nvim_set_hl(0, 'Comment', { fg = colors.comment })
@@ -74,16 +78,16 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'DiagnosticOk', { fg = colors.green })
     vim.api.nvim_set_hl(0, 'DiagnosticUnderlineOk', { undercurl = true, sp = colors.green })
 
-    vim.api.nvim_set_hl(0, 'Search', { bg = colors.blue })
+    vim.api.nvim_set_hl(0, 'Search', { fg = colors.special, bg = colors.blue })
     vim.api.nvim_set_hl(0, 'IncSearch', { link = 'Search' })
 
-    vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#333333' })
-    vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#333333' })
-    vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#333333' })
+    vim.api.nvim_set_hl(0, 'LspReferenceText', { bg = colors.reference })
+    vim.api.nvim_set_hl(0, 'LspReferenceRead', { link = 'LspReferenceText' })
+    vim.api.nvim_set_hl(0, 'LspReferenceWrite', { bg = '#442222' })
 
     vim.api.nvim_set_hl(0, 'SpellBad', { undercurl = true, sp = colors.red })
 
-    vim.api.nvim_set_hl(0, 'Title', { bold = true, fg = '#bbbbbb' })
+    vim.api.nvim_set_hl(0, 'Title', { underline = true, bold = true, fg = colors.special })
 
     vim.api.nvim_set_hl(0, 'markdownUrl', { underdashed = true })
     vim.api.nvim_set_hl(0, 'markdownUrlTitle', { underdotted = true })
@@ -91,6 +95,8 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.active_bg, bg = colors.active_bg })
     vim.api.nvim_set_hl(0, 'TelescopeBorder', { link = 'FloatBorder' })
     vim.api.nvim_set_hl(0, 'LspInfoBorder', { link = 'FloatBorder' })
+
+    vim.api.nvim_set_hl(0, 'TelescopeMatching', { link = 'Search' })
 end
 
 return M
