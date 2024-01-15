@@ -1,4 +1,4 @@
-local function InsertMarkdownURL()
+local function insert_markdown_link()
     local url = vim.fn.getreg "+"
     if url == "" then return end
     local cmd = "curl -L " .. vim.fn.shellescape(url) .. " 2>/dev/null"
@@ -13,11 +13,11 @@ local function InsertMarkdownURL()
     if title ~= "" then
         local pos = vim.api.nvim_win_get_cursor(0)[2]
         local line = vim.api.nvim_get_current_line()
-        local markdownLink = "[" .. title .. "](" .. url .. ")"
-        local new_line = line:sub(0, pos) .. markdownLink .. line:sub(pos + 1)
+        local link = "[" .. title .. "](" .. url .. ")"
+        local new_line = line:sub(0, pos) .. link .. line:sub(pos + 1)
         vim.api.nvim_set_current_line(new_line)
     else
-        print("Title not found for link")
+        vim.notify("Title not found for link")
     end
 end
 
@@ -29,25 +29,23 @@ local function on_attach(opts)
     if opts.virtual_types == nil then opts.virtual_types = true end
     return function(client, bufnr)
         if client.server_capabilities.documentHighlightProvider then
-            vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-            vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_document_highlight" }
+            local augroup = 'lsp_document_highlight'
+            vim.api.nvim_create_augroup(augroup, { clear = true })
+            vim.api.nvim_clear_autocmds { buffer = bufnr, group = augroup }
+            local highlight_refs = function()
+                vim.lsp.buf.clear_references()
+                vim.lsp.buf.document_highlight()
+            end
             vim.api.nvim_create_autocmd("CursorHold", {
-                callback = function()
-                    vim.lsp.buf.clear_references()
-                    vim.lsp.buf.document_highlight()
-                end,
+                callback = highlight_refs,
                 buffer = bufnr,
-                group = "lsp_document_highlight",
+                group = augroup,
             })
             vim.api.nvim_create_autocmd("CursorHoldI", {
-                callback = function()
-                    vim.lsp.buf.clear_references()
-                    vim.lsp.buf.document_highlight()
-                end,
+                callback = highlight_refs,
                 buffer = bufnr,
-                group = "lsp_document_highlight",
+                group = augroup,
             })
-
         end
         if opts.autoformat then
             require 'lsp-format'.on_attach(client)
@@ -138,8 +136,9 @@ return {
             lspconfig.marksman.setup {
                 on_attach = function(client, bufnr)
                     on_attach {} (client, bufnr)
-                    vim.keymap.set('n', '<localleader>p', InsertMarkdownURL, { silent = true, desc = 'Paste link' })
-                end }
+                    vim.keymap.set('n', '<localleader>p', insert_markdown_link, { silent = true, desc = 'Paste link' })
+                end,
+            }
 
             for _, server in pairs { 'gopls', 'hls', 'tsserver', 'templ' } do
                 lspconfig[server].setup {

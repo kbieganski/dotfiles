@@ -32,7 +32,7 @@ function M.setup()
     end
 
     vim.api.nvim_set_hl(0, 'Normal', { fg = colors.normal })
-    vim.api.nvim_set_hl(0, 'NormalNC', {  })
+    vim.api.nvim_set_hl(0, 'NormalNC', { bg = colors.inactive_bg })
     vim.api.nvim_set_hl(0, 'CursorLine', { bg = colors.cursorline })
 
     vim.api.nvim_set_hl(0, 'Visual', { bg = colors.visual })

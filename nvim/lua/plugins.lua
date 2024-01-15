@@ -241,12 +241,13 @@ return {
         dependencies = { 'nvim-telescope/telescope.nvim' },
     },
     {
-        -- 'vigoux/notifier.nvim',  -- this is the upstream, without level-aware content highlighting
-        'williamboman/notifier.nvim',
-        branch = 'feat/level-aware-content-highlighting',
+        "j-hui/fidget.nvim",
         opts = {
-            notify = {
-                clear_time = 2000,
+            notification = {
+                override_vim_notify = true,
+                window = {
+                    winblend = 0,
+                },
             },
         },
     },
@@ -259,7 +260,10 @@ return {
         },
     },
     { import = 'plugins-dap' },
-    'LnL7/vim-nix',                 -- nix language support
+    {
+        'LnL7/vim-nix',
+        filetype = 'nix',
+    },
     {
         'lewis6991/spaceless.nvim', -- trim whitespace
         opts = {},
@@ -293,12 +297,34 @@ return {
     {
         'numToStr/Navigator.nvim',
         config = function()
-            require 'Navigator'.setup {}
+            local pane_at = {
+                h = '#{pane_at_left}',
+                j = '#{pane_at_bottom}',
+                k = '#{pane_at_top}',
+                l = '#{pane_at_right}',
+            }
+            local tmux_navigator = require 'Navigator.mux.tmux'
+            tmux_navigator._navigate = tmux_navigator.navigate
+            ---@diagnostic disable-next-line: duplicate-set-field
+            tmux_navigator.navigate = function(self, direction)
+                if pane_at[direction] then
+                    ---@diagnostic disable-next-line: invisible
+                    self.execute(string.format("if -F '%s' '' 'select-pane -%s'", pane_at[direction],
+                        ---@diagnostic disable-next-line: invisible
+                        self.direction[direction]))
+                else
+                    self:_navigate(direction)
+                end
+                return self
+            end
+            require 'Navigator'.setup { disable_on_zoom = true, mux = tmux_navigator:new() }
         end,
-    },
-    {
-        'chentoast/marks.nvim',
-        opts = {},
+        keys = {
+            { '<M-h>', function() require 'Navigator'.left() end,  desc = 'Window left',  silent = true },
+            { '<M-j>', function() require 'Navigator'.down() end,  desc = 'Window down',  silent = true },
+            { '<M-k>', function() require 'Navigator'.up() end,    desc = 'Window up',    silent = true },
+            { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right', silent = true },
+        },
     },
     {
         'jbyuki/venn.nvim',
