@@ -9,7 +9,8 @@ function M.setup()
         cursorline = '#222222',
         reference = '#333333',
         visual = '#444444',
-        lineno = '#555555',
+        border = '#555555',
+        lineno = '#666666',
         comment = '#777777',
         delimiter = '#888888',
         preproc = '#999999',
@@ -92,10 +93,13 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'markdownUrl', { underdashed = true })
     vim.api.nvim_set_hl(0, 'markdownUrlTitle', { underdotted = true })
 
-    vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.active_bg, bg = colors.active_bg })
-    vim.api.nvim_set_hl(0, 'TelescopeBorder', { link = 'FloatBorder' })
+    vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.border, bg = colors.active_bg })
     vim.api.nvim_set_hl(0, 'LspInfoBorder', { link = 'FloatBorder' })
+    vim.api.nvim_set_hl(0, 'PmenuSel', { link = 'CursorLine' })
 
+    vim.api.nvim_set_hl(0, 'TelescopeBorder', { link = 'FloatBorder' })
+    vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = colors.active_bg })
+    vim.api.nvim_set_hl(0, 'TelescopeSelection', { link = 'CursorLine' })
     vim.api.nvim_set_hl(0, 'TelescopeMatching', { link = 'Search' })
 end
 
