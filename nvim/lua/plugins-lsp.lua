@@ -28,7 +28,27 @@ local function on_attach(opts)
     opts = opts or {}
     if opts.virtual_types == nil then opts.virtual_types = true end
     return function(client, bufnr)
-        require 'illuminate'.on_attach(client)
+        if client.server_capabilities.documentHighlightProvider then
+            vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
+            vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_document_highlight" }
+            vim.api.nvim_create_autocmd("CursorHold", {
+                callback = function()
+                    vim.lsp.buf.clear_references()
+                    vim.lsp.buf.document_highlight()
+                end,
+                buffer = bufnr,
+                group = "lsp_document_highlight",
+            })
+            vim.api.nvim_create_autocmd("CursorHoldI", {
+                callback = function()
+                    vim.lsp.buf.clear_references()
+                    vim.lsp.buf.document_highlight()
+                end,
+                buffer = bufnr,
+                group = "lsp_document_highlight",
+            })
+
+        end
         if opts.autoformat then
             require 'lsp-format'.on_attach(client)
         end
@@ -97,7 +117,6 @@ return {
             { 'SmiteshP/nvim-navic',                          lazy = true, opts = {} }, -- breadcrumbs
             { 'lukas-reineke/lsp-format.nvim',                lazy = true, opts = {} }, -- auto format
             { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', lazy = true, opts = {} }, -- diagnostic lines
-            { 'RRethy/vim-illuminate',                        lazy = true },            -- highlight word under cursor
             { 'hrsh7th/cmp-nvim-lsp',                         lazy = true },
             {
                 'simrat39/symbols-outline.nvim',
