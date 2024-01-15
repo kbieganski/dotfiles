@@ -186,8 +186,17 @@ return {
         },
     },
     {
-        'folke/todo-comments.nvim', -- higlight todo comments
+        'folke/todo-comments.nvim',
         opts = {},
+        keys = {
+            {
+                '<leader>t',
+                function() require 'telescope'.load_extension 'todo-comments'.todo() end,
+                desc = 'Todos',
+                silent = true,
+            },
+        },
+        dependencies = { 'nvim-telescope/telescope.nvim' },
     },
     -- UI improvements
     {

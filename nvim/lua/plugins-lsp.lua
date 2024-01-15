@@ -213,8 +213,7 @@ return {
                 },
             }
 
-            require 'nvim-lightbulb'.setup { sign = { enabled = false }, virtual_text = { enabled = true }, autocmd = {
-                enabled = true } }
+            require 'nvim-lightbulb'.setup { autocmd = { enabled = true } }
         end,
         filetype = { 'c', 'cpp', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'rust', 'typescript' },
     },
