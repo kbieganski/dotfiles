@@ -120,7 +120,8 @@ return {
                 },
                 window = {
                     documentation = {
-                        border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' }
+                        border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' },
+                        winhighlight = '',
                     },
                 },
                 experimental = { ghost_text = true },
@@ -133,7 +134,7 @@ return {
                 },
                 sources = {
                     { name = 'buffer' }
-                }
+                },
             })
 
             -- `:` cmdline setup.
