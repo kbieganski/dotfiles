@@ -57,9 +57,9 @@ local function on_attach(opts)
             require 'nvim-navic'.attach(client, bufnr)
             vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
         end
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_next,
+        vim.keymap.set('n', ']e', vim.diagnostic.goto_next,
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev,
+        vim.keymap.set('n', '[e', vim.diagnostic.goto_prev,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
         vim.keymap.set('n', '<localleader>e', vim.diagnostic.open_float,
             { buffer = bufnr, silent = true, desc = 'Line diagnostics' })
