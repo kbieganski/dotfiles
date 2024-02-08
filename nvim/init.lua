@@ -21,3 +21,10 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup plugins
 require 'lazy'.setup 'plugins'
+
+require 'diagline_popup'.setup()
+
+function R(name)
+    require 'plenary.reload'.reload_module(name)
+    return require(name)
+end
