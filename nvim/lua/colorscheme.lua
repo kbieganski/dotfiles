@@ -93,7 +93,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'markdownUrl', { underdashed = true })
     vim.api.nvim_set_hl(0, 'markdownUrlTitle', { underdotted = true })
 
-    vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.border, bg = colors.active_bg })
+    vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.border })
     vim.api.nvim_set_hl(0, 'LspInfoBorder', { link = 'FloatBorder' })
     vim.api.nvim_set_hl(0, 'PmenuSel', { link = 'CursorLine' })
 

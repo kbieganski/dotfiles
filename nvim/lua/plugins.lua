@@ -275,7 +275,8 @@ return {
     },
     {
         'lewis6991/spaceless.nvim', -- trim whitespace
-        opts = {},
+        lazy = false,
+        config = function() require 'spaceless'.setup() end,
     },
     {
         'NMAC427/guess-indent.nvim', -- guess indentation from file

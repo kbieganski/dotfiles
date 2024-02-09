@@ -23,7 +23,7 @@ end
 
 
 local function on_attach(opts)
-    vim.diagnostic.config { virtual_text = false, virtual_lines = false }
+    vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
     opts = opts or {}
     if opts.virtual_types == nil then opts.virtual_types = true end
@@ -61,7 +61,7 @@ local function on_attach(opts)
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
         vim.keymap.set('n', '[e', vim.diagnostic.goto_prev,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
-        vim.keymap.set('n', '<localleader>e', vim.diagnostic.open_float,
+        vim.keymap.set('n', '<localleader>e', require 'diagline_popup'.show,
             { buffer = bufnr, silent = true, desc = 'Line diagnostics' })
         vim.keymap.set('n', '<localleader>E', telescope_builtin.diagnostics,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })
@@ -97,10 +97,6 @@ local function on_attach(opts)
             { buffer = bufnr, silent = true, desc = 'Reference' })
         vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations,
             { buffer = bufnr, silent = true, desc = 'Implementation' })
-        vim.keymap.set('n', '<localleader>j', function()
-            vim.g.lines_enabled = not vim.g.lines_enabled
-            vim.diagnostic.config { virtual_lines = vim.g.lines_enabled }
-        end, { buffer = bufnr, silent = true, desc = 'Show diagnostic lines' })
     end
 end
 
@@ -114,7 +110,6 @@ return {
             { 'kosayoda/nvim-lightbulb',                      lazy = true },            -- code action lightbulb
             { 'SmiteshP/nvim-navic',                          lazy = true, opts = {} }, -- breadcrumbs
             { 'lukas-reineke/lsp-format.nvim',                lazy = true, opts = {} }, -- auto format
-            { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', lazy = true, opts = {} }, -- diagnostic lines
             { 'hrsh7th/cmp-nvim-lsp',                         lazy = true },
             {
                 'simrat39/symbols-outline.nvim',
@@ -250,13 +245,6 @@ return {
                     end,
                 },
             }
-            local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-            function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-                opts = opts or {}
-                --opts.border = opts.border or 'single'
-                opts.max_width = opts.max_width or 60
-                return orig_util_open_floating_preview(contents, syntax, opts, ...)
-            end
         end,
         dependencies = { 'neovim/nvim-lspconfig' },
         ft = 'rust',

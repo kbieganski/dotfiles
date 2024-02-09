@@ -1,87 +1,112 @@
 local M = {}
 
-local function make_highlight_map(base_name)
-  local result = {}
-  for k in pairs(diagnostic_severities) do
-    local name = M.severity[k]
-    name = name:sub(1, 1) .. name:sub(2):lower()
-    result[k] = 'Diagnostic' .. base_name .. name
-  end
-
-  return result
-end
-
-function f()
-    g(a, b, c)
-end
-
-
-function M.make_diag_window()
-    local focus_id = "diagnostic_lines"
-    local current_winnr = vim.api.nvim_get_current_win()
-    if vim.F.npcall(vim.api.nvim_win_get_var, current_winnr, focus_id) then
-        return
-    end
+---@private
+--- Get data/functions that depend on the position of the floating window
+---@return [function, function, string]
+local function float_pos_dependent()
     local lines_above = vim.fn.winline() - 1
     local lines_below = vim.fn.winheight(0) - lines_above
-    local row, cursor_col = unpack(vim.api.nvim_win_get_cursor(0))
-    local float_lines = {}
-    local diags = vim.diagnostic.get(0)
-    diags = vim.tbl_filter(function(diag) return diag.lnum + 1 == row end, diags)
-    if #diags == 0 then
-        return
-    end
     if lines_above < lines_below then
-        table.sort(diags, function(a, b) return a.col > b.col end)
+        return {
+            function(a, b) return a.severity < b.severity end,
+            function(_, i) return i - 1 end,
+            '└─── ',
+        }
     else
-        table.sort(diags, function(a, b) return a.col < b.col end)
+        return {
+            function(a, b) return a.severity > b.severity end,
+            function(diags, i) return #diags - i end,
+            '┌─── ',
+        }
     end
-    local prefix = '│'
-    local last_col = diags[1].col
-    diags[1].turn_sym = lines_above < lines_below and '└ ' or '┌ '
-    local i = 2
-    while i <= #diags do
-        if diags[i].col == last_col then
-            --table.remove(diags, i)
-            --  │
-            --  ├►
-            --  ▼
-            diags[i].turn_sym = '├ '
-        else
-            diags[i].turn_sym = lines_above < lines_below and '└ ' or '┌ '
-            prefix = '│' .. string.rep(' ', math.abs(last_col - diags[i].col) - 1) .. prefix
-            last_col = diags[i].col
-        end
-        i = i + 1
-    end
-    last_col = -1
-    for _, diag in ipairs(diags) do
-        local message = diag.message
-        local idx = string.find(diag.message, "\n")
-        if idx then
-            message = string.sub(diag.message, 1, idx - 1)
-        end
-        prefix = vim.trim(prefix)
-        local my_prefix = prefix:sub(1, #prefix - #('│'))
-        if diag.col ~= last_col then
-            prefix = my_prefix
-        end
-        message = my_prefix .. diag.turn_sym .. vim.diagnostic.severity[diag.severity] .. ' ' .. message
-        idx = lines_above < lines_below and #float_lines + 1 or 1
-        table.insert(float_lines, idx, message)
-        last_col = diag.col
-    end
-    local first_col = lines_above < lines_below and diags[1].col or diags[#diags].col
-    local bufnr, _ = vim.lsp.util.open_floating_preview(float_lines, 'markdown',
-        { offset_x = first_col - cursor_col - 1, focus_id = focus_id, wrap = false })
-    --vim.api.nvim_buf_add_highlight(bufnr, -1, 'DiagnosticError' 0, 0, -1)
 end
 
-function M.setup()
-    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-        group = vim.api.nvim_create_augroup('auto_diag_window', { clear = true }),
-        callback = M.make_diag_window,
-    })
+--- Make a floating window with the diagnostics of the current line
+---@param opts (table, optional) Options
+---        - focus (boolean) If true, an existing floating window will be focused
+function M.show(opts)
+    opts = opts or {}
+    opts.focus = opts.focus == nil and true or opts.focus
+    local focus_id = "diagline_popup"
+
+    local _, lnum, cur_col, cur_off = unpack(vim.fn.getpos [[.]])
+    local diags = vim.diagnostic.get(0, { lnum = lnum - 1 })
+    if #diags == 0 then return end
+
+    local severity_less, float_line, connector_end = unpack(float_pos_dependent())
+
+    table.sort(diags,
+        function(a, b)
+            if a.col == b.col then return severity_less(a, b) end
+            return a.col > b.col
+        end)
+
+    local float_diags = {}
+    for i, diag in ipairs(diags) do
+        local message = diag.message
+        local idx = message:find("\n")
+        if idx then
+            message = message:sub(1, idx - 1)
+        end
+        local severity = vim.diagnostic.severity[diag.severity]
+        severity = severity:sub(1, 1):upper() .. severity:sub(2):lower()
+        float_diags[i] = {
+            float_line = float_line(diags, i),
+            hi_group = 'Diagnostic' .. severity,
+            other_connectors = '',
+            connector_end = connector_end,
+            message = message,
+        }
+        if i > 1 then
+            local j = i - 1
+            local prev_diag = diags[j]
+            if diag.col == prev_diag.col then
+                float_diags[j].connector_end = '├─── '
+            else
+                local new_connector = '│' .. (' '):rep(prev_diag.col - diag.col - 1)
+                while j > 0 do
+                    if diags[j].col ~= diag.col then
+                        float_diags[j].other_connectors = new_connector .. float_diags[j].other_connectors
+                    end
+                    j = j - 1
+                end
+            end
+        end
+    end
+
+    local float_contents = {}
+    for _, diag in ipairs(float_diags) do
+        local connectors = diag.other_connectors .. diag.connector_end
+        diag.hi_col = #connectors
+        float_contents[diag.float_line + 1] = connectors .. diag.message
+    end
+
+    local bufnr, _ = vim.lsp.util.open_floating_preview(float_contents, nil,
+        {
+            offset_x = diags[#diags].col - (cur_col + cur_off),
+            focusable = opts.focus,
+            focus_id = focus_id,
+            wrap = false
+        })
+
+    for _, diag in ipairs(float_diags) do
+        vim.api.nvim_buf_add_highlight(bufnr, -1, 'FloatBorder', diag.float_line, 0, diag.hi_col)
+        vim.api.nvim_buf_add_highlight(bufnr, -1, diag.hi_group, diag.float_line, diag.hi_col, -1)
+    end
+end
+
+--- Setup the diagline_popup module
+---@param opts table, optional Options
+---            - events (table) The events that trigger the floating window
+function M.setup(opts)
+    opts = opts or {}
+    opts.events = opts.events == nil and { 'CursorHold', 'CursorHoldI' } or opts.events
+    if #opts.events > 0 then
+        vim.api.nvim_create_autocmd(opts.events, {
+            group = vim.api.nvim_create_augroup('diagline_popup', { clear = true }),
+            callback = function() M.show { focus = false } end,
+        })
+    end
 end
 
 return M
