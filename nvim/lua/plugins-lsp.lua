@@ -57,31 +57,29 @@ local function on_attach(opts)
             require 'nvim-navic'.attach(client, bufnr)
             vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
         end
-        vim.keymap.set('n', ']e', vim.diagnostic.goto_next,
+        vim.keymap.set('n', ']-', vim.diagnostic.goto_next,
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
-        vim.keymap.set('n', '[e', vim.diagnostic.goto_prev,
+        vim.keymap.set('n', '[-', vim.diagnostic.goto_prev,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
-        vim.keymap.set('n', '<localleader>e', require 'diagline_popup'.show,
+        vim.keymap.set('n', '!', require 'diagline_popup'.show,
             { buffer = bufnr, silent = true, desc = 'Line diagnostics' })
-        vim.keymap.set('n', '<localleader>E', telescope_builtin.diagnostics,
+        vim.keymap.set('n', '-', function() telescope_builtin.diagnostics { bufnr = 0 } end,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })
-        vim.keymap.set('n', '<localleader>h', vim.lsp.buf.hover,
+        vim.keymap.set('n', '_', telescope_builtin.diagnostics,
+            { buffer = bufnr, silent = true, desc = 'All diagnostics' })
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover,
             { buffer = bufnr, silent = true, desc = 'Hover' })
-        vim.keymap.set('n', '<localleader>o', require 'symbols-outline'.toggle_outline,
-            { buffer = bufnr, silent = true, desc = 'Symbol outline' })
         for _, mode in ipairs { 'n', 'v' } do
-            vim.keymap.set(mode, '<localleader>a', vim.lsp.buf.code_action,
+            vim.keymap.set(mode, 'H', vim.lsp.buf.code_action,
                 { buffer = bufnr, silent = true, desc = 'Code action' })
-            vim.keymap.set(mode, '<localleader>f', vim.lsp.buf.format,
+            vim.keymap.set(mode, '<leader>f', vim.lsp.buf.format,
                 { buffer = bufnr, silent = true, desc = 'Apply formatting' })
         end
-        vim.keymap.set('n', '<localleader>k', vim.lsp.buf.signature_help,
-            { buffer = bufnr, silent = true, desc = 'Signature help' })
-        vim.keymap.set('n', '<localleader>r', vim.lsp.buf.rename,
+        vim.keymap.set('n', 'J', vim.lsp.buf.rename,
             { buffer = bufnr, silent = true, desc = 'Rename symbol' })
-        vim.keymap.set('n', '<localleader>s', telescope_builtin.lsp_document_symbols,
+        vim.keymap.set('n', 'm', telescope_builtin.lsp_document_symbols,
             { buffer = bufnr, silent = true, desc = 'Find symbol' })
-        vim.keymap.set('n', '<localleader>S', telescope_builtin.lsp_workspace_symbols,
+        vim.keymap.set('n', 'M', telescope_builtin.lsp_workspace_symbols,
             { buffer = bufnr, silent = true, desc = 'Find workspace symbol' })
         vim.keymap.set('n', 'gc', telescope_builtin.lsp_incoming_calls,
             { buffer = bufnr, silent = true, desc = 'Caller' })
@@ -105,17 +103,12 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'folke/neodev.nvim',                            lazy = true, opts = {} }, -- LSP for neovim config/plugin dev
-            { 'jubnzv/virtual-types.nvim',                    lazy = true },            -- code lens types
-            { 'kosayoda/nvim-lightbulb',                      lazy = true },            -- code action lightbulb
-            { 'SmiteshP/nvim-navic',                          lazy = true, opts = {} }, -- breadcrumbs
-            { 'lukas-reineke/lsp-format.nvim',                lazy = true, opts = {} }, -- auto format
-            { 'hrsh7th/cmp-nvim-lsp',                         lazy = true },
-            {
-                'simrat39/symbols-outline.nvim',
-                lazy = true,
-                opts = { autofold_depth = 2 }
-            },
+            { 'folke/neodev.nvim',             lazy = true, opts = {} }, -- LSP for neovim config/plugin dev
+            { 'jubnzv/virtual-types.nvim',     lazy = true },            -- code lens types
+            { 'kosayoda/nvim-lightbulb',       lazy = true },            -- code action lightbulb
+            { 'SmiteshP/nvim-navic',           lazy = true, opts = {} }, -- breadcrumbs
+            { 'lukas-reineke/lsp-format.nvim', lazy = true, opts = {} }, -- auto format
+            { 'hrsh7th/cmp-nvim-lsp',          lazy = true },
         },
         config = function()
             -- pretty LSP diagnostics icons
@@ -131,7 +124,7 @@ return {
             lspconfig.marksman.setup {
                 on_attach = function(client, bufnr)
                     on_attach {} (client, bufnr)
-                    vim.keymap.set('n', '<localleader>p', insert_markdown_link, { silent = true, desc = 'Paste link' })
+                    vim.keymap.set('n', '<leader>l', insert_markdown_link, { silent = true, desc = 'Paste link' })
                 end,
             }
 
@@ -240,7 +233,7 @@ return {
                     capabilities = capabilities,
                     on_attach = function(client, bufnr)
                         on_attach { autoformat = true, virtual_types = false } (client, bufnr)
-                        vim.keymap.set('n', '<localleader><CR>', rust_tools.debuggables.debuggables,
+                        vim.keymap.set('n', '<CR>d', rust_tools.debuggables.debuggables,
                             { buffer = bufnr, desc = 'Debuggables' })
                     end,
                 },

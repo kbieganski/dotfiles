@@ -96,8 +96,8 @@ function M.show(opts)
 end
 
 --- Setup the diagline_popup module
----@param opts table, optional Options
----            - events (table) The events that trigger the floating window
+---@param opts (table?) Options
+---        - events (table?) The events that trigger the floating window
 function M.setup(opts)
     opts = opts or {}
     opts.events = opts.events == nil and { 'CursorHold', 'CursorHoldI' } or opts.events

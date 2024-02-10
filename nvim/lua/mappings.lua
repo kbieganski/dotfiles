@@ -3,7 +3,6 @@ local M = {}
 
 function M.set()
     vim.g.mapleader = ' '
-    vim.g.maplocalleader = '\r'
 
     -- remap Ctrl-C to Esc, so that InsertLeave gets triggered
     vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
@@ -54,29 +53,26 @@ function M.set()
     vim.keymap.set('n', '<C-tab>', ':tabnext<CR>', { silent = true })
     vim.keymap.set('n', '<C-S-tab>', ':tabprev<CR>', { silent = true })
 
-    -- faster scrolling
-    vim.keymap.set('n', '<C-j>', '2<C-e>2j', { silent = true })
-    vim.keymap.set('n', '<C-k>', '2<C-y>2k', { silent = true })
-
-    -- move through jump history
-    vim.keymap.set('n', '<C-h>', '<C-o>', { silent = true })
-    vim.keymap.set('n', '<C-l>', '<C-i>', { silent = true })
-
     -- make < > shifts keep selection
     vim.keymap.set('v', '<', '<gv', { silent = true })
     vim.keymap.set('v', '>', '>gv', { silent = true })
 
-    vim.keymap.set('n', '<leader>q', ':qa<CR>', { silent = true, desc = 'Quit' })
-    vim.keymap.set('n', '<leader>Q', ':qa!<CR>', { silent = true, desc = 'Force quit' })
-    vim.keymap.set('n', '<leader>w', ':w<CR>', { silent = true, desc = 'Write current file' })
-    vim.keymap.set('n', '<leader>W', ':w!<CR>', { silent = true, desc = 'Force write current file' })
-    vim.keymap.set('n', '<leader><M-w>', ':wa<CR>', { silent = true, desc = 'Write all open files' })
-    vim.keymap.set('n', '<leader><C-w>', ':w !sudo tee %<CR>', { silent = true, desc = 'Write current file (sudo)' })
-    vim.keymap.set('n', '<leader>bx', ':bn<CR>:bd#<CR>', { silent = true, desc = 'Close buffer' })
-    vim.keymap.set('n', '<leader>bX', ':bn<CR>:bd#!<CR>', { silent = true, desc = 'Force close buffer' })
+    for _, keys in ipairs({ 'za', 'zA', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
+        vim.keymap.set('n', keys, ':<CR>', { silent = true, desc = '' })
+    end
+
+    vim.keymap.set('n', 'Z', ':qa<CR>', { silent = true, desc = 'Quit' })
+    vim.keymap.set('n', '<M-Z>', ':qa!<CR>', { silent = true, desc = 'Force quit' })
+    vim.keymap.set('n', '<C-s>', ':w<CR>', { silent = true, desc = 'Write current file' })
+    vim.keymap.set('n', '<M-s>', ':w!<CR>', { silent = true, desc = 'Force write current file' })
+    vim.keymap.set('n', 'zs', ':wa<CR>', { silent = true, desc = 'Write all open files' })
+    vim.keymap.set('n', 'zS', ':w !sudo tee %<CR>', { silent = true, desc = 'Write current file (sudo)' })
+
+    vim.keymap.set('n', 'zx', ':bn<CR>:bd#<CR>', { silent = true, desc = 'Close buffer' })
+    vim.keymap.set('n', 'zX', ':bn<CR>:bd#!<CR>', { silent = true, desc = 'Force close buffer' })
 
     -- Rename current file
-    vim.keymap.set('n', '<leader>R', function()
+    vim.keymap.set('n', 'zr', function()
         local filename = vim.api.nvim_buf_get_name(0)
         vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
             if new_filename == '' then

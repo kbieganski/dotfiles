@@ -206,11 +206,11 @@ return {
             }
         },
         keys = {
-            { '<localleader>db', function() require 'dap'.toggle_breakpoint() end, desc = 'Breakpoint' },
-            { '<localleader>dc', function() require 'dap'.continue() end,          desc = 'Continue' },
-            { '<localleader>dj', function() require 'dap'.step_into() end,         desc = 'Step into' },
-            { '<localleader>dk', function() require 'dap'.step_out() end,          desc = 'Step out' },
-            { '<localleader>dl', function() require 'dap'.step_over() end,         desc = 'Step over' },
+            { '<CR>b', function() require 'dap'.toggle_breakpoint() end, desc = 'Breakpoint' },
+            { '<CR>c', function() require 'dap'.continue() end,          desc = 'Continue' },
+            { '<CR>j', function() require 'dap'.step_into() end,         desc = 'Step into' },
+            { '<CR>k', function() require 'dap'.step_out() end,          desc = 'Step out' },
+            { '<CR>l', function() require 'dap'.step_over() end,         desc = 'Step over' },
         },
     },
 }

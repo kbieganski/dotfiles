@@ -4,33 +4,18 @@ LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua
 return {
     {
         'nvim-treesitter/nvim-treesitter',
+        branch = 'v0.9.2',
         ft = LANGS,
         config = function()
             require 'nvim-treesitter.configs'.setup {
                 ensure_installed = LANGS,
                 highlight = { enable = true },
-            }
-        end,
-        build = ':TSUpdate',
-    },
-    {
-        "kylechui/nvim-surround",
-        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
-        ft = LANGS,
-        opts = {},
-    },
-    {
-        'nvim-treesitter/nvim-treesitter-textobjects',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
-        ft = LANGS,
-        config = function()
-            require 'nvim-treesitter.configs'.setup {
                 textobjects = {
                     lsp_interop = {
                         enable = true,
                         border = 'single',
                         peek_definition_code = {
-                            ['<localleader>H'] = '@*.outer',
+                            L = '@*.outer',
                         },
                     },
                     move = {
@@ -121,6 +106,14 @@ return {
                     },
                 },
             }
-        end
+        end,
+        dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+        build = ':TSUpdate',
+    },
+    {
+        "kylechui/nvim-surround",
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
+        ft = LANGS,
+        opts = {},
     },
 }

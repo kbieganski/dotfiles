@@ -28,13 +28,7 @@ return {
                     align = 'center',
                 },
             }
-            wk.register({
-                    b = { 'Buffers' },
-                    g = { 'Git' },
-                    G = { 'GitHub' },
-                    n = { 'Notes' },
-                },
-                { prefix = '<leader>' })
+            vim.keymap.set('n', '=', function() wk.show('=') end)
         end,
     },
     {
@@ -55,7 +49,9 @@ return {
                     mappings = {
                         i = {
                             ['<ESC>'] = 'close',
+                            ['<down>'] = 'move_selection_next',
                             ['<M-j>'] = 'move_selection_next',
+                            ['<up>'] = 'move_selection_previous',
                             ['<M-k>'] = 'move_selection_previous',
                         },
                     },
@@ -67,9 +63,13 @@ return {
             }
         end,
         keys = {
-            { '<leader>`', function() require 'telescope.builtin'.marks() end,     desc = 'Marks' },
             {
-                '<leader>/',
+                '<M-`>',
+                function() require 'telescope.builtin'.jumplist() end,
+                desc = 'Jumps'
+            },
+            {
+                '<M-/>',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.current_buffer_fuzzy_find({ default_text = selection })
@@ -78,7 +78,7 @@ return {
                 desc = 'Find in current file'
             },
             {
-                '<leader>?',
+                '<M-\\>',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.live_grep({ default_text = selection })
@@ -87,17 +87,16 @@ return {
                 desc = 'Find in files'
             },
             {
-                '<leader>bb',
+                '<leader>b',
                 function() require 'telescope.builtin'.buffers { ignore_current_buffer = true, sort_mru = true } end,
                 desc = 'Switch buffer'
             },
-            { '<leader>h', function() require 'telescope.builtin'.help_tags() end, desc = 'Help' },
-            { '<leader>j', function() require 'telescope.builtin'.jumplist() end,  desc = 'Browse jumps' },
-            { '<leader>l', function() require 'telescope.builtin'.resume() end,    desc = 'Last picker' },
-            { '<leader>p', function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
-            { '<leader>r', function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
+            { '<leader>h',       function() require 'telescope.builtin'.help_tags() end, desc = 'Help' },
+            { '<leader><Space>', function() require 'telescope.builtin'.resume() end,    desc = 'Last picker' },
+            { '<M-p>',           function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
+            { '`',               function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
             {
-                '<leader>s',
+                '|',
                 function() require 'telescope.builtin'.find_files { hidden = true, follow = true } end,
                 desc = 'Find file'
             },
@@ -111,7 +110,7 @@ return {
         end,
         keys = {
             {
-                '<leader>f',
+                '\\',
                 function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
                 desc = 'Browse files'
             },
@@ -133,10 +132,10 @@ return {
             require 'telescope'.load_extension 'gh'
         end,
         keys = {
-            { '<leader>Ga', function() require 'telescope'.extensions.gh.run() end,          desc = 'Action runs' },
-            { '<leader>Gg', function() require 'telescope'.extensions.gh.gist() end,         desc = 'Gist' },
-            { '<leader>Gi', function() require 'telescope'.extensions.gh.issues() end,       desc = 'Issues' },
-            { '<leader>Gp', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'Pull requests' },
+            { '<leader>a', function() require 'telescope'.extensions.gh.run() end,          desc = 'GH Action runs' },
+            { '<leader>g', function() require 'telescope'.extensions.gh.gist() end,         desc = 'GH Gists' },
+            { '<leader>i', function() require 'telescope'.extensions.gh.issues() end,       desc = 'GH issues' },
+            { '<leader>p', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'GH pull requests' },
         },
     },
     {
@@ -146,7 +145,7 @@ return {
             require 'telescope'.load_extension 'repo'
         end,
         keys = {
-            { '<leader>gg', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
+            { '<leader>r', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
         },
     },
     {
@@ -159,8 +158,8 @@ return {
         },
         keys = {
             {
-                '<leader>u',
-                function() require 'telescope'.extensions.undo.list() end,
+                '<M-u>',
+                function() require 'telescope'.extensions.undo.undo() end,
                 desc = 'undo history',
             },
         },
@@ -184,19 +183,6 @@ return {
                 opts = {},
             },
         },
-    },
-    {
-        'folke/todo-comments.nvim',
-        opts = {},
-        keys = {
-            {
-                '<leader>t',
-                function() require 'telescope'.load_extension 'todo-comments'.todo() end,
-                desc = 'Todos',
-                silent = true,
-            },
-        },
-        dependencies = { 'nvim-telescope/telescope.nvim' },
     },
     -- UI improvements
     {
@@ -364,4 +350,23 @@ return {
             { '<leader>d', function() toggle_venn() end, desc = 'Toggle diagram drawing', silent = true },
         },
     },
+    {
+        'numToStr/Comment.nvim',
+        opts = {
+            toggler = {
+                line = 'zcc',
+                block = 'zbc',
+            },
+            opleader = {
+                line = 'zc',
+                block = 'zb',
+            },
+            extra = {
+                above = 'zcO',
+                below = 'zco',
+                eol = 'zcA',
+            },
+        },
+    },
+    'JoosepAlviste/nvim-ts-context-commentstring',
 }
