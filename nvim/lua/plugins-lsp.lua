@@ -1,27 +1,3 @@
-local function insert_markdown_link()
-    local url = vim.fn.getreg "+"
-    if url == "" then return end
-    local cmd = "curl -L " .. vim.fn.shellescape(url) .. " 2>/dev/null"
-    local handle = io.popen(cmd)
-    if not handle then return end
-    local html = handle:read "*a"
-    handle:close()
-    local title = ""
-    local pattern = "<title>(.-)</title>"
-    local m = string.match(html, pattern)
-    if m then title = m end
-    if title ~= "" then
-        local pos = vim.api.nvim_win_get_cursor(0)[2]
-        local line = vim.api.nvim_get_current_line()
-        local link = "[" .. title .. "](" .. url .. ")"
-        local new_line = line:sub(0, pos) .. link .. line:sub(pos + 1)
-        vim.api.nvim_set_current_line(new_line)
-    else
-        vim.notify("Title not found for link")
-    end
-end
-
-
 local function on_attach(opts)
     vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
@@ -55,7 +31,6 @@ local function on_attach(opts)
         end
         if client.server_capabilities.documentSymbolProvider then
             require 'nvim-navic'.attach(client, bufnr)
-            vim.opt_local.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
         end
         vim.keymap.set('n', ']-', vim.diagnostic.goto_next,
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
@@ -103,12 +78,12 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'folke/neodev.nvim',             lazy = true, opts = {} }, -- LSP for neovim config/plugin dev
-            { 'jubnzv/virtual-types.nvim',     lazy = true },            -- code lens types
-            { 'kosayoda/nvim-lightbulb',       lazy = true },            -- code action lightbulb
-            { 'SmiteshP/nvim-navic',           lazy = true, opts = {} }, -- breadcrumbs
-            { 'lukas-reineke/lsp-format.nvim', lazy = true, opts = {} }, -- auto format
-            { 'hrsh7th/cmp-nvim-lsp',          lazy = true },
+            { 'folke/neodev.nvim', },             -- LSP for neovim config/plugin dev
+            { 'jubnzv/virtual-types.nvim', },     -- code lens types
+            { 'kosayoda/nvim-lightbulb', },       -- code action lightbulb
+            { 'SmiteshP/nvim-navic', },           -- breadcrumbs
+            { 'lukas-reineke/lsp-format.nvim', }, -- auto format
+            { 'hrsh7th/cmp-nvim-lsp', },
         },
         config = function()
             -- pretty LSP diagnostics icons
@@ -124,7 +99,6 @@ return {
             lspconfig.marksman.setup {
                 on_attach = function(client, bufnr)
                     on_attach {} (client, bufnr)
-                    vim.keymap.set('n', '<leader>l', insert_markdown_link, { silent = true, desc = 'Paste link' })
                 end,
             }
 
@@ -169,20 +143,16 @@ return {
 
             lspconfig.zls.setup {
                 capabilities = capabilities,
-                on_attach = on_attach { autoformat = false },
+                on_attach = on_attach { autoformat = true },
             }
 
-            require 'neodev'.setup {}
-
+            require 'neodev'.setup()
             lspconfig.lua_ls.setup {
-                on_attach = on_attach { autoformat = false },
+                capabilities = capabilities,
+                on_attach = on_attach { autoformat = true },
                 settings = {
                     Lua = {
-                        completion = {
-                            callSnippet = 'Replace'
-                        },
                         runtime = {
-                            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
                             version = 'LuaJIT',
                         },
                         diagnostics = {
@@ -201,7 +171,10 @@ return {
                 },
             }
 
-            require 'nvim-lightbulb'.setup { autocmd = { enabled = true } }
+            require 'nvim-lightbulb'.setup {
+                sign = { text = '' },
+                autocmd = { enabled = true },
+            }
         end,
         filetype = { 'c', 'cpp', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'rust', 'typescript' },
     },

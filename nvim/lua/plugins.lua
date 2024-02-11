@@ -196,20 +196,25 @@ return {
                     },
                 },
                 sections = {
-                    lualine_a = { 'mode', function() if vim.b.venn_enabled then return '[Diagram]' else return '' end end },
-                    lualine_b = { 'branch', 'diff' },
-                    lualine_c = { 'filename', { 'diagnostics', sources = { 'nvim_diagnostic' } } },
-                    lualine_x = { 'filetype' },
-                    lualine_y = { 'encoding', 'fileformat', },
+                    lualine_a = { 'mode', function() if vim.b.venn_enabled then return 'D' else return '' end end, 'selectioncount' },
+                    lualine_b = { 'diagnostics' },
+                    lualine_c = { function() return require 'nvim-navic'.get_location() end },
+                    lualine_x = { 'diff' },
+                    lualine_y = { 'branch', 'filename' },
+                    lualine_z = { 'progress', 'location' },
+                },
+                inactive_sections = {
+                    lualine_a = { 'mode' },
+                    lualine_c = {},
+                    lualine_b = {},
+                    lualine_x = {},
+                    lualine_y = { 'filename' },
                     lualine_z = { 'progress', 'location' },
                 },
             }
         end,
     },
-    {
-        'kyazdani42/nvim-web-devicons',
-        opts = {}
-    },
+    'kyazdani42/nvim-web-devicons',
     {
         'stevearc/dressing.nvim', -- better select/input menus
         config = function()
@@ -246,22 +251,9 @@ return {
             },
         },
     },
-    {
-        'levouh/tint.nvim',
-        event = 'WinEnter',
-        opts = {
-            tint = -20,
-            saturation = 0,
-        },
-    },
     { import = 'plugins-dap' },
     {
-        'LnL7/vim-nix',
-        filetype = 'nix',
-    },
-    {
         'lewis6991/spaceless.nvim', -- trim whitespace
-        lazy = false,
         config = function() require 'spaceless'.setup() end,
     },
     {
@@ -368,5 +360,4 @@ return {
             },
         },
     },
-    'JoosepAlviste/nvim-ts-context-commentstring',
 }

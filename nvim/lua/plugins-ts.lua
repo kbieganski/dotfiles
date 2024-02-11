@@ -1,14 +1,16 @@
-LANGS = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline',
-    'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
 -- Tree-sitter plugins
+
+local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline',
+    'nix', 'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
+
 return {
     {
         'nvim-treesitter/nvim-treesitter',
         branch = 'v0.9.2',
-        ft = LANGS,
+        ft = langs,
         config = function()
             require 'nvim-treesitter.configs'.setup {
-                ensure_installed = LANGS,
+                ensure_installed = langs,
                 highlight = { enable = true },
                 textobjects = {
                     lsp_interop = {
@@ -107,13 +109,26 @@ return {
                 },
             }
         end,
-        dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter-textobjects',
+            {
+                'nvim-treesitter/nvim-treesitter-context',
+                opts = {
+                    max_lines = 1,
+                    mode = 'topline',
+                },
+            },
+        },
         build = ':TSUpdate',
     },
     {
-        "kylechui/nvim-surround",
+        'kylechui/nvim-surround',
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
-        ft = LANGS,
+        ft = langs,
         opts = {},
     },
+    {
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    }
 }

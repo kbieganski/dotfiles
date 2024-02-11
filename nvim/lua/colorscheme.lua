@@ -35,7 +35,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'Normal', { fg = colors.normal })
     vim.api.nvim_set_hl(0, 'NormalNC', { bg = colors.inactive_bg })
     vim.api.nvim_set_hl(0, 'CursorLine', { bg = colors.cursorline })
-
+    vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = colors.inactive_bg })
     vim.api.nvim_set_hl(0, 'Visual', { bg = colors.visual })
 
     vim.api.nvim_set_hl(0, 'Keyword', { bold = true })
@@ -96,6 +96,9 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'VertSplit', { fg = colors.border })
     vim.api.nvim_set_hl(0, 'LspInfoBorder', { link = 'FloatBorder' })
     vim.api.nvim_set_hl(0, 'PmenuSel', { link = 'CursorLine' })
+
+    vim.api.nvim_set_hl(0, 'TreesitterContext', { bg = colors.cursorline })
+    vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { fg = colors.lineno, bg = colors.cursorline })
 
     vim.api.nvim_set_hl(0, 'TelescopeBorder', { link = 'FloatBorder' })
     vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = colors.active_bg })
