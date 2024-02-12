@@ -36,25 +36,26 @@ local function on_attach(opts)
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
         vim.keymap.set('n', '[-', vim.diagnostic.goto_prev,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
-        vim.keymap.set('n', '!', require 'diagline_popup'.show,
-            { buffer = bufnr, silent = true, desc = 'Line diagnostics' })
         vim.keymap.set('n', '-', function() telescope_builtin.diagnostics { bufnr = 0 } end,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })
         vim.keymap.set('n', '_', telescope_builtin.diagnostics,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover,
             { buffer = bufnr, silent = true, desc = 'Hover' })
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+            border = "single",
+        })
         for _, mode in ipairs { 'n', 'v' } do
-            vim.keymap.set(mode, 'H', vim.lsp.buf.code_action,
+            vim.keymap.set(mode, '<M-a>', vim.lsp.buf.code_action,
                 { buffer = bufnr, silent = true, desc = 'Code action' })
-            vim.keymap.set(mode, '<leader>f', vim.lsp.buf.format,
+            vim.keymap.set(mode, '<M-f>', vim.lsp.buf.format,
                 { buffer = bufnr, silent = true, desc = 'Apply formatting' })
         end
-        vim.keymap.set('n', 'J', vim.lsp.buf.rename,
+        vim.keymap.set('n', '<M-r>', vim.lsp.buf.rename,
             { buffer = bufnr, silent = true, desc = 'Rename symbol' })
         vim.keymap.set('n', 'm', telescope_builtin.lsp_document_symbols,
             { buffer = bufnr, silent = true, desc = 'Find symbol' })
-        vim.keymap.set('n', 'M', telescope_builtin.lsp_workspace_symbols,
+        vim.keymap.set('n', '<M-m>', telescope_builtin.lsp_workspace_symbols,
             { buffer = bufnr, silent = true, desc = 'Find workspace symbol' })
         vim.keymap.set('n', 'gc', telescope_builtin.lsp_incoming_calls,
             { buffer = bufnr, silent = true, desc = 'Caller' })

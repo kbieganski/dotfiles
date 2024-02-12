@@ -8,9 +8,13 @@ function M.set()
     vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
 
     -- unmap useless stuff
-    vim.keymap.set('n', 'J', function() end, { silent = true })
-    vim.keymap.set('n', 'K', function() end, { silent = true })
-    vim.keymap.set('n', 's', function() end, { silent = true })
+    vim.keymap.set('n', 's', function() end, { silent = true, desc = '' })
+    for _, keys in ipairs({ 'za', 'zA', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
+        vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
+    end
+    for _, keys in ipairs({ '-', '_', '=', '+', 'm' }) do
+        vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
+    end
 
     -- delete without yanking with x/X
     vim.keymap.set('n', 'x', '"_x', { silent = true })
@@ -38,7 +42,7 @@ function M.set()
     vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { silent = true })
     vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { silent = true })
 
-    -- window management with the alt and ctrl keys
+    -- window management with alt
     vim.keymap.set('n', '<M-q>', ':close<CR>', { silent = true })
     vim.keymap.set('n', '<M-c>', ':split<CR>', { silent = true })
     vim.keymap.set('n', '<M-v>', ':vsplit<CR>', { silent = true })
@@ -57,15 +61,11 @@ function M.set()
     vim.keymap.set('v', '<', '<gv', { silent = true })
     vim.keymap.set('v', '>', '>gv', { silent = true })
 
-    for _, keys in ipairs({ 'za', 'zA', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
-        vim.keymap.set('n', keys, ':<CR>', { silent = true, desc = '' })
-    end
 
     vim.keymap.set('n', 'Z', ':qa<CR>', { silent = true, desc = 'Quit' })
     vim.keymap.set('n', '<M-Z>', ':qa!<CR>', { silent = true, desc = 'Force quit' })
     vim.keymap.set('n', '<C-s>', ':w<CR>', { silent = true, desc = 'Write current file' })
-    vim.keymap.set('n', '<M-s>', ':w!<CR>', { silent = true, desc = 'Force write current file' })
-    vim.keymap.set('n', 'zs', ':wa<CR>', { silent = true, desc = 'Write all open files' })
+    vim.keymap.set('n', '<M-s>', ':wa<CR>', { silent = true, desc = 'Write all open files' })
     vim.keymap.set('n', 'zS', ':w !sudo tee %<CR>', { silent = true, desc = 'Write current file (sudo)' })
 
     vim.keymap.set('n', 'zx', ':bn<CR>:bd#<CR>', { silent = true, desc = 'Close buffer' })
