@@ -17,7 +17,7 @@ return {
                         enable = true,
                         border = 'single',
                         peek_definition_code = {
-                            ['<M-k>'] = '@*.outer',
+                            ['<M-K>'] = '@*.outer',
                         },
                     },
                     move = {
