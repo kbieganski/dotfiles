@@ -8,7 +8,6 @@ function M.set()
     vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
 
     -- unmap useless stuff
-    vim.keymap.set('n', 's', function() end, { silent = true, desc = '' })
     for _, keys in ipairs({ 'za', 'zA', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
         vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
     end
