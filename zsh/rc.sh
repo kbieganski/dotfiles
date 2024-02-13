@@ -3,8 +3,7 @@ COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(bazel colorize emacs extract git gitignore jsontools pip zsh-navigation-tools zsh-syntax-highlighting)
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+plugins=(extract git git-commit starship zoxide zsh-navigation-tools zsh-syntax-highlighting)
 
 setopt extendedglob      # Regular expressions with *
 setopt nocaseglob        # Case insensitive globbing
