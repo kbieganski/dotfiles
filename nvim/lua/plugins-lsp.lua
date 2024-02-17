@@ -32,9 +32,9 @@ local function on_attach(opts)
         if client.server_capabilities.documentSymbolProvider then
             require 'nvim-navic'.attach(client, bufnr)
         end
-        vim.keymap.set('n', ']-', vim.diagnostic.goto_next,
+        vim.keymap.set('n', ']-', function() vim.diagnostic.goto_next { float = false } end,
             { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
-        vim.keymap.set('n', '[-', vim.diagnostic.goto_prev,
+        vim.keymap.set('n', '[-', function() vim.diagnostic.goto_prev { float = false } end,
             { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
         vim.keymap.set('n', '-', function() telescope_builtin.diagnostics { bufnr = 0 } end,
             { buffer = bufnr, silent = true, desc = 'All diagnostics' })

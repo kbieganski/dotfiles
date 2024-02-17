@@ -106,7 +106,8 @@ function M.setup(opts)
             group = vim.api.nvim_create_augroup('diagline-popup', { clear = true }),
             callback = function()
                 for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
-                    if vim.api.nvim_win_get_config(win).zindex then
+                    local win_config = vim.api.nvim_win_get_config(win)
+                    if win_config.zindex and win_config.focusable then
                         return
                     end
                 end
