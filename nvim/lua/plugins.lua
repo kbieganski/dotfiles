@@ -15,6 +15,13 @@ end
 
 return {
     {
+        dir = vim.fn.stdpath('config') .. '/plugins/diagline-popup',
+        opts = {},
+    },
+    {
+        dir = vim.fn.stdpath('config') .. '/plugins/compiler-explorer',
+    },
+    {
         'folke/which-key.nvim',
         config = function()
             local wk = require 'which-key'

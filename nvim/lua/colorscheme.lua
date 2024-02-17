@@ -65,6 +65,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'Error', { fg = colors.red })
     vim.api.nvim_set_hl(0, 'DiagnosticError', { link = 'Error' })
     vim.api.nvim_set_hl(0, 'DiagnosticUnderlineError', { undercurl = true, sp = colors.red })
+    vim.api.nvim_set_hl(0, 'NvimInvalid', { undercurl = true, sp = colors.red })
     vim.api.nvim_set_hl(0, 'ErrorMsg', { link = 'Error' })
 
     vim.api.nvim_set_hl(0, 'Warn', { fg = colors.yellow })
@@ -87,6 +88,8 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'LspReferenceWrite', { bg = '#442222' })
 
     vim.api.nvim_set_hl(0, 'SpellBad', { undercurl = true, sp = colors.red })
+
+    vim.api.nvim_set_hl(0, 'Directory', { bold = true })
 
     vim.api.nvim_set_hl(0, 'Title', { underline = true, bold = true, fg = colors.special })
 

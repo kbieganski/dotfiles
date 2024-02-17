@@ -11,7 +11,8 @@ function M.setup()
     -- Highlight on yank
     vim.api.nvim_create_autocmd('TextYankPost', {
         group = vim.api.nvim_create_augroup('highlight_yank', {}),
-        callback = vim.highlight.on_yank,
+        -- slient! needed to avoid error because of bug with virtual edit
+        command = "silent! lua vim.highlight.on_yank { higroup = 'Search' }",
     })
 
     -- resize splits if window got resized
@@ -82,22 +83,8 @@ function M.setup()
                         end
                     end,
                     { buffer = e.buf, silent = true, desc = 'Paste link' })
-                vim.opt_local.laststatus = 0
             end
         })
-
-    -- set no statusline on DAP buffers,
-    local dapui_no_status_group = vim.api.nvim_create_augroup('dapui_no_status', {})
-    for _, pattern in ipairs({ 'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console', 'dap-repl' }) do
-        vim.api.nvim_create_autocmd('FileType',
-            {
-                group = dapui_no_status_group,
-                pattern = pattern,
-                callback = function(e)
-                    vim.opt_local.laststatus = 0
-                end
-            })
-    end
 end
 
 return M

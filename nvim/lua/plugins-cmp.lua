@@ -12,6 +12,8 @@ return {
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-cmdline',
             'f3fora/cmp-spell',
+            'L3MON4D3/LuaSnip',
+            'saadparwaiz1/cmp_luasnip',
             {
                 'zbirenbaum/copilot.lua',
                 cmd = "Copilot",
@@ -36,6 +38,7 @@ return {
                     vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
             end
             cmp.setup {
+
                 preselect = cmp.PreselectMode.None,
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
@@ -106,6 +109,11 @@ return {
                         border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' },
                         winhighlight = '',
                     },
+                },
+                snippet = {
+                    expand = function(args)
+                        require 'luasnip'.lsp_expand(args.body)
+                    end,
                 },
                 experimental = { ghost_text = true },
             }

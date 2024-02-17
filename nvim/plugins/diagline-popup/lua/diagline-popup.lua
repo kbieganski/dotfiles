@@ -26,8 +26,8 @@ end
 ---        - focus (boolean) If true, an existing floating window will be focused
 function M.show(opts)
     opts = opts or {}
-    opts.focus = opts.focus == nil and true or opts.focus
-    local focus_id = "diagline_popup"
+    opts.focusable = opts.focusable == nil and true or opts.focusable
+    local focus_id = "diagline-popup"
 
     local _, lnum, cur_col, cur_off = unpack(vim.fn.getpos [[.]])
     local diags = vim.diagnostic.get(0, { lnum = lnum - 1 })
@@ -84,7 +84,7 @@ function M.show(opts)
     local bufnr, _ = vim.lsp.util.open_floating_preview(float_contents, nil,
         {
             offset_x = diags[#diags].col - (cur_col + cur_off),
-            focusable = opts.focus,
+            focusable = opts.focusable,
             focus_id = focus_id,
             wrap = false
         })
@@ -95,7 +95,7 @@ function M.show(opts)
     end
 end
 
---- Setup the diagline_popup module
+--- Setup the diagline-popup module
 ---@param opts (table?) Options
 ---        - events (table?) The events that trigger the floating window
 function M.setup(opts)
@@ -103,8 +103,15 @@ function M.setup(opts)
     opts.events = opts.events == nil and { 'CursorHold', 'CursorHoldI' } or opts.events
     if #opts.events > 0 then
         vim.api.nvim_create_autocmd(opts.events, {
-            group = vim.api.nvim_create_augroup('diagline_popup', { clear = true }),
-            callback = function() M.show { focus = false } end,
+            group = vim.api.nvim_create_augroup('diagline-popup', { clear = true }),
+            callback = function()
+                for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+                    if vim.api.nvim_win_get_config(win).zindex then
+                        return
+                    end
+                end
+                M.show { focusable = false }
+            end,
         })
     end
 end

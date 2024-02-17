@@ -29,6 +29,8 @@ function M.set()
     vim.o.spell = true
     vim.o.foldenable = false
     vim.o.relativenumber = true
+    vim.o.laststatus = 3
+    vim.o.cmdheight = 0
     vim.wo.conceallevel = 2
     vim.opt.signcolumn = 'yes:2'
 end
