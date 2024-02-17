@@ -1,4 +1,4 @@
--- Tree-sitter plugins
+-- Tree-sitter
 
 local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline',
     'nix', 'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }

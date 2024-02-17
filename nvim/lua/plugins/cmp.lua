@@ -1,3 +1,5 @@
+-- Completion
+
 return {
     {
         'hrsh7th/nvim-cmp',
@@ -12,8 +14,7 @@ return {
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-cmdline',
             'f3fora/cmp-spell',
-            'L3MON4D3/LuaSnip',
-            'saadparwaiz1/cmp_luasnip',
+            'dcampos/nvim-snippy',
             {
                 'zbirenbaum/copilot.lua',
                 cmd = "Copilot",
@@ -30,6 +31,7 @@ return {
         },
         config = function()
             local cmp = require 'cmp'
+            local snippy = require 'snippy'
             local lsp_cmp_format = require 'lspkind'.cmp_format { mode = 'symbol' }
             local has_words_before = function()
                 unpack = unpack or table.unpack
@@ -41,8 +43,8 @@ return {
 
                 preselect = cmp.PreselectMode.None,
                 sources = cmp.config.sources({
-                    { name = 'nvim_lsp' },
                     { name = 'nvim_lsp_signature_help' },
+                    { name = 'nvim_lsp' },
                     { name = 'nvim_lua' },
                     { name = 'copilot' },
                     {
@@ -60,15 +62,12 @@ return {
                     { name = 'crates' },
                 }),
                 mapping = {
-                    ['<down>'] = cmp.mapping.select_next_item(),
-                    ['<M-j>'] = cmp.mapping.select_next_item(),
-                    ['<up>'] = cmp.mapping.select_prev_item(),
-                    ['<M-k>'] = cmp.mapping.select_prev_item(),
-                    ['<M-Space>'] = cmp.mapping.complete(),
                     ['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
                     ['<Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
+                        elseif snippy.can_expand_or_advance() then
+                            snippy.expand_or_advance()
                         elseif has_words_before() then
                             cmp.complete()
                         else
@@ -78,6 +77,8 @@ return {
                     ['<S-Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_prev_item()
+                        elseif snippy.can_jump(-1) then
+                            snippy.previous()
                         else
                             fallback()
                         end
@@ -112,7 +113,7 @@ return {
                 },
                 snippet = {
                     expand = function(args)
-                        require 'luasnip'.lsp_expand(args.body)
+                        snippy.expand_snippet(args.body)
                     end,
                 },
                 experimental = { ghost_text = true },

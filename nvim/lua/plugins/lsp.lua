@@ -1,3 +1,5 @@
+-- Language Server Protocol
+
 local function on_attach(opts)
     vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
@@ -114,7 +116,7 @@ return {
                 capabilities = capabilities,
                 on_attach = function(client, bufnr)
                     on_attach { autoformat = false, virtual_types = false } (client, bufnr)
-                    vim.keymap.set('n', 'go', ':ClangdSwitchSourceHeader<CR>',
+                    vim.keymap.set('n', 'go', function() vim.cmd.ClangdSwitchSourceHeader() end,
                         { buffer = bufnr, desc = 'Switch source/header' })
                 end,
                 cmd = {
