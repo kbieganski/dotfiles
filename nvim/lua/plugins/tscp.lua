@@ -20,12 +20,31 @@ return {
         dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
             local telescope = require 'telescope'
+            local Path = require 'plenary.path'
+            local action_state = require 'telescope.actions.state'
+            local open_using = function(finder)
+                return function(prompt_bufnr)
+                    local current_finder = action_state.get_current_picker(prompt_bufnr).finder
+                    local entry = action_state.get_selected_entry()
+
+                    local entry_path
+                    if entry.ordinal == ".." then
+                        entry_path = Path:new(current_finder.path)
+                    else
+                        entry_path = action_state.get_selected_entry().Path
+                    end
+
+                    local path = entry_path:is_dir() and entry_path:absolute() or entry_path:parent():absolute()
+                    require 'telescope.actions'.close(prompt_bufnr)
+                    finder({ cwd = path })
+                end
+            end
             telescope.setup {
                 defaults = {
                     borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
                     layout_strategy = 'flex',
                     layout_config = {
-                        flex = { flip_columns = 240 },
+                        flex = { flip_columns = 180 },
                         vertical = { width = 0.9, height = 0.9 },
                         horizontal = { width = 0.9, height = 0.9 },
                     },
@@ -42,7 +61,15 @@ return {
                 },
                 extensions = {
                     hijack_netrw = true,
-                },
+                    file_browser = {
+                        mappings = {
+                            i = {
+                                ['<M-/>'] = open_using(require 'telescope.builtin'.find_files),
+                                ['<M-\\>'] = open_using(require 'telescope.builtin'.live_grep),
+                            },
+                        },
+                    },
+                }
             }
         end,
         keys = {

@@ -105,7 +105,7 @@ return {
                 end,
             }
 
-            for _, server in pairs { 'gopls', 'hls', 'tsserver', 'templ' } do
+            for _, server in pairs { 'gopls', 'hls', 'omnisharp', 'tsserver', 'templ' } do
                 lspconfig[server].setup {
                     capabilities = capabilities,
                     on_attach = on_attach { autoformat = true },

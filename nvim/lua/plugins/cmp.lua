@@ -32,7 +32,7 @@ return {
         config = function()
             local cmp = require 'cmp'
             local snippy = require 'snippy'
-            local lsp_cmp_format = require 'lspkind'.cmp_format { mode = 'symbol' }
+            local lsp_cmp_format = require 'lspkind'.cmp_format { mode = 'symbol', maxwidth = 20 }
             local has_words_before = function()
                 unpack = unpack or table.unpack
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -86,20 +86,22 @@ return {
                 },
                 formatting = {
                     format =
-                        function(entry, vim_item)
-                            CMP_WIDTH = 80 -- unknown item kinds will blow this, but let's deal with it once it happens
-                            local abbr = vim.fn.strcharpart(vim_item.abbr, 0, CMP_WIDTH - 1)
-                            if #abbr < #vim_item.abbr then
-                                vim_item.abbr = abbr .. '…'
+                        function(entry, item)
+                            if item.menu then
+                                local menu_width = 40
+                                local menu = vim.fn.strcharpart(item.menu, 0, menu_width - 1)
+                                if #menu < #item.menu then
+                                    item.menu = menu .. '…'
+                                end
+                                if #item.menu < menu_width then
+                                    item.menu = item.menu .. (' '):rep(menu_width - #menu - 1)
+                                end
                             end
-                            if #vim_item.abbr < CMP_WIDTH then
-                                vim_item.abbr = vim_item.abbr .. (' '):rep(CMP_WIDTH - #abbr - 1)
+                            if item.kind == 'Copilot' then
+                                item.kind = ''
+                                return item
                             end
-                            if vim_item.kind == 'Copilot' then
-                                vim_item.kind = ''
-                                return vim_item
-                            end
-                            return lsp_cmp_format(entry, vim_item)
+                            return lsp_cmp_format(entry, item)
                         end
                 },
                 view = {

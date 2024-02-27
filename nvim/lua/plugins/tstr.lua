@@ -1,7 +1,7 @@
 -- Tree-sitter
 
-local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'markdown_inline',
-    'nix', 'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
+local langs = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown',
+    'markdown_inline', 'nix', 'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
 
 return {
     {
