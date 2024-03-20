@@ -21,9 +21,9 @@ M._entries = setmetatable({}, {
 
 M.config = {
   highlight = 'CompilerExplorer',
-  strip_comments = true,
-  strip_directives = true,
-  strip_unused_labels = true, -- FIXME: directives before code get stripped
+  strip_comments = false,
+  strip_directives = false,
+  strip_unused_labels = false, -- FIXME: directives before code get stripped
   x86_syntax = 'intel',
   keys = {
     close = 'q',
@@ -87,18 +87,20 @@ local function goto_src(src_buf, src_loc)
   end
 end
 
-local function src_ln_to_asm_range(src_buf, src_ln)
+local function src_loc_to_asm_range(src_buf, src_loc)
   local entry = M._entries[src_buf]
-  if entry.src_to_asm[src_ln] then
-    return entry.src_to_asm[src_ln]
+  local _, src_ln, src_col = unpack(src_loc)
+  local line_map = entry.src_to_asm[src_ln]
+  if line_map then
+    return line_map[src_col] or line_map[line_map.min_col]
   end
   return nil
 end
 
 local function highlight_asm(asm_buf, asm_range)
   vim.api.nvim_buf_clear_namespace(asm_buf, comp_explr_ns, 0, -1)
-  local first_ln, last_ln = unpack(asm_range)
-  for ln = first_ln, last_ln do
+  --local first_ln, last_ln = unpack(asm_range)
+  for _, ln in ipairs(asm_range) do
     vim.api.nvim_buf_add_highlight(asm_buf, comp_explr_ns, M.config.highlight, ln - 1, 0, -1)
   end
 end
@@ -149,9 +151,8 @@ local function setup_buf(src_buf)
       if src_loc then
         highlight_src(src_buf, src_loc, end_loc)
         goto_src(src_buf, src_loc)
-        local _, src_ln, _ = unpack(src_loc)
-        local asm_range = src_ln_to_asm_range(src_buf, src_ln)
-        highlight_asm(asm_buf, asm_range)
+        --local asm_range = src_loc_to_asm_range(src_buf, src_loc)
+        --highlight_asm(asm_buf, asm_range)
       end
     end,
     desc = 'compiler-explorer.nvim: highlight source',
@@ -160,10 +161,14 @@ local function setup_buf(src_buf)
     group = augroup,
     buffer = src_buf,
     callback = function()
-      local src_ln, _ = unpack(vim.api.nvim_win_get_cursor(0))
-      local asm_range = src_ln_to_asm_range(src_buf, src_ln)
+      local src_ln, src_col = unpack(vim.api.nvim_win_get_cursor(0))
+      local src_loc = { '', src_ln, src_col } -- FIXME: empty file
+      local asm_range = src_loc_to_asm_range(src_buf, src_loc)
       if asm_range then
         highlight_asm(asm_buf, asm_range)
+        local src_loc, _ = asm_ln_to_src_loc(src_buf, asm_range[1])
+        local _, end_loc = asm_ln_to_src_loc(src_buf, asm_range[2])
+        highlight_src(src_buf, src_loc, end_loc)
         goto_asm(asm_buf, asm_range)
       end
     end,
@@ -260,6 +265,16 @@ local function fill_previous_end_loc(lines, i, loc)
 end
 
 local function post_process(entry, lines)
+  local src_to_asm = setmetatable({}, {
+    __index = function(tbl, key)
+      local entry = rawget(tbl, key)
+      if not entry then
+        entry = {}
+        rawset(tbl, key, entry)
+      end
+      return entry
+    end,
+  })
   local loc = nil
   for i, line in ipairs(lines) do
     if line.label then
@@ -277,7 +292,7 @@ local function post_process(entry, lines)
       elseif line.directive == 'loc' then
         local file_id = tonumber(line.args[1])
         loc = { entry.files[file_id], tonumber(line.args[2]), tonumber(line.args[3]) }
-        fill_previous_end_loc(lines, i, loc)
+        --fill_previous_end_loc(lines, i, loc)
       end
     elseif M.config.strip_unused_labels then
       local first, last = line.code:find('%.[%w%d]+')
@@ -288,6 +303,24 @@ local function post_process(entry, lines)
     line.loc = loc
     if vim.trim(line.code) == 'ret' then
       loc = nil
+    end
+  end
+  local end_loc = nil
+  for i = #lines, 1, -1 do
+    if lines[i].loc ~= loc then
+      end_loc = loc
+    end
+    if lines[i].loc and end_loc then
+      if lines[i].loc[2] > end_loc[2] then
+        end_loc = nil
+      elseif lines[i].loc[2] == end_loc[2] and lines[i].loc[3] > end_loc[3] then
+        end_loc = nil
+      end
+    end
+    lines[i].end_loc = end_loc
+    loc = lines[i].loc
+    if loc and end_loc then
+      lines[i].code = lines[i].code .. ' ' .. loc[2] .. ':' .. loc[3] .. ' ' .. end_loc[2] .. ':' .. end_loc[3]
     end
   end
 end
@@ -327,19 +360,57 @@ local function filter_lines(entry, lines)
   return new_lines
 end
 
+LineMap = {}
+
+function LineMap.new()
+  local self = setmetatable({}, LineMap)
+  self.cols = {}
+  return self
+end
+
+function LineMap:__index(key)
+  if type(key) == 'number' then
+    return self.cols[key]
+  end
+  return rawget(LineMap, key)
+end
+
+function LineMap:insert(start, finish, value)
+  assert(type(value) == 'table', 'value must be a table')
+  for i = start, finish do
+    self.cols[i] = value
+  end
+  if not self.min_col or start < self.min_col then
+    self.min_col = start
+  end
+end
+
 local function map_src_to_asm(lines)
   -- TODO: more granular mapping
-  local asm_ranges = {}
+  local asm_ranges = setmetatable({}, {
+    __index = function(tbl, key)
+      local entry = rawget(tbl, key)
+
+      if not entry then
+        entry = LineMap.new()
+        rawset(tbl, key, entry)
+      end
+
+      return entry
+    end,
+  })
   local loc = nil
   for i, line in ipairs(lines) do
     loc = line.loc
     if loc then
-      local src_ln = loc[2]
-      local asm_range = asm_ranges[src_ln]
-      if asm_range then
-        asm_range[2] = i
-      else
-        asm_ranges[src_ln] = { i, i }
+      local _, src_ln, src_col = unpack(loc)
+      for j = src_col, 40 do
+        local asm_range = asm_ranges[src_ln][j]
+        if not asm_range then
+          asm_ranges[src_ln]:insert(j, j, { i })
+        else
+          asm_range[#asm_range + 1] = i
+        end
       end
     end
   end
@@ -412,7 +483,7 @@ function M.update(buf)
   asm_lines = filter_lines(entry, asm_lines)
 
   entry.asm_lines = asm_lines
-  entry.src_to_asm = map_src_to_asm(asm_lines)
+  --entry.src_to_asm = map_src_to_asm(asm_lines)
 
   local asm_buf_lines = vim.tbl_map(render_line, entry.asm_lines)
 
