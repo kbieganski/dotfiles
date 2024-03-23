@@ -116,10 +116,12 @@ eval "$(zoxide init zsh)"
 
 source $HOME/.config/broot/launcher/bash/br
 
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && [[ -z $LOGIN_SHELL ]]; then
-   if tmux ls; then
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && ([[ -z $LOGIN_SHELL ]] || [[ -n $SSH_CONNECTION ]]); then
+   if tmux ls && [[ -n $SSH_CONNECTION ]]; then
        exec tmux attach
    else
-       exec tmux new
+       exec tmux new \; set-option destroy-unattached
    fi
 fi

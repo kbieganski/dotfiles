@@ -175,7 +175,8 @@ return {
         },
         opts = {},
         config = function()
-            require 'telescope'.load_extension('undo')
+            require 'telescope'.setup { extensions = { undo = { mappings = { i = { ['<CR>'] = require 'telescope-undo.actions'.restore } } } } }
+            require 'telescope'.load_extension 'undo'
         end,
     },
 }
