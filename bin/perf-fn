@@ -1,0 +1,69 @@
+#!/bin/env bash
+
+funcs=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --fn)
+            shift;
+            funcs+=("$1")
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+syms=$(readelf -sW $1 | while read _ _ _ _ _ _ _ sym; do 
+   echo -e "$sym\t$(echo $sym | rustfilt)";
+done)
+
+sudo perf probe -d "*"
+echo "$syms" | while read sym; do
+    for func in "${funcs[@]}"; do
+        if [[ $sym == *$func* ]]; then
+            echo "Probing $(echo "$sym" | cut -f2)"
+            sym=$(echo "$sym" | cut -f1)
+            sudo perf probe -x $1 ${func}=$sym
+            sudo perf probe -x $1 --add "${func}=$sym%return" --no-demangle
+            sudo chmod a+r /sys/kernel/tracing/events/probe_perf/${func}*/*
+        fi
+    done
+done
+
+events=''
+for func in "${funcs[@]}"; do
+    events+="-e probe_perf:${func} -e probe_perf:${func}__return "
+done
+perf record $events -- "$@"
+
+perf_script=$(mktemp --suffix .py)
+chmod +x $perf_script
+echo "times = {}
+starts = {}
+
+def trace_end():
+    min_time = min(times.values())
+    for fn, time in times.items():
+        print(f'{fn}: {time} ({time/min_time*100-100:.2f}%)')" > $perf_script
+
+for func in "${funcs[@]}"; do
+    echo "
+def probe_perf__${func}(event_name, context, common_cpu,
+    common_secs, common_nsecs, common_pid, common_comm,
+    common_callchain, __probe_ip, perf_sample_dict):
+    starts['$func'] = common_secs * 1000000000 + common_nsecs
+
+def probe_perf__${func}__return(event_name, context, common_cpu,
+    common_secs, common_nsecs, common_pid, common_comm,
+    common_callchain, __probe_ip, perf_sample_dict):
+    time = (common_secs * 1000000000 + common_nsecs) - starts['$func']
+    if '$func' in times:
+        times['$func'] = min(time, times['$func'])
+    else:
+        times['$func'] = time
+" >> $perf_script
+done
+
+perf script -s $perf_script
