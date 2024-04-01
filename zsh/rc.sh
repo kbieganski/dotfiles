@@ -83,14 +83,14 @@ alias free='free -h'
 alias e='exit'
 alias q='exit'
 
-alias cp='/bin/cp -ivr'
-alias mv='/bin/mv -iv'
-alias rm='/bin/rm -ivr'
+alias cp='cp -ivr'
+alias mv='mv -iv'
+alias rm='rm -ivr'
 alias rip='rip --graveyard $HOME/trash'
 alias r='rip'
 
-alias ln='/bin/ln -s'
-alias hln='/bin/ln'
+alias ln='ln -s'
+alias hln='ln'
 
 alias cal='cal -m -3'
 alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
@@ -99,6 +99,10 @@ alias pacman='pacman --color=auto'
 alias pm='pacman --color=auto'
 alias makepkg='makepkg -is'
 alias mp='makepkg -is'
+
+alias nix-shell='nix-shell --run zsh'
+alias ns='nix-shell'
+alias nsp='nix-shell -p'
 
 alias suspend='systemctl suspend'
 

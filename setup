@@ -1,20 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+dotfiles_dir=$(dirname $(readlink -f $0))
+ln -s $dotfiles_dir/home.nix $HOME/.config/home-manager/home.nix
+nix-shell '<home-manager>' -A install
 
-function section() {
-    echo -e "\n\\e[30;35;1m====== $1 ======\\e[;;m\n"
-}
-
-if [ -z "$(pacman -Q | grep ansible)" ]; then
-    section "Installing Ansible"
-    su - root -c "pacman -Sy && pacman -S ansible"
-fi
-
-export ANSIBLE_STDOUT_CALLBACK=yaml 
-
-section "Installing Ansible roles"
-ansible-galaxy install -r ansible/requirements.yml
-
-section "Running Ansible"
-ansible-playbook -K ansible/local.yml
