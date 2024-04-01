@@ -6,7 +6,7 @@ COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(extract git git-commit starship zoxide zsh-navigation-tools zsh-syntax-highlighting)
+plugins=(extract git starship zoxide zsh-navigation-tools zsh-syntax-highlighting)
 
 setopt extendedglob      # Regular expressions with *
 setopt nocaseglob        # Case insensitive globbing
