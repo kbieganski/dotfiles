@@ -1,4 +1,7 @@
+#!/bin/env zsh
+
 export ZSH=~/.oh-my-zsh
+
 COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='true'
 HIST_STAMPS='yyyy-mm-dd'
@@ -15,7 +18,6 @@ setopt histignorealldups # Remove duplicate commands
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive tab completion
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"   # Colored completion (different colors for dirs/files/etc)
-# Speed up completions
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
@@ -31,15 +33,12 @@ bindkey '^[[C'  forward-char                      # Right key
 bindkey '^[[D'  backward-char                     # Left key
 bindkey '^[[5~' history-beginning-search-backward # Page up key
 bindkey '^[[6~' history-beginning-search-forward  # Page down key
-# Navigate words with ctrl+arrow keys
 bindkey '^[Oc' forward-word
 bindkey '^[Od' backward-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
 source $ZSH/oh-my-zsh.sh
-
-export EDITOR=nvim
 
 alias cd=z
 alias ..='cd ..'
@@ -67,7 +66,7 @@ alias du='dust'
 alias df='duf'
 
 alias find='fd'
-alias fdi='fd -I'
+alias fdi='fd --no-ignore'
 
 alias c='clear'
 alias h='history'
@@ -83,22 +82,14 @@ alias free='free -h'
 alias e='exit'
 alias q='exit'
 
-alias cp='cp -ivr'
-alias mv='mv -iv'
-alias rm='rm -ivr'
+alias cp='cp -vr'
+alias mv='mv -v'
+alias rm='rm -vr'
 alias rip='rip --graveyard $HOME/trash'
 alias r='rip'
 
-alias ln='ln -s'
-alias hln='ln'
-
 alias cal='cal -m -3'
 alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
-
-alias pacman='pacman --color=auto'
-alias pm='pacman --color=auto'
-alias makepkg='makepkg -is'
-alias mp='makepkg -is'
 
 alias nix-shell='nix-shell --run zsh'
 alias ns='nix-shell'
@@ -108,24 +99,19 @@ alias suspend='systemctl suspend'
 
 alias vim='nvim'
 
-export VISUAL=nvim
-export EDITOR=nvim
-
-export TERMINAL=kitty
-
 alias lf='\cd "$(\lf -print-last-dir "$@")"'
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
-source $HOME/.config/broot/launcher/bash/br
-
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && ([[ -z $LOGIN_SHELL ]] || [[ -n $SSH_CONNECTION ]]); then
-   if tmux ls && [[ -n $SSH_CONNECTION ]]; then
+if [ -z "$TMUX" ]; then
+   if [ -n "$LOGIN_SHELL" ]; then
+      ssh-add
+   fi
+   if tmux ls && [ -n $SSH_CONNECTION ]; then
        exec tmux attach
    else
        exec tmux new \; set-option destroy-unattached
    fi
 fi
+

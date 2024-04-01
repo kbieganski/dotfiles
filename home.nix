@@ -24,11 +24,7 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.git = {
-    enable = true;
-    userName = "Krzysztof Biegański";
-    userEmail = "krzysztof@biegan.ski";
-  };
+  programs.git.enable = true;
 
   programs.neovim = {
     enable = true;
@@ -41,7 +37,10 @@ in
   services.nixseparatedebuginfod.enable = true;
 
   home.packages = with pkgs; [
-    zsh
+    zsh = {
+      enable = true;
+      oh-my-zsh.enable = true;
+    };
     tmux
     openssh
     mosh  # feature-rich ssh client
@@ -52,7 +51,6 @@ in
     rm-improved  # better rm
     du-dust  # modern du
     duf  # better df
-    broot  # dir tree navigation
     fd  # better find
     gh  # GitHub CLI
     tokei  # source code counter
@@ -79,7 +77,6 @@ in
     hck  # modern cut
     entr  # run commands on change
     fclones  # find file duplicates
-    broot
 
     starship
     man-pages
@@ -116,13 +113,28 @@ in
   ];
 
 
-  home.file.".zshrc".source = /${dotfilesDir}/zsh/rc.sh;
-  home.file.".zshenv".source = /${dotfilesDir}/zsh/env.sh;
-  home.file.".zprofile".source = /${dotfilesDir}/zsh/profile.sh;
-  xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
+  home.file.".profile".source = /${dotfilesDir}/profile.sh;
+  home.file.".zshrc".source = /${dotfilesDir}/zshrc.sh;
+  home.file.".gitconfig".source = /${dotfilesDir}/git.conf;
+  xdg.configFile."starship.toml" = { source = /${dotfilesDir}/starship.toml; };
   xdg.configFile."kitty/kitty.conf" = { source = /${dotfilesDir}/kitty.conf; };
   xdg.configFile."nvim".source = /${dotfilesDir}/nvim;
   xdg.configFile."tmux/tmux.conf".source = /${dotfilesDir}/tmux.conf;
+  xdg.configFile."bat/config".source = /${dotfilesDir}/tmux.conf;
+
+  xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
+  xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
+
+  home.file.".xinitrc".source = /${dotfilesDir}/xinitrc.sh;
+  home.file.".Xresources".source = /${dotfilesDir}/Xresources;
+  xdg.configFile."i3/config".source = /${dotfilesDir}/i3.conf;
+  xdg.configFile."i3blocks/config".source = /${dotfilesDir}/i3blocks.conf;
+  xdg.configFile."dunst/dunstrc".source = /${dotfilesDir}/dunst.conf;
+  xdg.configFile."picom.conf".source = /${dotfilesDir}/picom.conf;
+  xdg.configFile."rofi/config.rasi" = { source = /${dotfilesDir}/rofi-config.rasi; };
+  xdg.configFile."rofi/theme.rasi" = { source = /${dotfilesDir}/rofi-theme.rasi; };
+
+  xdg.configFile."keepmenu/config.ini".source = /${dotfilesDir}/keepmenu.ini;
 
   fonts.fontconfig.enable = true;
 }
