@@ -1,7 +1,7 @@
 -- Tree-sitter
 
 local langs = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'glsl', 'go', 'haskell', 'javascript', 'lua', 'markdown',
-    'markdown_inline', 'nix', 'python', 'query', 'regex', 'rust', 'templ', 'typescript', 'verilog', 'zig' }
+    'markdown_inline', 'nix', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'zig' }
 
 return {
     {
@@ -22,7 +22,7 @@ return {
                     },
                     move = {
                         enable = true,
-                        set_jumps = true, -- whether to set jumps in the jumplist
+                        set_jumps = true,
                         goto_next_start = {
                             [']a'] = { query = { '@assignment.inner' }, },
                             [']b'] = { query = { '@block.inner' }, },

@@ -1,8 +1,0 @@
-- name: Install virtualization-related packages
-  pacman:
-    name:
-      - qemu
-      - virt-install
-      - docker
-      - docker-compose
-  become: true

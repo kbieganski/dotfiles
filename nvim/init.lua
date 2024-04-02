@@ -1,29 +1,28 @@
 -- Options
 vim.o.autochdir = true                    -- change working dir to buffer dir
 vim.o.clipboard = 'unnamedplus'           -- use system clipboard
-vim.o.conceallevel = 2
 vim.o.cursorline = true                   -- highlight line with cursor
 vim.o.expandtab = true                    -- insert spaces with tab
-vim.o.foldenable = false
+vim.o.foldenable = false                  -- no code folding
 vim.o.hlsearch = false                    -- do not highlight all search matches
 vim.o.ignorecase = true                   -- when searching
-vim.o.laststatus = 3                      --
-vim.o.number = true                       --
+vim.o.laststatus = 3                      -- single, global statusline
+vim.o.number = true                       -- show line numbers
 vim.o.pumheight = 10                      -- limit shown completion items
-vim.o.relativenumber = true
+vim.o.relativenumber = true               -- show relative line numbers
 vim.o.scrolloff = 10                      -- keep cursor 10 lines from screen edge
 vim.o.shiftwidth = 4                      -- width of indent
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.signcolumn = 'yes:2'                --
+vim.o.signcolumn = 'yes:2'                -- 2-wide sign column
 vim.o.smartcase = true                    -- don't ignore case if search string contains uppercase letters
 vim.o.smartindent = true                  -- indent based on syntax
 vim.o.spelllang = 'en_us,pl'              -- check English and Polish spelling
-vim.o.spell = true
+vim.o.spell = true                        -- enable spell checking
 vim.o.tabstop = 4                         -- width of tab
 vim.o.termguicolors = true                -- 24-bit color support
 vim.o.timeoutlen = 250                    -- mapping timeout
 vim.o.undofile = true                     -- persistent undo
-vim.o.updatetime = 1000
+vim.o.updatetime = 1000                   -- time for various update events
 vim.o.virtualedit = 'all'                 -- allow virtual editing
 vim.o.visualbell = true                   -- disable bleeping
 vim.o.writebackup = false                 -- disable backup when overwriting
@@ -166,9 +165,10 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup('markdown_link_mapping', {}),
+    group = vim.api.nvim_create_augroup('markdown_filetype_lalalal', {}),
     pattern = 'markdown',
     callback = function(e)
+        vim.opt_local.conceallevel = 2 -- conceal links
         vim.keymap.set('n', '<leader>l',
             function()
                 local url = vim.fn.getreg '+'
@@ -195,13 +195,6 @@ vim.api.nvim_create_autocmd('FileType', {
             { buffer = e.buf, silent = true, desc = 'Paste link' })
     end
 })
-
--- Filetypes
-vim.filetype.add {
-    extension = {
-        templ = 'templ'
-    },
-}
 
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins

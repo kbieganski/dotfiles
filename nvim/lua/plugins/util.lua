@@ -4,13 +4,13 @@ return {
     {
         dir = vim.fn.stdpath('config') .. '/dev/compiler-explorer',
     },
-    { 'Saecki/crates.nvim', ft = 'toml', opts = {} }, -- cargo file support
+    { 'Saecki/crates.nvim', ft = 'toml', opts = {} },
     {
-        'lewis6991/spaceless.nvim',                   -- trim whitespace
+        'lewis6991/spaceless.nvim',
         config = function() require 'spaceless'.setup() end,
     },
     {
-        'NMAC427/guess-indent.nvim', -- guess indentation from file
+        'NMAC427/guess-indent.nvim',
         opts = {},
     },
     {
@@ -21,7 +21,7 @@ return {
         end,
         keys = {
             {
-                '<leader>v',
+                '<leader><CR>',
                 function()
                     local peek = require 'peek'
                     if peek.is_open() then
@@ -34,6 +34,7 @@ return {
                 desc = 'Preview'
             },
         },
+        filetype = { 'markdown' },
     },
     {
         'numToStr/Navigator.nvim',
@@ -46,12 +47,9 @@ return {
             }
             local tmux_navigator = require 'Navigator.mux.tmux'
             tmux_navigator._navigate = tmux_navigator.navigate
-            ---@diagnostic disable-next-line: duplicate-set-field
             tmux_navigator.navigate = function(self, direction)
                 if pane_at[direction] then
-                    ---@diagnostic disable-next-line: invisible
                     self.execute(string.format("if -F '%s' '' 'select-pane -%s'", pane_at[direction],
-                        ---@diagnostic disable-next-line: invisible
                         self.direction[direction]))
                 else
                     self:_navigate(direction)
@@ -65,34 +63,6 @@ return {
             { '<M-j>', function() require 'Navigator'.down() end,  desc = 'Window down',  silent = true },
             { '<M-k>', function() require 'Navigator'.up() end,    desc = 'Window up',    silent = true },
             { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right', silent = true },
-        },
-    },
-    {
-        'jbyuki/venn.nvim',
-        config = function()
-            function _G.toggle_venn()
-                if not vim.b.venn_enabled then
-                    vim.b.venn_enabled = true
-                    vim.b.virtualedit_old = vim.opt_local.virtualedit:get()
-                    vim.opt_local.virtualedit = 'all'
-                    vim.keymap.set('n', 'J', '<C-v>j:VBox<CR>', { buffer = true, silent = true })
-                    vim.keymap.set('n', 'K', '<C-v>k:VBox<CR>', { buffer = true, silent = true })
-                    vim.keymap.set('n', 'H', '<C-v>h:VBox<CR>', { buffer = true, silent = true })
-                    vim.keymap.set('n', 'L', '<C-v>l:VBox<CR>', { buffer = true, silent = true })
-                    vim.keymap.set('v', 'f', ':VBox<CR>', { buffer = true, silent = true })
-                else
-                    vim.b.venn_enabled = false
-                    vim.opt_local.virtualedit = vim.b.virtualedit_old
-                    vim.keymap.del('n', 'J', { buffer = true })
-                    vim.keymap.del('n', 'K', { buffer = true })
-                    vim.keymap.del('n', 'H', { buffer = true })
-                    vim.keymap.del('n', 'L', { buffer = true })
-                    vim.keymap.del('v', 'f', { buffer = true })
-                end
-            end
-        end,
-        keys = {
-            { '<leader>d', function() toggle_venn() end, desc = 'Toggle diagram drawing', silent = true },
         },
     },
     {

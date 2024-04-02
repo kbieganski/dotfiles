@@ -1,7 +1,0 @@
-- name: Install audio packages
-  pacman:
-    name:
-      - pulseaudio
-      - pavucontrol
-      - alsa-utils
-  become: true

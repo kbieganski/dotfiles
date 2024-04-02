@@ -32,17 +32,17 @@ return {
         end,
     },
     {
-        'winston0410/range-highlight.nvim', -- highlights range entered in cmdline
+        'winston0410/range-highlight.nvim',
         opts = {},
         dependencies = {
             {
-                'winston0410/cmd-parser.nvim', -- required for range-highlight
+                'winston0410/cmd-parser.nvim',
                 opts = {},
             },
         },
     },
     {
-        'nvim-lualine/lualine.nvim', -- statusline
+        'nvim-lualine/lualine.nvim',
         config = function()
             local searchcount = function()
                 local sc = vim.fn.searchcount()
@@ -76,7 +76,7 @@ return {
     },
     'kyazdani42/nvim-web-devicons',
     {
-        'stevearc/dressing.nvim', -- better select/input menus
+        'stevearc/dressing.nvim',
         config = function()
             require 'dressing'.setup {
                 input = {

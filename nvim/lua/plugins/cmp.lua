@@ -131,7 +131,6 @@ return {
                 },
             })
 
-            -- `:` cmdline setup.
             cmp.setup.cmdline(':', {
                 preselect = cmp.PreselectMode.None,
                 mapping = cmp.mapping.preset.cmdline {

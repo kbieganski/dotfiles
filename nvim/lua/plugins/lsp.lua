@@ -4,7 +4,6 @@ local function on_attach(opts)
     vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
     opts = opts or {}
-    if opts.virtual_types == nil then opts.virtual_types = true end
     return function(client, bufnr)
         if client.server_capabilities.documentHighlightProvider then
             local augroup = 'lsp_document_highlight'
@@ -27,9 +26,6 @@ local function on_attach(opts)
         end
         if opts.autoformat then
             require 'lsp-format'.on_attach(client)
-        end
-        if opts.virtual_types then
-            require 'virtualtypes'.on_attach(client, bufnr)
         end
         if client.server_capabilities.documentSymbolProvider then
             require 'nvim-navic'.attach(client, bufnr)
@@ -81,11 +77,10 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'folke/neodev.nvim', },             -- LSP for neovim config/plugin dev
-            { 'jubnzv/virtual-types.nvim', },     -- code lens types
-            { 'kosayoda/nvim-lightbulb', },       -- code action lightbulb
-            { 'SmiteshP/nvim-navic', },           -- breadcrumbs
-            { 'lukas-reineke/lsp-format.nvim', }, -- auto format
+            { 'folke/neodev.nvim', },
+            { 'kosayoda/nvim-lightbulb', },
+            { 'SmiteshP/nvim-navic', },
+            { 'lukas-reineke/lsp-format.nvim', },
             { 'hrsh7th/cmp-nvim-lsp', },
         },
         config = function()
@@ -105,7 +100,7 @@ return {
                 end,
             }
 
-            for _, server in pairs { 'gopls', 'hls', 'omnisharp', 'tsserver', 'templ' } do
+            for _, server in pairs { 'gopls', 'hls', 'omnisharp', 'tsserver', 'zls' } do
                 lspconfig[server].setup {
                     capabilities = capabilities,
                     on_attach = on_attach { autoformat = true },
@@ -115,7 +110,7 @@ return {
             lspconfig.clangd.setup {
                 capabilities = capabilities,
                 on_attach = function(client, bufnr)
-                    on_attach { autoformat = false, virtual_types = false } (client, bufnr)
+                    on_attach { autoformat = false } (client, bufnr)
                     vim.keymap.set('n', 'go', function() vim.cmd.ClangdSwitchSourceHeader() end,
                         { buffer = bufnr, desc = 'Switch source/header' })
                 end,
@@ -144,11 +139,6 @@ return {
                 }
             }
 
-            lspconfig.zls.setup {
-                capabilities = capabilities,
-                on_attach = on_attach { autoformat = true },
-            }
-
             require 'neodev'.setup()
             lspconfig.lua_ls.setup {
                 capabilities = capabilities,
@@ -159,14 +149,11 @@ return {
                             version = 'LuaJIT',
                         },
                         diagnostics = {
-                            -- Get the language server to recognize the `vim` global
                             globals = { 'vim' },
                         },
                         workspace = {
-                            -- Make the server aware of Neovim runtime files
                             library = vim.api.nvim_get_runtime_file('', true),
                         },
-                        -- Do not send telemetry data containing a randomized but unique identifier
                         telemetry = {
                             enable = false,
                         },
@@ -182,7 +169,7 @@ return {
         filetype = { 'c', 'cpp', 'go', 'haskell', 'javascript', 'lua', 'markdown', 'python', 'rust', 'typescript' },
     },
     {
-        'simrat39/rust-tools.nvim', -- Rust-specific plugin
+        'simrat39/rust-tools.nvim',
         config = function()
             local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
             local rust_tools = require 'rust-tools'
@@ -208,7 +195,7 @@ return {
                     },
                     capabilities = capabilities,
                     on_attach = function(client, bufnr)
-                        on_attach { autoformat = true, virtual_types = false } (client, bufnr)
+                        on_attach { autoformat = true } (client, bufnr)
                         vim.keymap.set('n', '<CR>d', rust_tools.debuggables.debuggables,
                             { buffer = bufnr, desc = 'Debuggables' })
                     end,

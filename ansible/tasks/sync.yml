@@ -1,5 +1,0 @@
-- name: Install syncthing
-  pacman:
-    name:
-      - syncthing
-

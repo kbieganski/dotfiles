@@ -1,3 +1,0 @@
-%wheel ALL=(ALL) ALL
-
-aur ALL=(ALL) NOPASSWD: /usr/bin/pacman

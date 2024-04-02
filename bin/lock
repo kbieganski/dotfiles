@@ -2,20 +2,20 @@
 
 killall -SIGUSR1 dunst
 i3lock --blur=0.001 --clock 
-                 --date-font="Jost*" \
-                 --time-font="Jost*" \
-                 --layout-font="Jost*" \
-                 --verif-font="Jost*" \
-                 --wrong-font="Jost*" \
-                 --ringcolor=5294E2FF \
-                 --linecolor=5294E200 \
-                 --separatorcolor=5294E2FF \
-                 --datecolor=5294E2FF \
-                 --timecolor=5294E2FF \
-                 --verifcolor=5294E2FF \
-                 --wrongcolor=5294E2FF \
-                 --insidecolor=00000000 \
-                 --insidevercolor=00000000 \
-                 --insidewrongcolor=00000000 \
-                 --nofork; killall -SIGUSR2 dunst
+    --date-font="Jost*" \
+    --time-font="Jost*" \
+    --layout-font="Jost*" \
+    --verif-font="Jost*" \
+    --wrong-font="Jost*" \
+    --ringcolor=5294E2FF \
+    --linecolor=5294E200 \
+    --separatorcolor=5294E2FF \
+    --datecolor=5294E2FF \
+    --timecolor=5294E2FF \
+    --verifcolor=5294E2FF \
+    --wrongcolor=5294E2FF \
+    --insidecolor=00000000 \
+    --insidevercolor=00000000 \
+    --insidewrongcolor=00000000 \
+    --nofork; killall -SIGUSR2 dunst
 killall -SIGUSR2 dunst

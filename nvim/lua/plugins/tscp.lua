@@ -64,8 +64,8 @@ return {
                     file_browser = {
                         mappings = {
                             i = {
-                                ['<M-/>'] = open_using(require 'telescope.builtin'.find_files),
-                                ['<M-\\>'] = open_using(require 'telescope.builtin'.live_grep),
+                                ['/'] = open_using(require 'telescope.builtin'.find_files),
+                                ['<M-/>'] = open_using(require 'telescope.builtin'.live_grep),
                             },
                         },
                     },
@@ -79,7 +79,7 @@ return {
                 desc = 'Jumps'
             },
             {
-                '<M-/>',
+                '\\',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.current_buffer_fuzzy_find({ default_text = selection })
@@ -88,7 +88,7 @@ return {
                 desc = 'Find in current file'
             },
             {
-                '<M-\\>',
+                '|',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.live_grep({ default_text = selection })
@@ -97,7 +97,7 @@ return {
                 desc = 'Find in files'
             },
             {
-                '<leader>b',
+                '+',
                 function() require 'telescope.builtin'.buffers { ignore_current_buffer = true, sort_mru = true } end,
                 desc = 'Switch buffer'
             },
@@ -106,7 +106,7 @@ return {
             { '<M-p>',           function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
             { '`',               function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
             {
-                '|',
+                '<M-\\>',
                 function() require 'telescope.builtin'.find_files { hidden = true, follow = true } end,
                 desc = 'Find file'
             },
@@ -120,7 +120,7 @@ return {
         end,
         keys = {
             {
-                '\\',
+                '<CR>',
                 function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
                 desc = 'Browse files'
             },
@@ -142,10 +142,10 @@ return {
             require 'telescope'.load_extension 'gh'
         end,
         keys = {
-            { '<leader>a', function() require 'telescope'.extensions.gh.run() end,          desc = 'GH Action runs' },
-            { '<leader>g', function() require 'telescope'.extensions.gh.gist() end,         desc = 'GH Gists' },
-            { '<leader>i', function() require 'telescope'.extensions.gh.issues() end,       desc = 'GH issues' },
-            { '<leader>p', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'GH pull requests' },
+            { '<leader>A', function() require 'telescope'.extensions.gh.run() end,          desc = 'GH Action runs' },
+            { '<leader>G', function() require 'telescope'.extensions.gh.gist() end,         desc = 'GH Gists' },
+            { '<leader>I', function() require 'telescope'.extensions.gh.issues() end,       desc = 'GH issues' },
+            { '<leader>P', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'GH pull requests' },
         },
     },
     {
@@ -155,12 +155,12 @@ return {
             require 'telescope'.load_extension 'repo'
         end,
         keys = {
-            { '<leader>r', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
+            { '<leader>R', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
         },
     },
     {
         'debugloop/telescope-undo.nvim',
-        dependencies = { -- note how they're inverted to above example
+        dependencies = {
             {
                 'nvim-telescope/telescope.nvim',
                 dependencies = { 'nvim-lua/plenary.nvim' },

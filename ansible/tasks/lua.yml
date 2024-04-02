@@ -1,5 +1,0 @@
-- name: Install Lua packages
-  pacman:
-    name:
-      - lua-language-server
-  become: true

@@ -1,7 +1,0 @@
-- name: Install Haskell packages
-  pacman:
-    name:
-      - ghc
-      - cabal-install
-      - stack
-  become: true

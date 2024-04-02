@@ -1,9 +1,0 @@
-- name: Install Go packages
-  pacman:
-    name:
-      - go
-      - go-tools
-      - delve
-  become: true
-- name: Install gopls
-  command: go get golang.org/x/tools/gopls

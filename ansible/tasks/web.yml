@@ -1,6 +1,0 @@
-- name: Install Firefox and w3m
-  pacman:
-    name:
-      - firefox
-      - w3m
-  become: true

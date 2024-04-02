@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env bash
 
 mkdir -p ~/proj
 remote=$(gh repo list --json name | jq -r ".[] | .name" | sort | uniq)
