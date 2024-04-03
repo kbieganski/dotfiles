@@ -105,13 +105,9 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
 if [ -z "$TMUX" ]; then
-   if [ -n "$LOGIN_SHELL" ]; then
-      ssh-add
-   fi
-   if tmux ls && [ -n "$SSH_CONNECTION" ]; then
-       exec tmux attach
-   else
-       exec tmux new \; set-option destroy-unattached
-   fi
+    if [ -n "$LOGIN_SHELL" ]; then
+       ssh-add
+    fi
+    exec tmux new \; set-option destroy-unattached
 fi
 
