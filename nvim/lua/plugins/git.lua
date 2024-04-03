@@ -8,7 +8,7 @@ return {
             local telescope_builtin = require 'telescope.builtin'
             local gitsigns = require 'gitsigns'
             gitsigns.setup {
-                numhl = true,
+                word_diff = true,
                 current_line_blame = false,
                 on_attach = function(bufnr)
                     vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })

@@ -1,21 +1,28 @@
 #!/bin/sh
 
 killall -SIGUSR1 dunst
-i3lock --blur=0.001 --clock 
+i3lock --blur=1 --clock --indicator \
     --date-font="Jost*" \
     --time-font="Jost*" \
-    --layout-font="Jost*" \
     --verif-font="Jost*" \
     --wrong-font="Jost*" \
-    --ringcolor=5294E2FF \
-    --linecolor=5294E200 \
-    --separatorcolor=5294E2FF \
-    --datecolor=5294E2FF \
-    --timecolor=5294E2FF \
-    --verifcolor=5294E2FF \
-    --wrongcolor=5294E2FF \
-    --insidecolor=00000000 \
-    --insidevercolor=00000000 \
-    --insidewrongcolor=00000000 \
+    --inside-color=00000066 \
+    --ring-color=EEEEEEFF \
+    --insidever-color=00000066 \
+    --ringver-color=44FF88FF \
+    --insidewrong-color=00000066 \
+    --ringwrong-color=FF5577FF \
+    --line-color=00000000 \
+    --keyhl-color=00AAFFFF \
+    --bshl-color=FFCC00FF \
+    --separator-color=00000000 \
+    --verif-color=44FF88FF \
+    --wrong-color=FF5577FF \
+    --modif-color=00AAFFFF \
+    --time-color=EEEEEEFF \
+    --date-color=EEEEEEFF \
+    --verif-text="Unlocking" \
+    --wrong-text="Incorrect" \
+    --noinput-text="No input" \
     --nofork; killall -SIGUSR2 dunst
 killall -SIGUSR2 dunst

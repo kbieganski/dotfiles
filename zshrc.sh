@@ -108,7 +108,7 @@ if [ -z "$TMUX" ]; then
    if [ -n "$LOGIN_SHELL" ]; then
       ssh-add
    fi
-   if tmux ls && [ -n $SSH_CONNECTION ]; then
+   if tmux ls && [ -n "$SSH_CONNECTION" ]; then
        exec tmux attach
    else
        exec tmux new \; set-option destroy-unattached
