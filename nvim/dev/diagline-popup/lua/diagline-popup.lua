@@ -105,6 +105,7 @@ function M.setup(opts)
         vim.api.nvim_create_autocmd(opts.events, {
             group = vim.api.nvim_create_augroup('diagline-popup', { clear = true }),
             callback = function()
+                if vim.diagnostic.is_disabled() then return end
                 for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
                     local win_config = vim.api.nvim_win_get_config(win)
                     if win_config.zindex and win_config.focusable then
