@@ -33,19 +33,21 @@ bindkey -M vicmd '^r' fzf-history
 
 autoload -U up-line-or-beginning-search
 zle -N up-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search
-bindkey -M vicmd "^[[A" up-line-or-beginning-search
-bindkey -M vicmd "k" up-line-or-beginning-search
-bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
-bindkey -M vicmd "${terminfo[kcuu1]}" up-line-or-beginning-search
+for key in "^[[A" ${terminfo[kcuu1]}; do
+    bindkey $key up-line-or-beginning-search
+done
+for key in "^[[A" ${terminfo[kcuu1]} k; do
+    bindkey -M vicmd $key up-line-or-beginning-search
+done
 
 autoload -U down-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[B" down-line-or-beginning-search
-bindkey -M vicmd "^[[B" down-line-or-beginning-search
-bindkey -M vicmd "j" down-line-or-beginning-search
-bindkey "${terminfo[kcud1]}" up-line-or-beginning-search
-bindkey -M vicmd "${terminfo[kcud1]}" up-line-or-beginning-search
+for key in "^[[B" ${terminfo[kcud1]}; do
+    bindkey $key down-line-or-beginning-search
+done
+for key in "^[[B" ${terminfo[kcud1]} j; do
+    bindkey -M vicmd $key down-line-or-beginning-search
+done
 
 # The following lines were added by compinstall
 
