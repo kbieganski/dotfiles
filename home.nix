@@ -34,13 +34,9 @@ in
   programs.starship.enable = true;  # prompt
 
   services.syncthing.enable = true;
-  services.nixseparatedebuginfod.enable = true;
 
   home.packages = with pkgs; [
-    zsh = {
-      enable = true;
-      oh-my-zsh.enable = true;
-    };
+    zsh
     tmux
     openssh
     mosh  # feature-rich ssh client
@@ -105,6 +101,8 @@ in
     sway
     swaylock
     swayidle
+    i3status
+    i3blocks
     wl-clipboard
     mako
     kitty
@@ -122,7 +120,6 @@ in
   xdg.configFile."tmux/tmux.conf".source = /${dotfilesDir}/tmux.conf;
   xdg.configFile."bat/config".source = /${dotfilesDir}/tmux.conf;
 
-  xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
   xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
 
   home.file.".xinitrc".source = /${dotfilesDir}/xinitrc.sh;

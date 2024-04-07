@@ -36,12 +36,16 @@ zle -N up-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey -M vicmd "^[[A" up-line-or-beginning-search
 bindkey -M vicmd "k" up-line-or-beginning-search
+bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
+bindkey -M vicmd "${terminfo[kcuu1]}" up-line-or-beginning-search
 
 autoload -U down-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 bindkey -M vicmd "^[[B" down-line-or-beginning-search
 bindkey -M vicmd "j" down-line-or-beginning-search
+bindkey "${terminfo[kcud1]}" up-line-or-beginning-search
+bindkey -M vicmd "${terminfo[kcud1]}" up-line-or-beginning-search
 
 # The following lines were added by compinstall
 
@@ -143,5 +147,5 @@ alias lf='\cd "$(\lf -print-last-dir "$@")"'
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
-source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/dotfiles/ext/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
