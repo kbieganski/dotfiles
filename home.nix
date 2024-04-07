@@ -121,7 +121,7 @@ in
 
   xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
 
-  xdg.configFile."i3blocks".source = /${dotfilesDir}/ext/i3blocks;
+  xdg.configFile."i3blocks/blocks".source = /${dotfilesDir}/ext/i3blocks;
   xdg.configFile."i3blocks/config".source = /${dotfilesDir}/i3blocks.conf;
 
   home.file.".xinitrc".source = /${dotfilesDir}/xinitrc.sh;
