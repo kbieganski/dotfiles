@@ -101,7 +101,6 @@ in
     sway
     swaylock
     swayidle
-    i3status
     i3blocks
     wl-clipboard
     mako
@@ -111,8 +110,8 @@ in
   ];
 
 
-  home.file.".profile".source = /${dotfilesDir}/profile.sh;
-  home.file.".zshrc".source = /${dotfilesDir}/zshrc.sh;
+  home.file.".zprofile".source = /${dotfilesDir}/profile.zsh;
+  home.file.".zshrc".source = /${dotfilesDir}/rc.zsh;
   home.file.".gitconfig".source = /${dotfilesDir}/git.conf;
   xdg.configFile."starship.toml" = { source = /${dotfilesDir}/starship.toml; };
   xdg.configFile."kitty/kitty.conf" = { source = /${dotfilesDir}/kitty.conf; };
@@ -122,10 +121,12 @@ in
 
   xdg.configFile."sway/config".source = /${dotfilesDir}/sway.conf;
 
+  xdg.configFile."i3blocks".source = /${dotfilesDir}/ext/i3blocks;
+  xdg.configFile."i3blocks/config".source = /${dotfilesDir}/i3blocks.conf;
+
   home.file.".xinitrc".source = /${dotfilesDir}/xinitrc.sh;
   home.file.".Xresources".source = /${dotfilesDir}/Xresources;
   xdg.configFile."i3/config".source = /${dotfilesDir}/i3.conf;
-  xdg.configFile."i3blocks/config".source = /${dotfilesDir}/i3blocks.conf;
   xdg.configFile."dunst/dunstrc".source = /${dotfilesDir}/dunst.conf;
   xdg.configFile."picom.conf".source = /${dotfilesDir}/picom.conf;
   xdg.configFile."rofi/config.rasi" = { source = /${dotfilesDir}/rofi-config.rasi; };
