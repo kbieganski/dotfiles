@@ -1,44 +1,81 @@
 #!/bin/env zsh
 
-export ZSH=~/.oh-my-zsh
+if [ -z "$TMUX" ]; then
+    if [[ -o login ]] && [ -z "$SSH_CONNECTION" ]; then
+       ssh-add
+    else
+      exec tmux new \; set-option destroy-unattached
+    fi
+fi
 
-COMPLETION_WAITING_DOTS='true'
-DISABLE_UNTRACKED_FILES_DIRTY='true'
-HIST_STAMPS='yyyy-mm-dd'
+setopt extendedglob
+setopt nocaseglob
+setopt rcexpandparam
+setopt numericglobsort
+setopt nobeep
+setopt appendhistory
+setopt histignorealldups
+
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
-plugins=(extract git starship zoxide zsh-navigation-tools zsh-syntax-highlighting)
 
-setopt extendedglob      # Regular expressions with *
-setopt nocaseglob        # Case insensitive globbing
-setopt rcexpandparam     # Array expension with parameters
-setopt numericglobsort   # Sort filenames numerically when it makes sense
-setopt nobeep            # No beep
-setopt appendhistory     # Append history instead of overwriting
-setopt histignorealldups # Remove duplicate commands
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
 
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive tab completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"   # Colored completion (different colors for dirs/files/etc)
-zstyle ':completion:*' accept-exact '*(N)'
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
+function fzf-history {
+    BUFFER=$(cut -d';' -f 1 --complement < ~/.zsh_history | fzf)
+    zle end-of-line
+}
+zle -N fzf-history
+bindkey '^r' fzf-history
+bindkey -M viins '^r' fzf-history
+bindkey -M vicmd '^r' fzf-history
 
-bindkey -e
-bindkey '^[[7~' beginning-of-line                 # Home key
-bindkey '^[[H' beginning-of-line                  # Home key
-bindkey '^[[8~' end-of-line                       # End key
-bindkey '^[[F' end-of-line                        # End key
-bindkey '^[[2~' overwrite-mode                    # Insert key
-bindkey '^[[3~' delete-char                       # Delete key
-bindkey '^[[C'  forward-char                      # Right key
-bindkey '^[[D'  backward-char                     # Left key
-bindkey '^[[5~' history-beginning-search-backward # Page up key
-bindkey '^[[6~' history-beginning-search-forward  # Page down key
+autoload -U up-line-or-beginning-search
+zle -N up-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey -M vicmd "^[[A" up-line-or-beginning-search
+bindkey -M vicmd "k" up-line-or-beginning-search
+
+autoload -U down-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey -M vicmd "^[[B" down-line-or-beginning-search
+bindkey -M vicmd "j" down-line-or-beginning-search
+
+# The following lines were added by compinstall
+
+zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+zstyle ':completion:*' expand prefix suffix
+zstyle ':completion:*' file-sort name
+zstyle ':completion:*' ignore-parents parent pwd
+zstyle ':completion:*' insert-unambiguous true
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*'
+zstyle ':completion:*' max-errors 2
+zstyle ':completion:*' menu select=1
+zstyle ':completion:*' original true
+zstyle :compinstall filename '/home/krzysztof/dotfiles/zshrc.sh'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+bindkey -v
+bindkey '^[[7~' beginning-of-line
+bindkey '^[[H' beginning-of-line
+bindkey '^[[8~' end-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[2~' overwrite-mode
+bindkey '^[[3~' delete-char
+bindkey '^[[C'  forward-char
+bindkey '^[[D'  backward-char
+bindkey '^[[5~' history-beginning-search-backward
+bindkey '^[[6~' history-beginning-search-forward
 bindkey '^[Oc' forward-word
 bindkey '^[Od' backward-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
-
-source $ZSH/oh-my-zsh.sh
 
 alias cd=z
 alias ..='cd ..'
@@ -88,6 +125,8 @@ alias rm='rm -vr'
 alias rip='rip --graveyard $HOME/trash'
 alias r='rip'
 
+alias g='git'
+
 alias cal='cal -m -3'
 alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
 
@@ -104,10 +143,5 @@ alias lf='\cd "$(\lf -print-last-dir "$@")"'
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
-if [ -z "$TMUX" ]; then
-    if [ -n "$LOGIN_SHELL" ]; then
-       ssh-add
-    fi
-    exec tmux new \; set-option destroy-unattached
-fi
+source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
