@@ -1,3 +1,6 @@
 [submodule "ext/zsh-syntax-highlighting"]
 	path = ext/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "ext/gdb-dashboard"]
+	path = ext/gdb-dashboard
+	url = https://github.com/cyrus-and/gdb-dashboard

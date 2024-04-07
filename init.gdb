@@ -49,7 +49,7 @@ gdb.events.new_objfile.connect(on_objfile)
 gdb.events.gdb_exiting.connect(on_exit)
 end
 
-source ~/.gdb-dashboard
+source ~/dotfiles/ext/gdb-dashboard/.gdbinit
 
 dashboard -layout assembly breakpoints expressions history memory registers stack threads variables
 dashboard -style prompt_running '\\[\\e[1;34m\\]>>>\\[\\e[0m\\]'
