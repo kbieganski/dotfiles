@@ -146,6 +146,8 @@ alias vim='nvim'
 
 alias lf='\cd "$(\lf -print-last-dir "$@")"'
 
+alias icat='kitty +kitten icat'
+
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 

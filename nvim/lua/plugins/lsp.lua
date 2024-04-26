@@ -1,7 +1,6 @@
 -- Language Server Protocol
 
 local function on_attach(opts)
-    vim.diagnostic.config { virtual_text = false }
     local telescope_builtin = require 'telescope.builtin'
     opts = opts or {}
     return function(client, bufnr)
@@ -84,6 +83,8 @@ return {
             { 'hrsh7th/cmp-nvim-lsp', },
         },
         config = function()
+            vim.diagnostic.config { virtual_text = false, update_on_insert = true }
+
             -- pretty LSP diagnostics icons
             for name, icon in pairs { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' } do
                 vim.fn.sign_define('DiagnosticSign' .. name, { text = icon, texthl = 'Diagnostic' .. name })
