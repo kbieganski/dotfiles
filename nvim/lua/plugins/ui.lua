@@ -75,18 +75,10 @@ return {
         'stevearc/dressing.nvim',
         config = function()
             require 'dressing'.setup {
-                input = {
-                    border = 'single',
-                },
+                input = { border = 'single', },
                 select = {
-                    telescope = require('telescope.themes').get_cursor {
-                        borderchars = {
-                            { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
-                            prompt = { '─', '│', ' ', '│', '┌', '┐', '│', '│' },
-                            results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
-                            preview = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
-                        },
-                    },
+                    backend = { 'builtin' },
+                    builtin = { border = 'single' },
                 },
             }
         end,

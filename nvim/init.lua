@@ -34,7 +34,7 @@ vim.g.mapleader = ' '
 vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
 
 -- Unmap useless stuff
-for _, keys in ipairs({ 'za', 'zA', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
+for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
     vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
 end
 for _, keys in ipairs({ '-', '_', '=', '+', 'm' }) do
