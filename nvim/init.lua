@@ -33,6 +33,10 @@ vim.g.mapleader = ' '
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
 vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
 
+-- Easier save
+vim.keymap.set('n', '<leader>w', vim.cmd.w, { silent = true, desc = 'Write file' })
+vim.keymap.set('n', '<leader>W', vim.cmd.wa, { silent = true, desc = 'Write all files' })
+
 -- Unmap useless stuff
 for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
     vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })

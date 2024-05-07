@@ -28,12 +28,12 @@ local function on_attach(client, bufnr)
         { buffer = bufnr, silent = true, desc = 'All diagnostics' })
     vim.keymap.set('n', '_', telescope_builtin.diagnostics, { buffer = bufnr, silent = true, desc = 'All diagnostics' })
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, silent = true, desc = 'Hover' })
-    vim.keymap.set({ 'n', 'v' }, '<M-a>', vim.lsp.buf.code_action,
+    vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action,
         { buffer = bufnr, silent = true, desc = 'Code action' })
-    vim.keymap.set('n', '<M-r>', vim.lsp.buf.rename, { buffer = bufnr, silent = true, desc = 'Rename symbol' })
-    vim.keymap.set('n', 'm', telescope_builtin.lsp_document_symbols,
+    vim.keymap.set('n', '<leader>n', vim.lsp.buf.rename, { buffer = bufnr, silent = true, desc = 'Rename symbol' })
+    vim.keymap.set('n', '<leader>m', telescope_builtin.lsp_document_symbols,
         { buffer = bufnr, silent = true, desc = 'Find symbol' })
-    vim.keymap.set('n', '<M-m>', telescope_builtin.lsp_workspace_symbols,
+    vim.keymap.set('n', '<leader>M', telescope_builtin.lsp_workspace_symbols,
         { buffer = bufnr, silent = true, desc = 'Find workspace symbol' })
     vim.keymap.set('n', 'gc', telescope_builtin.lsp_incoming_calls, { buffer = bufnr, silent = true, desc = 'Caller' })
     vim.keymap.set('n', 'gC', telescope_builtin.lsp_outgoing_calls, { buffer = bufnr, silent = true, desc = 'Callee' })
@@ -58,7 +58,7 @@ return {
             { 'lukas-reineke/lsp-format.nvim', },
         },
         config = function()
-            vim.diagnostic.config { virtual_text = false, update_on_insert = true }
+            vim.diagnostic.config { virtual_text = false, update_in_insert = true }
 
             -- pretty LSP diagnostics icons
             for name, icon in pairs { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' } do
@@ -127,7 +127,7 @@ return {
             }
 
             require 'nvim-lightbulb'.setup {
-                sign = { text = '󰌵 ' },
+                sign = { text = '󰘦 ', hl = 'Normal' },
                 autocmd = { enabled = true },
             }
         end,

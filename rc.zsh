@@ -1,10 +1,10 @@
 #!/bin/env zsh
 
 if [ -z "$TMUX" ]; then
-    if [[ -o login ]] && [ -z "$SSH_CONNECTION" ]; then
-       ssh-add
+    if [ -z "$SSH_CONNECTION" ]; then
+        exec tmux new \; set-option destroy-unattached
     else
-      exec tmux new \; set-option destroy-unattached
+        exec tmux attach
     fi
 fi
 
