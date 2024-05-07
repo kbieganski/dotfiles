@@ -7,7 +7,6 @@ return {
     {
         'nvim-treesitter/nvim-treesitter',
         branch = 'v0.9.2',
-        ft = langs,
         config = function()
             require 'nvim-treesitter.configs'.setup {
                 ensure_installed = langs,
@@ -15,7 +14,7 @@ return {
                 textobjects = {
                     lsp_interop = {
                         enable = true,
-                        border = 'single',
+                        border = 'none',
                         peek_definition_code = {
                             ['<M-K>'] = '@*.outer',
                         },
@@ -111,24 +110,28 @@ return {
         end,
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
-            {
-                'nvim-treesitter/nvim-treesitter-context',
-                opts = {
-                    max_lines = 1,
-                    mode = 'topline',
-                },
-            },
         },
         build = ':TSUpdate',
+        ft = langs,
+    },
+    {
+        'nvim-treesitter/nvim-treesitter-context',
+        opts = {
+            max_lines = 1,
+            mode = 'topline',
+        },
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        ft = langs,
     },
     {
         'kylechui/nvim-surround',
+        opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
         ft = langs,
-        opts = {},
     },
     {
         'JoosepAlviste/nvim-ts-context-commentstring',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        ft = langs,
     }
 }

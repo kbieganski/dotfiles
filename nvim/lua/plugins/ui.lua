@@ -14,21 +14,14 @@ return {
     {
         'folke/which-key.nvim',
         config = function()
-            local wk = require 'which-key'
-            wk.setup {
+            require 'which-key'.setup {
                 icons = {
                     separator = "->",
-                },
-                window = {
-                    border = 'single',
-                    margin = { 4, 4, 4, 4 },
-                    padding = { 1, 1, 1, 1 },
                 },
                 layout = {
                     align = 'center',
                 },
             }
-            vim.keymap.set('n', '=', function() wk.show('=') end)
         end,
     },
     {
@@ -56,9 +49,12 @@ return {
                     },
                 },
                 sections = {
-                    lualine_a = { 'mode', function() if vim.b.venn_enabled then return 'D' else return '' end end, 'selectioncount' },
+                    lualine_a = { 'mode', 'selectioncount' },
                     lualine_b = { 'diagnostics' },
-                    lualine_c = { function() return require 'nvim-navic'.get_location() end },
+                    lualine_c = { function()
+                        if #vim.lsp.get_active_clients() > 0 then return require 'nvim-navic'.get_location() end
+                        return ''
+                    end },
                     lualine_x = { 'diff' },
                     lualine_y = { 'branch', 'filename' },
                     lualine_z = { searchcount, 'progress', 'location' },
@@ -80,11 +76,7 @@ return {
         config = function()
             require 'dressing'.setup {
                 input = {
-                    override = function(conf)
-                        conf.col = -1
-                        conf.row = 0
-                        return conf
-                    end,
+                    border = 'single',
                 },
                 select = {
                     telescope = require('telescope.themes').get_cursor {
@@ -98,7 +90,6 @@ return {
                 },
             }
         end,
-        dependencies = { 'nvim-telescope/telescope.nvim' },
     },
     {
         'j-hui/fidget.nvim',

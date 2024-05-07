@@ -5,7 +5,6 @@ return {
         'hrsh7th/nvim-cmp',
         event = 'InsertEnter',
         dependencies = {
-            'neovim/nvim-lspconfig',
             'onsails/lspkind-nvim',
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-nvim-lsp-signature-help',
@@ -13,7 +12,6 @@ return {
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-cmdline',
-            'f3fora/cmp-spell',
             'dcampos/nvim-snippy',
             {
                 'zbirenbaum/copilot.lua',
@@ -40,22 +38,12 @@ return {
                     vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
             end
             cmp.setup {
-
-                preselect = cmp.PreselectMode.None,
+                preselect = cmp.PreselectMode.None, -- Otherwise doesn't work well with Copilot
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp_signature_help' },
                     { name = 'nvim_lsp' },
                     { name = 'nvim_lua' },
                     { name = 'copilot' },
-                    {
-                        name = 'spell',
-                        option = {
-                            keep_all_entries = false,
-                            enable_in_context = function()
-                                return true
-                            end,
-                        },
-                    },
                 }, {
                     { name = 'path' },
                     { name = 'buffer' },

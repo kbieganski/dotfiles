@@ -1,5 +1,6 @@
 -- Telescope
 
+-- Get the current selection in visual mode
 local function get_visual_selection()
     if vim.api.nvim_get_mode().mode ~= 'v' then
         return ''
@@ -13,40 +14,42 @@ local function get_visual_selection()
     end
 end
 
+-- Open a finder using the current finder
+local function open_using_finder(finder)
+    local action_state = require 'telescope.actions.state'
+    return function(prompt_bufnr)
+        local current_finder = action_state.get_current_picker(prompt_bufnr).finder
+        local entry = action_state.get_selected_entry()
+
+        local entry_path
+        if entry.ordinal == ".." then
+            entry_path = Path:new(current_finder.path)
+        else
+            entry_path = action_state.get_selected_entry().Path
+        end
+
+        local path = entry_path:is_dir() and entry_path:absolute() or entry_path:parent():absolute()
+        require 'telescope.actions'.close(prompt_bufnr)
+        finder({ cwd = path })
+    end
+end
+
 return {
     {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
-        dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
             local telescope = require 'telescope'
             local Path = require 'plenary.path'
-            local action_state = require 'telescope.actions.state'
-            local open_using = function(finder)
-                return function(prompt_bufnr)
-                    local current_finder = action_state.get_current_picker(prompt_bufnr).finder
-                    local entry = action_state.get_selected_entry()
 
-                    local entry_path
-                    if entry.ordinal == ".." then
-                        entry_path = Path:new(current_finder.path)
-                    else
-                        entry_path = action_state.get_selected_entry().Path
-                    end
-
-                    local path = entry_path:is_dir() and entry_path:absolute() or entry_path:parent():absolute()
-                    require 'telescope.actions'.close(prompt_bufnr)
-                    finder({ cwd = path })
-                end
-            end
             telescope.setup {
                 defaults = {
-                    borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+                    borderchars = { '─', ' ', ' ', ' ', '─', '─', ' ', ' ' },
                     layout_strategy = 'flex',
                     layout_config = {
                         flex = { flip_columns = 180 },
-                        vertical = { width = 0.9, height = 0.9 },
-                        horizontal = { width = 0.9, height = 0.9 },
+                        vertical = { width = { padding = 0 }, height = { padding = 0 } },
+                        horizontal = { width = { padding = 0 }, height = { padding = 0 } },
                     },
                     mappings = {
                         i = {
@@ -60,17 +63,19 @@ return {
                     file_ignore_patterns = { '.cache', '.clangd' },
                 },
                 extensions = {
-                    hijack_netrw = true,
                     file_browser = {
+                        hijack_netrw = true,
                         mappings = {
                             i = {
-                                ['/'] = open_using(require 'telescope.builtin'.find_files),
-                                ['<M-/>'] = open_using(require 'telescope.builtin'.live_grep),
+                                ['/'] = open_using_finder(require 'telescope.builtin'.find_files),
+                                ['<M-/>'] = open_using_finder(require 'telescope.builtin'.live_grep),
                             },
                         },
                     },
                 }
             }
+            require 'telescope'.load_extension 'fzf'
+            require 'telescope'.load_extension 'file_browser'
         end,
         keys = {
             {
@@ -111,60 +116,29 @@ return {
                 desc = 'Find file'
             },
         },
-    },
-    {
-        'nvim-telescope/telescope-file-browser.nvim',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
-        config = function()
-            require 'telescope'.load_extension 'file_browser'
-        end,
-        keys = {
+        dependencies = {
+            'nvim-lua/plenary.nvim',
             {
-                '<CR>',
-                function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
-                desc = 'Browse files'
+                'nvim-telescope/telescope-fzf-native.nvim',
+                build =
+                'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
             },
-        },
-    },
-    {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build =
-        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
-        dependencies = { 'nvim-telescope/telescope.nvim' },
-        config = function()
-            require 'telescope'.load_extension 'fzf'
-        end,
-    },
-    {
-        'nvim-telescope/telescope-github.nvim',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
-        config = function()
-            require 'telescope'.load_extension 'gh'
-        end,
-        keys = {
-            { '<leader>A', function() require 'telescope'.extensions.gh.run() end,          desc = 'GH Action runs' },
-            { '<leader>G', function() require 'telescope'.extensions.gh.gist() end,         desc = 'GH Gists' },
-            { '<leader>I', function() require 'telescope'.extensions.gh.issues() end,       desc = 'GH issues' },
-            { '<leader>P', function() require 'telescope'.extensions.gh.pull_request() end, desc = 'GH pull requests' },
-        },
-    },
-    {
-        'cljoly/telescope-repo.nvim',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
-        config = function()
-            require 'telescope'.load_extension 'repo'
-        end,
-        keys = {
-            { '<leader>R', function() require 'telescope'.extensions.repo.repo() end, desc = 'Repositories' },
+            {
+                'nvim-telescope/telescope-file-browser.nvim',
+                keys = {
+                    {
+                        '<CR>',
+                        function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
+                        desc = 'Browse files'
+                    },
+                },
+            },
         },
     },
     {
         'debugloop/telescope-undo.nvim',
         dependencies = {
-            {
-                'nvim-telescope/telescope.nvim',
-                dependencies = { 'nvim-lua/plenary.nvim' },
-            },
+            'nvim-telescope/telescope.nvim',
         },
         keys = {
             {

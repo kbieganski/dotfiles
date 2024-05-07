@@ -7,10 +7,11 @@ return {
     { 'Saecki/crates.nvim', ft = 'toml', opts = {} },
     {
         'lewis6991/spaceless.nvim',
-        config = function() require 'spaceless'.setup() end,
+        event = 'InsertEnter',
     },
     {
         'NMAC427/guess-indent.nvim',
+        event = 'InsertEnter',
         opts = {},
     },
     {
@@ -34,7 +35,7 @@ return {
                 desc = 'Preview'
             },
         },
-        filetype = { 'markdown' },
+        ft = { 'markdown' },
     },
     {
         'numToStr/Navigator.nvim',
@@ -46,15 +47,18 @@ return {
                 l = '#{pane_at_right}',
             }
             local tmux_navigator = require 'Navigator.mux.tmux'
-            tmux_navigator._navigate = tmux_navigator.navigate
+            local ori_navigate = tmux_navigator.navigate
+            -- Modify Navigator's behavior to not wrap around
+            ---@diagnostic disable-next-line: duplicate-set-field
             tmux_navigator.navigate = function(self, direction)
                 if pane_at[direction] then
+                    ---@diagnostic disable-next-line: invisible
                     self.execute(string.format("if -F '%s' '' 'select-pane -%s'", pane_at[direction],
+                        ---@diagnostic disable-next-line: invisible
                         self.direction[direction]))
-                else
-                    self:_navigate(direction)
+                    return self
                 end
-                return self
+                return ori_navigate(self, direction)
             end
             require 'Navigator'.setup { disable_on_zoom = true, mux = tmux_navigator:new() }
         end,
@@ -68,19 +72,9 @@ return {
     {
         'numToStr/Comment.nvim',
         opts = {
-            toggler = {
-                line = 'zcc',
-                block = 'zbc',
-            },
-            opleader = {
-                line = 'zc',
-                block = 'zb',
-            },
-            extra = {
-                above = 'zcO',
-                below = 'zco',
-                eol = 'zcA',
-            },
+            toggler = { line = 'zcc', block = 'zbc', },
+            opleader = { line = 'zC', block = 'zB', },
+            extra = { above = 'zcO', below = 'zco', eol = 'zcA', },
         },
     },
 }
