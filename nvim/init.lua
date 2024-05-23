@@ -39,10 +39,10 @@ vim.keymap.set('n', '<leader>W', vim.cmd.wa, { silent = true, desc = 'Write all 
 
 -- Unmap useless stuff
 for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
-    vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
+    vim.keymap.set({ 'n', 'v' }, keys, function() end, { silent = true, desc = '' })
 end
 for _, keys in ipairs({ '-', '_', '=', '+', 'm' }) do
-    vim.keymap.set('n', keys, function() end, { silent = true, desc = '' })
+    vim.keymap.set({ 'n', 'v' }, keys, function() end, { silent = true, desc = '' })
 end
 
 -- Delete without yanking with x/X

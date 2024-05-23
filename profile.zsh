@@ -6,7 +6,6 @@ eval "$(ssh-agent -s)" &> /dev/null
 
 export EDITOR=nvim
 export VISUAL=nvim
-export PAGER=nvimpager
 
 export TERMINAL=kitty
 

@@ -1,7 +1,7 @@
 #!/bin/env zsh
 
 if [ -z "$TMUX" ]; then
-    if [ -z "$SSH_CONNECTION" ]; then
+    if [ -z "$SSH_CONNECTION" ] || [ -z "$(tmux ls)" ]; then
         exec tmux new \; set-option destroy-unattached
     else
         exec tmux attach
@@ -30,6 +30,9 @@ zle -N fzf-history
 bindkey '^r' fzf-history
 bindkey -M viins '^r' fzf-history
 bindkey -M vicmd '^r' fzf-history
+
+bindkey -M viins "^[[1~" beginning-of-line
+bindkey -M viins  "^[[4~" end-of-line
 
 autoload -U up-line-or-beginning-search
 zle -N up-line-or-beginning-search
