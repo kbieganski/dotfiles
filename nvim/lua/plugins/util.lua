@@ -71,10 +71,6 @@ return {
     },
     {
         'numToStr/Comment.nvim',
-        opts = {
-            toggler = { line = 'zcc', block = 'zbc', },
-            opleader = { line = 'zC', block = 'zB', },
-            extra = { above = 'zcO', below = 'zco', eol = 'zcA', },
-        },
+        opts = {},
     },
 }

@@ -9,8 +9,6 @@ export VISUAL=nvim
 
 export TERMINAL=kitty
 
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-
 source /etc/profile.d/debuginfod.sh
 
 systemctl --user import-environment PATH HOME

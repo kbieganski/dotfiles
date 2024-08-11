@@ -84,7 +84,7 @@ return {
                 desc = 'Jumps'
             },
             {
-                '\\',
+                '<M-/>',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.current_buffer_fuzzy_find({ default_text = selection })
@@ -93,7 +93,7 @@ return {
                 desc = 'Find in current file'
             },
             {
-                '|',
+                '\\',
                 function()
                     local selection = get_visual_selection()
                     require 'telescope.builtin'.live_grep({ default_text = selection })
@@ -106,12 +106,12 @@ return {
                 function() require 'telescope.builtin'.buffers { ignore_current_buffer = true, sort_mru = true } end,
                 desc = 'Switch buffer'
             },
-            { '<leader>h',       function() require 'telescope.builtin'.help_tags() end, desc = 'Help' },
-            { '<leader><Space>', function() require 'telescope.builtin'.resume() end,    desc = 'Last picker' },
-            { '<M-p>',           function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
-            { '`',               function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
+            { '<leader>h', function() require 'telescope.builtin'.help_tags() end, desc = 'Help' },
+            { '<leader>l', function() require 'telescope.builtin'.resume() end,    desc = 'Last picker' },
+            { '<M-p>',     function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
+            { '<leader>o', function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
             {
-                '<M-\\>',
+                '|',
                 function() require 'telescope.builtin'.find_files { hidden = true, follow = true } end,
                 desc = 'Find file'
             },
@@ -127,7 +127,7 @@ return {
                 'nvim-telescope/telescope-file-browser.nvim',
                 keys = {
                     {
-                        '<CR>',
+                        '<leader>f',
                         function() require 'telescope'.extensions.file_browser.file_browser { respect_gitignore = false } end,
                         desc = 'Browse files'
                     },

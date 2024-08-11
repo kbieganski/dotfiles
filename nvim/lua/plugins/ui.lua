@@ -15,12 +15,11 @@ return {
         'folke/which-key.nvim',
         config = function()
             require 'which-key'.setup {
+                preset = 'helix',
                 icons = {
-                    separator = "->",
+                    separator = "➤ ",
                 },
-                layout = {
-                    align = 'center',
-                },
+                delay = 500,
             }
         end,
     },
@@ -50,21 +49,13 @@ return {
                 },
                 sections = {
                     lualine_a = { 'mode', 'selectioncount' },
-                    lualine_b = { 'diagnostics' },
-                    lualine_c = { function()
+                    lualine_b = {},
+                    lualine_c = { 'branch', 'filename', function()
                         if #vim.lsp.get_active_clients() > 0 then return require 'nvim-navic'.get_location() end
                         return ''
                     end },
-                    lualine_x = { 'diff' },
-                    lualine_y = { 'branch', 'filename' },
-                    lualine_z = { searchcount, 'progress', 'location' },
-                },
-                inactive_sections = {
-                    lualine_a = { 'mode' },
-                    lualine_c = {},
-                    lualine_b = {},
                     lualine_x = {},
-                    lualine_y = { 'filename' },
+                    lualine_y = { 'diagnostics', 'diff' },
                     lualine_z = { searchcount, 'progress', 'location' },
                 },
             }

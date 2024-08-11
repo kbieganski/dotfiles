@@ -6,7 +6,6 @@ local langs = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'glsl', 'go', 'haskell', '
 return {
     {
         'nvim-treesitter/nvim-treesitter',
-        branch = 'v0.9.2',
         config = function()
             require 'nvim-treesitter.configs'.setup {
                 ensure_installed = langs,

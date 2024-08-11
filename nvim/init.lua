@@ -20,7 +20,6 @@ vim.o.spelllang = 'en_us,pl'              -- check English and Polish spelling
 vim.o.spell = true                        -- enable spell checking
 vim.o.tabstop = 4                         -- width of tab
 vim.o.termguicolors = true                -- 24-bit color support
-vim.o.timeoutlen = 250                    -- mapping timeout
 vim.o.undofile = true                     -- persistent undo
 vim.o.updatetime = 1000                   -- time for various update events
 vim.o.virtualedit = 'all'                 -- allow virtual editing
@@ -38,10 +37,7 @@ vim.keymap.set('n', '<leader>w', vim.cmd.w, { silent = true, desc = 'Write file'
 vim.keymap.set('n', '<leader>W', vim.cmd.wa, { silent = true, desc = 'Write all files' })
 
 -- Unmap useless stuff
-for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'ze', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
-    vim.keymap.set({ 'n', 'v' }, keys, function() end, { silent = true, desc = '' })
-end
-for _, keys in ipairs({ '-', '_', '=', '+', 'm' }) do
+for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'zd', 'zD', 'ze', 'zE', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
     vim.keymap.set({ 'n', 'v' }, keys, function() end, { silent = true, desc = '' })
 end
 
@@ -59,9 +55,6 @@ vim.keymap.set('n', 'o', 'o<esc>kj', { silent = true })
 vim.keymap.set('n', 'O', 'O<esc>jk', { silent = true })
 vim.keymap.set('i', '<M-o>', '<esc>o', { silent = true })
 vim.keymap.set('i', '<M-O>', '<esc>O', { silent = true })
-
--- Redo on U
-vim.keymap.set('n', 'U', '<C-r><esc>', { silent = true })
 
 -- Move up/down on visual lines
 vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { silent = true, expr = true })

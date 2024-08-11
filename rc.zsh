@@ -2,7 +2,7 @@
 
 if [ -z "$TMUX" ]; then
     if [ -z "$SSH_CONNECTION" ] || [ -z "$(tmux ls)" ]; then
-        exec tmux new \; set-option destroy-unattached
+        exec tmux new\; set-option destroy-unattached
     else
         exec tmux attach
     fi
@@ -23,7 +23,7 @@ HISTSIZE=10000
 SAVEHIST=10000
 
 function fzf-history {
-    BUFFER=$(cut -d';' -f 1 --complement < ~/.zsh_history | fzf)
+    BUFFER=$(sed -e ':x /\\\+$/ { N; s/\\\+\n//g ; bx }' < ~/.zsh_history  | fzf)
     zle end-of-line
 }
 zle -N fzf-history
@@ -51,6 +51,10 @@ done
 for key in "^[[B" ${terminfo[kcud1]} j; do
     bindkey -M vicmd $key down-line-or-beginning-search
 done
+
+_fg() { fg }
+zle -N _fg
+bindkey "^Z" _fg
 
 # The following lines were added by compinstall
 
@@ -146,8 +150,6 @@ alias nsp='nix-shell -p'
 alias suspend='systemctl suspend'
 
 alias vim='nvim'
-
-alias lf='\cd "$(\lf -print-last-dir "$@")"'
 
 alias icat='kitty +kitten icat'
 

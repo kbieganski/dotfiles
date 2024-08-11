@@ -1,5 +1,5 @@
 [Unit]
-Description=i3-resurrect save all workspaces (timer)
+Description=Saves i3 environment  (timer)
 
 [Timer]
 OnUnitActiveSec=60s

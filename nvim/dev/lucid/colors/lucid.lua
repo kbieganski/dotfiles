@@ -53,9 +53,12 @@ vim.api.nvim_set_hl(0, 'Delimiter', { fg = colors.delimiter })
 
 vim.api.nvim_set_hl(0, 'Special', { fg = colors.special })
 
-vim.api.nvim_set_hl(0, 'DiffAdd', { fg = colors.green })
-vim.api.nvim_set_hl(0, 'DiffDelete', { fg = colors.red })
-vim.api.nvim_set_hl(0, 'DiffChanged', { fg = colors.blue })
+vim.api.nvim_set_hl(0, 'Added', { fg = colors.green })
+vim.api.nvim_set_hl(0, 'Removed', { fg = colors.red })
+vim.api.nvim_set_hl(0, 'Changed', { fg = colors.blue })
+vim.api.nvim_set_hl(0, 'DiffAdd', { link = 'Added' })
+vim.api.nvim_set_hl(0, 'DiffDelete', { link = 'Removed' })
+vim.api.nvim_set_hl(0, 'DiffChange', { link = 'Changed' })
 
 vim.api.nvim_set_hl(0, 'Error', { fg = colors.red })
 vim.api.nvim_set_hl(0, 'DiagnosticError', { link = 'Error' })

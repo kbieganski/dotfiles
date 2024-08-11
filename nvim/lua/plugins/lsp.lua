@@ -24,9 +24,10 @@ local function on_attach(client, bufnr)
         { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
     vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev { float = false } end,
         { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
-    vim.keymap.set('n', '-', function() telescope_builtin.diagnostics { bufnr = 0 } end,
+    vim.keymap.set('n', '<leader>d', function() telescope_builtin.diagnostics { bufnr = bufnr } end,
         { buffer = bufnr, silent = true, desc = 'All diagnostics' })
-    vim.keymap.set('n', '_', telescope_builtin.diagnostics, { buffer = bufnr, silent = true, desc = 'All diagnostics' })
+    vim.keymap.set('n', '<leader>D', telescope_builtin.diagnostics,
+        { buffer = bufnr, silent = true, desc = 'All diagnostics' })
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, silent = true, desc = 'Hover' })
     vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action,
         { buffer = bufnr, silent = true, desc = 'Code action' })
@@ -35,16 +36,28 @@ local function on_attach(client, bufnr)
         { buffer = bufnr, silent = true, desc = 'Find symbol' })
     vim.keymap.set('n', '<leader>M', telescope_builtin.lsp_workspace_symbols,
         { buffer = bufnr, silent = true, desc = 'Find workspace symbol' })
-    vim.keymap.set('n', 'gc', telescope_builtin.lsp_incoming_calls, { buffer = bufnr, silent = true, desc = 'Caller' })
-    vim.keymap.set('n', 'gC', telescope_builtin.lsp_outgoing_calls, { buffer = bufnr, silent = true, desc = 'Callee' })
+    vim.keymap.set('n', 'gci', telescope_builtin.lsp_incoming_calls,
+        { buffer = bufnr, silent = true, desc = 'Incoming calls' })
+    vim.keymap.set('n', 'gco', telescope_builtin.lsp_outgoing_calls,
+        { buffer = bufnr, silent = true, desc = 'Outgoing calls' })
     vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { buffer = bufnr, silent = true, desc = 'Definition' })
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = bufnr, silent = true, desc = 'Declaration' })
     vim.keymap.set('n', 'gt', telescope_builtin.lsp_type_definitions,
         { buffer = bufnr, silent = true, desc = 'Type definition' })
+    vim.keymap.set('n', 'gq', vim.lsp.buf.format, { buffer = bufnr, silent = true, desc = 'Format entire buffer' })
     vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { buffer = bufnr, silent = true, desc = 'Reference' })
     vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations,
         { buffer = bufnr, silent = true, desc = 'Implementation' })
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single", })
+end
+
+local autoformat_group = vim.api.nvim_create_augroup('autoformat', { clear = false }) -- Do not clear, otherwise it breaks autoformat on config reload
+local function setup_autoformat(bufnr)
+    vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+        group = autoformat_group,
+        buffer = bufnr,
+        callback = function() vim.lsp.buf.format { buffer = bufnr } end,
+    })
 end
 
 return {
@@ -52,10 +65,9 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'folke/neodev.nvim', },
             { 'kosayoda/nvim-lightbulb', },
             { 'SmiteshP/nvim-navic', },
-            { 'lukas-reineke/lsp-format.nvim', },
+            { 'folke/lazydev.nvim',      opts = {}, },
         },
         config = function()
             vim.diagnostic.config { virtual_text = false, update_in_insert = true }
@@ -75,7 +87,7 @@ return {
                     capabilities = capabilities,
                     on_attach = function(client, bufnr)
                         on_attach(client, bufnr)
-                        require 'lsp-format'.on_attach(client)
+                        setup_autoformat(bufnr)
                     end,
                 }
             end
@@ -98,6 +110,7 @@ return {
                 on_attach = on_attach,
             }
 
+            vim.lsp.buf.incoming_calls()
             lspconfig.pylsp.setup {
                 capabilities = capabilities,
                 on_attach = on_attach,
@@ -110,12 +123,11 @@ return {
                 }
             }
 
-            require 'neodev'.setup()
             lspconfig.lua_ls.setup {
                 capabilities = capabilities,
                 on_attach = function(client, bufnr)
                     on_attach(client, bufnr)
-                    require 'lsp-format'.on_attach(client)
+                    setup_autoformat(bufnr)
                 end,
                 settings = {
                     Lua = {
@@ -154,7 +166,7 @@ return {
                     capabilities = capabilities,
                     on_attach = function(client, bufnr)
                         on_attach(client, bufnr)
-                        require 'lsp-format'.on_attach(client)
+                        setup_autoformat(bufnr)
                     end,
                 },
             }
