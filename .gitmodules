@@ -7,3 +7,6 @@
 [submodule "ext/i3blocks"]
 	path = ext/i3blocks
 	url = https://github.com/vivien/i3blocks-contrib
+[submodule "ext/dotfiles-secret"]
+	path = ext/dotfiles-secret
+	url = git@github.com:kbieganski/dotfiles-secret
