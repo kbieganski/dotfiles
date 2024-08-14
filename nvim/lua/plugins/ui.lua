@@ -41,19 +41,16 @@ return {
                 return sc.current .. '/' .. sc.total
             end
             require 'lualine'.setup {
-                options = {
-                    disabled_filetypes = {
-                        statusline = { 'Outline', 'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes',
-                            'dapui_console', 'dap-repl' },
-                    },
-                },
                 sections = {
                     lualine_a = { 'mode', 'selectioncount' },
                     lualine_b = {},
-                    lualine_c = { 'branch', 'filename', function()
-                        if #vim.lsp.get_active_clients() > 0 then return require 'nvim-navic'.get_location() end
-                        return ''
-                    end },
+                    lualine_c = { 'branch',
+                        { 'filename', path = 3, symbols = { modified = '❬*❭', readonly = '❬ro❭', unnamed = '❬no name❭', new = '❬new❭' } },
+                        function()
+                            if #vim.lsp.get_active_clients() > 0 then return require 'nvim-navic'.get_location() end
+                            return ''
+                        end
+                    },
                     lualine_x = {},
                     lualine_y = { 'diagnostics', 'diff' },
                     lualine_z = { searchcount, 'progress', 'location' },

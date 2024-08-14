@@ -90,6 +90,17 @@ bindkey '^[Od' backward-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
+export LS_COLORS='rs=0:di=01;37:ln=00;34:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32';
+export EXA_COLORS='xx=fg'
+
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+  --color=fg:#d0d0d0,fg+:#dddddd,bg:-1,bg+:#222222
+  --color=hl:#00aaff,hl+:#00aaff,info:#999999,marker:#dddddd
+  --color=prompt:#dddddd,spinner:#44ff88,pointer:#44ff88,header:#777777
+  --color=border:#dddddd,label:#aeaeae,query:#d9d9d9
+  --preview-window="border-sharp" --prompt="❯ " --marker="⏵" --pointer="⏵"
+  --separator="─" --scrollbar="│"'
+
 alias cd=z
 alias ..='cd ..'
 alias ...='cd ../..'

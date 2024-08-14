@@ -14,20 +14,11 @@ local function get_visual_selection()
     end
 end
 
--- Open a finder using the current finder
+-- Open a finder from the current finder
 local function open_using_finder(finder)
     local action_state = require 'telescope.actions.state'
     return function(prompt_bufnr)
-        local current_finder = action_state.get_current_picker(prompt_bufnr).finder
-        local entry = action_state.get_selected_entry()
-
-        local entry_path
-        if entry.ordinal == ".." then
-            entry_path = Path:new(current_finder.path)
-        else
-            entry_path = action_state.get_selected_entry().Path
-        end
-
+        local entry_path = action_state.get_selected_entry().Path
         local path = entry_path:is_dir() and entry_path:absolute() or entry_path:parent():absolute()
         require 'telescope.actions'.close(prompt_bufnr)
         finder({ cwd = path })
@@ -44,7 +35,14 @@ return {
 
             telescope.setup {
                 defaults = {
-                    borderchars = { '─', ' ', ' ', ' ', '─', '─', ' ', ' ' },
+                    prompt_prefix = '❯ ',
+                    selection_caret = '⏵ ',
+                    borderchars = {
+                        prompt = { '·', ' ', '─', ' ', ' ', ' ', '─', ' ' },
+                        results = { '─', ' ', '─', ' ', ' ', '─', ' ', ' ' },
+                        preview = { '─', ' ', '─', '│', '┬', ' ', ' ', '┴' },
+                    },
+                    path_display = 'smart',
                     layout_strategy = 'flex',
                     layout_config = {
                         flex = { flip_columns = 180 },
@@ -67,8 +65,8 @@ return {
                         hijack_netrw = true,
                         mappings = {
                             i = {
-                                ['/'] = open_using_finder(require 'telescope.builtin'.find_files),
-                                ['<M-/>'] = open_using_finder(require 'telescope.builtin'.live_grep),
+                                ['\\'] = open_using_finder(require 'telescope.builtin'.live_grep),
+                                ['|'] = open_using_finder(require 'telescope.builtin'.find_files),
                             },
                         },
                     },

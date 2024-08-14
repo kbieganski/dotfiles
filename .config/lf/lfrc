@@ -1,0 +1,84 @@
+set cursoractivefmt "\033[7m"
+set cursorparentfmt "\033[7m"
+set cursorpreviewfmt "\033[4m"
+set cutfmt "\033[7;31m"
+set copyfmt "\033[7;32m"
+set icons true
+set incfilter true
+set incsearch true
+set mouse true
+set previewer bat
+set selectfmt "\033[7;34m"
+set tagfmt "\033[37m"
+
+cmd rename ${{
+    old="$(mktemp)"
+    new="$(mktemp)"
+    if [ -n "$fs" ]; then
+        fs="$(basename -a -- $fs)"
+    else
+        fs="$(ls)"
+    fi
+    printf '%s\n' "$fs" > "$old"
+    printf '%s\n' "$fs" > "$new"
+    $EDITOR "$new"
+    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+    paste "$old" "$new" | while IFS= read -r names; do
+        src="$(printf '%s' "$names" | cut -f1)"
+        dst="$(printf '%s' "$names" | cut -f2)"
+        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+            continue
+        fi
+        mv -- "$src" "$dst"
+    done
+    rm -- "$old" "$new"
+    lf -remote "send $id unselect"
+}}
+
+cmd move-parent &{{
+    dironly="setlocal \"$(dirname -- "$PWD" | sed 's/\\/\\\\/g;s/"/\\"/g')\" dironly"
+    lf -remote "send $id :updir; $dironly true; $1; $dironly false; open"
+}}
+
+map J move-parent down
+map K move-parent up
+
+# y (select for copy) and P to paste soft-link
+# d (select for cut) and P to paste hard-link
+cmd link %{{
+    set -- $(cat ~/.local/share/lf/files)
+    mode="$1"
+    shift
+    if [ "$#" -lt 1 ]; then
+        lf -remote "send $id echo no files to link"
+        exit
+    fi
+    case "$mode" in
+        # symbolically copy mode is indicating a soft link
+        copy) ln -sr -t . -- "$@";;
+        # while a move mode is indicating a hard link
+        move) ln -t . -- "$@";;
+    esac
+    rm ~/.local/share/lf/files
+    lf -remote "send clear"
+}}
+map P :link
+
+cmd yank-path $printf '%s' "$f" | xclip -i -selection clipboard
+
+cmd open-with-gui &$@ $fx # opens asynchronously, intended for GUI applications
+cmd open-with-cli $$@ $fx # opens synchronously, intended for CLI/TUI applications
+map O push :open-with-gui<space>
+map o push :open-with-cli<space>
+
+cmd share $curl -F"file=@$fx" -Fexpires=24 https://0x0.st | xclip -selection c
+
+# set pane_path when changing directory
+cmd on-cd &printf '\033]7;%s\033\' "$PWD" > /dev/tty
+
+# unset pane_path when quitting
+cmd on-quit &printf '\033]7;\033\' > /dev/tty
+
+# trigger on-cd upon startup
+on-cd
+

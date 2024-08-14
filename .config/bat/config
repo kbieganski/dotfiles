@@ -1,3 +1,5 @@
---theme="GitHub"
+--theme=lucid
 --italic-text=always
+--color=always
+--style=numbers
 --pager="less --RAW-CONTROL-CHARS --quit-if-one-screen --mouse"
