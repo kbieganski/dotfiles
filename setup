@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-dotfiles_dir=$(dirname $(readlink -f $0))
-ln -s $dotfiles_dir/home.nix $HOME/.config/home-manager/home.nix
-nix-shell '<home-manager>' -A install
-
