@@ -52,7 +52,7 @@ for key in "^[[B" ${terminfo[kcud1]} j; do
     bindkey -M vicmd $key down-line-or-beginning-search
 done
 
-_fg() { fg }
+_fg() { fg &>/dev/null }
 zle -N _fg
 bindkey "^Z" _fg
 

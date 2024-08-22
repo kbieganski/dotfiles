@@ -2,16 +2,6 @@
 
 return {
     {
-        dir = vim.fn.stdpath('config') .. '/dev/diagline-popup',
-        opts = {},
-    },
-    {
-        dir = vim.fn.stdpath('config') .. '/dev/lucid',
-        config = function()
-            vim.cmd.colorscheme 'lucid'
-        end,
-    },
-    {
         'folke/which-key.nvim',
         config = function()
             require 'which-key'.setup {

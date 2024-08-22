@@ -1,9 +1,6 @@
 -- Utility
 
 return {
-    {
-        dir = vim.fn.stdpath('config') .. '/dev/compiler-explorer',
-    },
     { 'Saecki/crates.nvim', ft = 'toml', opts = {} },
     {
         'lewis6991/spaceless.nvim',
