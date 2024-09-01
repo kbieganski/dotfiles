@@ -30,10 +30,7 @@ return {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
         config = function()
-            local telescope = require 'telescope'
-            local Path = require 'plenary.path'
-
-            telescope.setup {
+            require 'telescope'.setup {
                 defaults = {
                     prompt_prefix = '❯ ',
                     selection_caret = '⏵ ',
