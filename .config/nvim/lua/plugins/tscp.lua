@@ -7,9 +7,9 @@ local function get_visual_selection()
     else
         local _, ls, cs = unpack(vim.fn.getpos('v'))
         local _, le, ce = unpack(vim.fn.getpos('.'))
-        ls = ls - 1; le = le - 1; cs = cs - 1; ce = ce - 1
-        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le), math.min(cs, ce), math.max(ls, le), math.max(cs, ce),
-            {})
+        ls = ls - 1; le = le - 1; cs = cs - 1
+        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
+            math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
         return table.concat(lines, ' ')
     end
 end
