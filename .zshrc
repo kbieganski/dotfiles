@@ -94,8 +94,7 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ~='cd ~'
 
-EXA_FLAGS=()
-alias l='ls'
+alias l=ls
 alias ls='exa --classify --group-directories-first --git --icons --time-style long-iso'
 alias la='ls --all'
 alias ll='ls --long'
@@ -116,7 +115,6 @@ alias find='fd'
 alias fdi='fd --no-ignore'
 
 alias c='clear'
-alias h='history'
 
 alias term='kill'
 alias kill='kill -9'
@@ -139,10 +137,6 @@ alias g='git'
 
 alias cal='cal -m -3'
 alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
-
-alias nix-shell='nix-shell --run zsh'
-alias ns='nix-shell'
-alias nsp='nix-shell -p'
 
 alias suspend='systemctl suspend'
 
