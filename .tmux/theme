@@ -1,6 +1,1 @@
-set -g window-active-style bg='#121212'
-set -g window-style bg='#000000'
-set -g pane-active-border-style 'bg=#121212 fg=#DADADA'
-set -g pane-border-style 'bg=#000000 fg=#DADADA'
-set -g mode-style 'fg=#DADADA bg=#232B55'
-
+../ext/dotfiles-secret/austere-theme/tmux.conf
