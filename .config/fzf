@@ -1,0 +1,17 @@
+--color=fg:#DADADA
+--color=fg+:#FFFFFF
+--color=bg:-1
+--color=bg+:#242424
+--color=hl:#6F82FF
+--color=hl+:#6F82FF
+--color=info:#7F7F7F
+--color=marker:#DADADA
+--color=prompt:#DADADA
+--color=spinner:#70FF92
+--color=pointer:#70FF92
+--color=header:#7F7F7F
+--color=border:#DADADA
+--color=label:#B2B2B2
+--color=query:#CCCCCC
+--preview-window="border-sharp" --prompt="❯ " --marker="⏵" --pointer="⏵"
+--separator="─" --scrollbar="│"
