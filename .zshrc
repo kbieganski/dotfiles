@@ -108,39 +108,42 @@ alias llra='ls --long --recurse --all'
 alias llt='ls --long --tree'
 alias llta='ls --long --tree --all'
 
-alias du='dust'
-alias df='duf'
+alias du=dust
+alias df=duf
 
-alias find='fd'
+alias find=fd
 alias fdi='fd --no-ignore'
 
-alias c='clear'
+alias grep=rg
+alias rgi='rg --no-ignore'
 
-alias term='kill'
+alias c=clear
+
+alias term=kill
 alias kill='kill -9'
-alias ps='procs'
+alias ps=procs
 alias pt='procs --tree'
 alias pw='procs --watch'
 alias pwt='procs --watch --tree'
 alias uptime='uptime -p'
 alias free='free -h'
-alias e='exit'
-alias q='exit'
+alias e=exit
+alias q=exit
 
 alias cp='cp -vr'
 alias mv='mv -v'
 alias rm='rm -vr'
 alias rip='rip --graveyard $HOME/trash'
-alias r='rip'
+alias r=rip
 
-alias g='git'
+alias g=git
 
 alias cal='cal -m -3'
 alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
 
 alias suspend='systemctl suspend'
 
-alias vim='nvim'
+alias vim=nvim
 
 alias icat='kitty +kitten icat'
 
