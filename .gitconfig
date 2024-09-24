@@ -98,7 +98,7 @@
     rw = !git reword
 
     s = show
-    save = commit -am \"!save\"
+    save = commit --allow-empty-message --message ""
     st = status
     sw = switch
     swc = switch -c
