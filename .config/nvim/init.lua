@@ -25,6 +25,7 @@ vim.o.updatetime = 1000                   -- time for various update events
 vim.o.virtualedit = 'all'                 -- allow virtual editing
 vim.o.visualbell = true                   -- disable bleeping
 vim.o.writebackup = false                 -- disable backup when overwriting
+vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
 
 -- Mappings
 vim.g.mapleader = ' '

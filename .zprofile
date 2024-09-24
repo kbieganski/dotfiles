@@ -9,8 +9,6 @@ export VISUAL=nvim
 
 export TERMINAL=kitty
 
-source /etc/profile.d/debuginfod.sh
-
 systemctl --user import-environment PATH HOME
 
 if [ -z "$TMUX" ] && [[ -o login ]] && [ -z "$SSH_CONNECTION" ]; then

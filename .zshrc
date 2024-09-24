@@ -22,6 +22,22 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
+function precmd {
+    local ssh_connection=$(tmux show-env | grep "^SSH_CONNECTION")
+    if [ -n "$ssh_connection" ]; then
+        export $ssh_connection
+    else
+        unset SSH_CONNECTION
+    fi
+    local ssh_auth_sock=$(tmux show-env | grep "^SSH_AUTH_SOCK")
+    if [ -n "$ssh_auth_sock" ]; then
+        export $ssh_auth_sock
+    fi
+    local display=$(tmux show-env | grep "^DISPLAY")
+    if [ -n "$display" ]; then
+        export $display
+    fi
+}
 
 bindkey -M viins "^[[1~" beginning-of-line
 bindkey -M viins  "^[[4~" end-of-line
@@ -87,7 +103,6 @@ export EXA_COLORS="xx=fg:$LS_COLORS"
 
 export FZF_DEFAULT_OPTS="$(< $HOME/.config/fzf)"
 
-alias cd=z
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -111,7 +126,6 @@ alias llta='ls --long --tree --all'
 alias du=dust
 alias df=duf
 
-alias find=fd
 alias fdi='fd --no-ignore'
 
 alias grep=rg
@@ -148,8 +162,7 @@ alias vim=nvim
 alias icat='kitty +kitten icat'
 
 eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
 source <(fzf --zsh)
-
 source $HOME/dotfiles/ext/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source .config/zsh/*.zsh
 
