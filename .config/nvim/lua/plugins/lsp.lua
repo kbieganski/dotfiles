@@ -21,7 +21,7 @@ local function on_attach(client, bufnr)
         require 'nvim-navic'.attach(client, bufnr)
     end
     if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(bufnr, true)
+        vim.lsp.inlay_hint.enable(true)
     end
     vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next { float = false } end,
         { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
