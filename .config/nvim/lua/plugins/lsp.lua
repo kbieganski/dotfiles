@@ -20,6 +20,9 @@ local function on_attach(client, bufnr)
     if client.server_capabilities.documentSymbolProvider then
         require 'nvim-navic'.attach(client, bufnr)
     end
+    if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint.enable(bufnr, true)
+    end
     vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next { float = false } end,
         { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
     vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev { float = false } end,
@@ -150,9 +153,6 @@ return {
         config = function()
             local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
             vim.g.rustaceanvim = {
-                tools = {
-                    inlay_hints = { only_current_line = true, },
-                },
                 server = {
                     settings = {
                         ['rust-analyzer'] = {
