@@ -73,12 +73,18 @@ return {
             { 'folke/lazydev.nvim',      opts = {}, },
         },
         config = function()
-            vim.diagnostic.config { virtual_text = false, update_in_insert = true }
-
-            -- pretty LSP diagnostics icons
-            for name, icon in pairs { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' } do
-                vim.fn.sign_define('DiagnosticSign' .. name, { text = icon, texthl = 'Diagnostic' .. name })
-            end
+            vim.diagnostic.config {
+                virtual_text = false,
+                update_in_insert = true,
+                signs = {
+                    text = {
+                        [vim.diagnostic.severity.ERROR] = ' ',
+                        [vim.diagnostic.severity.WARN] = ' ',
+                        [vim.diagnostic.severity.INFO] = ' ',
+                        [vim.diagnostic.severity.HINT] = ' ',
+                    }
+                }
+            }
 
             -- enable completion capabilities for LSP
             local capabilities = require 'cmp_nvim_lsp'.default_capabilities()

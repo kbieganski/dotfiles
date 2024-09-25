@@ -37,7 +37,7 @@ return {
                     lualine_c = { 'branch',
                         { 'filename', path = 3, symbols = { modified = '❬*❭', readonly = '❬ro❭', unnamed = '❬no name❭', new = '❬new❭' } },
                         function()
-                            if #vim.lsp.get_active_clients() > 0 then return require 'nvim-navic'.get_location() end
+                            if #vim.lsp.get_clients { bufnr = 0 } > 0 then return require 'nvim-navic'.get_location() end
                             return ''
                         end
                     },
