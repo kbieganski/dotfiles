@@ -1,11 +1,6 @@
-#!/bin/env zsh
-
 export PATH=~/bin:~/.local/bin:~/.cargo/bin:$PATH
 
 eval "$(ssh-agent -s)" &> /dev/null
-
-export EDITOR=nvim
-export VISUAL=nvim
 
 export TERMINAL=kitty
 
