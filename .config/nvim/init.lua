@@ -205,35 +205,55 @@ function R(name)
     return require(name)
 end
 
-local function run_get_stdout(cmd, fn)
-    return function()
-        local buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_set_current_buf(buf)
-        vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
-        vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
-        local tempfile = vim.fn.tempname()
-        vim.fn.termopen(cmd .. ' > ' .. tempfile, {
-            on_exit = function()
-                vim.api.nvim_buf_delete(buf, { force = true })
-                if (vim.fn.filereadable(tempfile) ~= 0) then
-                    local selected = vim.fn.readfile(tempfile)[1]
-                    fn(selected)
-                end
-            end
-        })
-        vim.cmd.startinsert()
+-- Interactive shell commands
+local function get_visual_selection()
+    if vim.api.nvim_get_mode().mode ~= 'v' then
+        return ''
+    else
+        local _, ls, cs = unpack(vim.fn.getpos('v'))
+        local _, le, ce = unpack(vim.fn.getpos('.'))
+        ls = ls - 1; le = le - 1; cs = cs - 1
+        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
+            math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
+        return table.concat(lines, ' ')
     end
 end
 
-vim.api.nvim_create_user_command('Fzf', run_get_stdout('fzf', vim.cmd.edit), { nargs = 0 })
-vim.api.nvim_create_user_command('Lf', run_get_stdout('lf -print-selection', vim.cmd.edit), { nargs = 0 })
+local function run_get_stdout(cmd, fn)
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_set_current_buf(buf)
+    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+    local tempfile = vim.fn.tempname()
+    vim.fn.termopen(cmd .. ' > ' .. tempfile, {
+        on_exit = function()
+            vim.api.nvim_buf_delete(buf, { force = true })
+            if (vim.fn.filereadable(tempfile) ~= 0) then
+                local selected = vim.fn.readfile(tempfile)[1]
+                fn(selected)
+            end
+        end
+    })
+    vim.cmd.startinsert()
+end
 
-vim.api.nvim_create_user_command('Rg', run_get_stdout('rgi',
-        function(selected)
-            local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
-            line = tonumber(line)
-            col = tonumber(col) - 1
-            vim.cmd.edit(filename)
-            vim.api.nvim_win_set_cursor(0, { line, col })
-        end),
-    { nargs = 0 })
+vim.keymap.set('n', '<leader>f',
+    function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
+    { silent = true, desc = 'File browser' })
+vim.keymap.set({ 'n', 'v' }, '|',
+    function()
+        run_get_stdout('fzf --query "' .. get_visual_selection() .. '"', vim.cmd.edit)
+    end,
+    { silent = true, desc = 'Find files' })
+vim.keymap.set({ 'n', 'v' }, '\\',
+    function()
+        run_get_stdout('rgl ' .. get_visual_selection(),
+            function(selected)
+                local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
+                line = tonumber(line)
+                col = tonumber(col) - 1
+                vim.cmd.edit(filename)
+                vim.api.nvim_win_set_cursor(0, { line, col })
+            end)
+    end,
+    { silent = true, desc = 'Live grep' })

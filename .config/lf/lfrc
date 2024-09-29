@@ -11,6 +11,7 @@ set previewer bat
 set selectfmt "\033[7;34m"
 set tagfmt "\033[37m"
 
+# Batch rename
 cmd rename ${{
     old="$(mktemp)"
     new="$(mktemp)"
@@ -35,6 +36,7 @@ cmd rename ${{
     lf -remote "send $id unselect"
 }}
 
+# Change parent dir
 cmd move-parent &{{
     dironly="setlocal \"$(dirname -- "$PWD" | sed 's/\\/\\\\/g;s/"/\\"/g')\" dironly"
     lf -remote "send $id :updir; $dironly true; $1; $dironly false; open"
@@ -42,6 +44,25 @@ cmd move-parent &{{
 
 map J move-parent down
 map K move-parent up
+
+# | to fzf current dir
+cmd fzf ${{
+    lf -remote "send $id :cd $(dirname $(fzf))"
+}}
+map | fzf
+
+# \ to ripgrep current dir
+cmd rg ${{
+    lf -remote "send $id :cd $(dirname $(rgl | cut -d: -f1))"
+}}
+map \\ rg
+
+# Inside Neovim, ignore e
+&{{
+    if [ -n "$NVIM" ]; then
+        lf -remote "send $id :map e"
+    fi
+}}
 
 # y (select for copy) and P to paste soft-link
 # d (select for cut) and P to paste hard-link
@@ -64,13 +85,16 @@ cmd link %{{
 }}
 map P :link
 
+# Copy path to clipboard
 cmd yank-path $printf '%s' "$f" | xclip -i -selection clipboard
 
+# Open file with GUI or CLI
 cmd open-with-gui &$@ $fx # opens asynchronously, intended for GUI applications
 cmd open-with-cli $$@ $fx # opens synchronously, intended for CLI/TUI applications
 map O push :open-with-gui<space>
 map o push :open-with-cli<space>
 
+# Upload file to share
 cmd share $curl -F"file=@$fx" -Fexpires=24 https://0x0.st | xclip -selection c
 
 # set pane_path when changing directory

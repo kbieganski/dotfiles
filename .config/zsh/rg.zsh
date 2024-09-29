@@ -1,14 +1,3 @@
-function rgl {
-    local reload='reload:rg --column --color=always --smart-case {q} || :'
-    fzf --disabled --ansi --multi \
-        --bind "start:$reload" --bind "change:$reload" \
-        --bind 'enter:accept' \
-        --delimiter : \
-        --preview 'bat {1} --color=always --highlight-line {2}' \
-        --preview-window '~4,+{2}+4/3,<80(up)' \
-        --query "$*"
-}
-
 function rge() {
     local reload='reload:rg --column --color=always --smart-case {q} || :'
     local opener='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
@@ -26,4 +15,3 @@ function rge() {
         --preview-window '~4,+{2}+4/3,<80(up)' \
         --query "$*"
 }
-

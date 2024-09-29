@@ -1,3 +1,4 @@
+--colors=match:fg:blue
 --colors=line:none
 --colors=column:none
 

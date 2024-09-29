@@ -105,7 +105,7 @@ return {
                 capabilities = capabilities,
                 on_attach = function(client, bufnr)
                     on_attach(client, bufnr)
-                    vim.keymap.set('n', 'go', function() vim.cmd.ClangdSwitchSourceHeader() end,
+                    vim.keymap.set('n', 'go', vim.cmd.ClangdSwitchSourceHeader,
                         { buffer = bufnr, desc = 'Switch source/header' })
                 end,
                 cmd = {
@@ -114,7 +114,10 @@ return {
                 },
             }
 
-            lspconfig.verible.setup {
+            lspconfig.svls.setup {
+                cmd = { 'target/debug/svls' },
+                filetypes = 'systemverilog',
+                name = 'svls',
                 capabilities = capabilities,
                 on_attach = on_attach,
             }
