@@ -35,12 +35,12 @@ return {
                     prompt_prefix = '❯ ',
                     selection_caret = '⏵ ',
                     borderchars = {
-                        prompt = { '·', ' ', '─', ' ', ' ', ' ', '─', ' ' },
-                        results = { '─', ' ', '─', ' ', ' ', '─', ' ', ' ' },
-                        preview = { '─', ' ', '─', '│', '┬', ' ', ' ', '┴' },
+                        prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+                        results = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
+                        preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
                     },
-                    path_display = 'smart',
-                    layout_strategy = 'flex',
+                    path_display = 'truncate',
+                    layout_strategy = 'vertical',
                     layout_config = {
                         flex = { flip_columns = 180 },
                         vertical = { width = { padding = 0 }, height = { padding = 0 } },

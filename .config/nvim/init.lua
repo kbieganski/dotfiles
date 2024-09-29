@@ -204,3 +204,36 @@ function R(name)
     require 'plenary.reload'.reload_module(name)
     return require(name)
 end
+
+local function run_get_stdout(cmd, fn)
+    return function()
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_set_current_buf(buf)
+        vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
+        vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+        local tempfile = vim.fn.tempname()
+        vim.fn.termopen(cmd .. ' > ' .. tempfile, {
+            on_exit = function()
+                vim.api.nvim_buf_delete(buf, { force = true })
+                if (vim.fn.filereadable(tempfile) ~= 0) then
+                    local selected = vim.fn.readfile(tempfile)[1]
+                    fn(selected)
+                end
+            end
+        })
+        vim.cmd.startinsert()
+    end
+end
+
+vim.api.nvim_create_user_command('Fzf', run_get_stdout('fzf', vim.cmd.edit), { nargs = 0 })
+vim.api.nvim_create_user_command('Lf', run_get_stdout('lf -print-selection', vim.cmd.edit), { nargs = 0 })
+
+vim.api.nvim_create_user_command('Rg', run_get_stdout('rgi',
+        function(selected)
+            local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
+            line = tonumber(line)
+            col = tonumber(col) - 1
+            vim.cmd.edit(filename)
+            vim.api.nvim_win_set_cursor(0, { line, col })
+        end),
+    { nargs = 0 })
