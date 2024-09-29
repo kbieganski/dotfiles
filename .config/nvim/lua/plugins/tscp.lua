@@ -74,11 +74,6 @@ return {
         end,
         keys = {
             {
-                '<M-`>',
-                function() require 'telescope.builtin'.jumplist() end,
-                desc = 'Jumps'
-            },
-            {
                 '<M-/>',
                 function()
                     local selection = get_visual_selection()

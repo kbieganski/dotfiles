@@ -5,11 +5,11 @@ return {
         'folke/which-key.nvim',
         config = function()
             require 'which-key'.setup {
-                preset = 'helix',
+                preset = 'modern',
                 icons = {
                     separator = "➤ ",
                 },
-                delay = 500,
+                delay = 400,
             }
         end,
     },
