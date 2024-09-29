@@ -67,7 +67,7 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { silent = true })
 
 -- Window management with alt
 vim.keymap.set('n', '<M-q>', vim.cmd.close, { silent = true })
-vim.keymap.set('n', '<M-c>', vim.cmd.split, { silent = true })
+vim.keymap.set('n', '<M-b>', vim.cmd.split, { silent = true })
 vim.keymap.set('n', '<M-v>', vim.cmd.vsplit, { silent = true })
 vim.keymap.set('n', '<M-H>', '<C-w><S-h>', { silent = true })
 vim.keymap.set('n', '<M-J>', '<C-w><S-j>', { silent = true })
