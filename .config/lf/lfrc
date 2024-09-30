@@ -57,10 +57,14 @@ cmd rg ${{
 }}
 map \\ rg
 
-# Inside Neovim, ignore e
+# Launch shell in current dir
+cmd sh ${{ zsh }}
+map S sh
+
+# Inside Neovim, ignore e, S
 &{{
     if [ -n "$NVIM" ]; then
-        lf -remote "send $id :map e"
+        lf -remote "send $id :map e; map S"
     fi
 }}
 

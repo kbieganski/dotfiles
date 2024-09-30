@@ -1,6 +1,6 @@
 eval "$(zoxide init zsh)"
 
-z() {
+function z {
     local dir=$(
         zoxide query --list --score |
             fzf --height 40% --layout reverse --info inline \
