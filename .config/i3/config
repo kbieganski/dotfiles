@@ -116,57 +116,15 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-#--- Colors ----------------------------------------------------------------
-set $background     #111111aa
-set $foreground     #eeeeee
-set $focused_bg     #eeeeeecc
-set $focused_fg     #111111
-set $active_bg      #ccccccaa
-set $active_fg      #111111
-set $inactive_bg    #111111aa
-set $inactive_fg    #eeeeee
-set $urgent_bg      #2244ffaa
-set $urgent_fg      #eeeeee
 
-set $font pango:Jost* 10
+#--- Theme ----------------------------------------------------------------
+include theme.conf
 
-set $border      	2
-set $nofocus     	$background
-set $focus       	$foreground
-set $titletxt    	$dark
-set $titlepad		6
-set $gaps_inner  	4
-set $gaps_outer  	8
-
-client.focused          $focused_bg   $focused_bg   $focused_fg   $focused_bg   $focused_bg
-client.focused_inactive $active_bg    $active_bg    $active_fg    $active_bg    $active_bg
-client.unfocused        $inactive_bg  $inactive_bg  $inactive_fg  $inactive_bg  $inactive_bg
-client.urgent           $urgent_bg    $urgent_bg    $urgent_fg    $urgent_bg    $urgent_bg
-client.placeholder      $background   $background   $foreground   $background   $background
-client.background       $background
-
-#--- Bars ------------------------------------------------------------------
-bar {
-    position bottom
-    status_command i3blocks
-    i3bar_command i3bar --transparency
-    tray_output primary
-    colors {
-        background         $background
-        statusline         $foreground
-        focused_workspace  $focused_bg  $focused_bg  $focused_fg
-        active_workspace   $active_bg   $active_bg   $active_fg
-        inactive_workspace $inactive_bg $inactive_bg $inactive_fg
-        urgent_workspace   $urgent_bg   $urgent_bg   $urgent_fg
-    }
-}
-
-#--- Gaps ------------------------------------------------------------------
-gaps inner $gaps_inner
-gaps outer $gaps_outer
+gaps inner 4
+gaps outer 8
 
 #--- Titlebar --------------------------------------------------------------
-font $font
+font pango:Jost* 10
 for_window [title="."] title_format "%title"
 for_window [class="firefox"] border pixel 1
 for_window [class="obsidian"] border pixel 1
@@ -184,7 +142,6 @@ new_window normal 1
 exec --no-startup-id udiskie
 exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent
 exec --no-startup-id redshift -t 6500:3500
-exec --no-startup-id flameshot
 exec --no-startup-id picom
 exec --no-startup-id dunst
 exec xss-lock -- lock
