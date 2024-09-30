@@ -10,3 +10,4 @@
 [submodule "ext/dotfiles-secret"]
 	path = ext/dotfiles-secret
 	url = git@github.com:kbieganski/dotfiles-secret
+    branch = main
