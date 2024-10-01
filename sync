@@ -14,10 +14,12 @@ function silent {
     fi
 }
 
+# Fetch changes
 silent git pull
 silent git submodule update --init --recursive
 silent stow $dotfiles_dir
 
+# Install system packages
 pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pkg_dir/pacman.txt))
 if [ -n "$pacman_new_pkgs" ]; then
     silent sudo pacman -S --noconfirm $pacman_new_pkgs
@@ -25,6 +27,7 @@ fi
 
 pacman -Qqne | rg -v "(amd|intel|nvidia|wacom)" | sort > $pkg_dir/pacman.txt
 
+# Install Rust packages
 for toolchain in stable nightly; do
     silent rustup toolchain install --profile default $toolchain
     while read pkg; do
@@ -38,6 +41,7 @@ for toolchain in stable nightly; do
     done < $pkg_dir/cargo-git.txt
 done
 
+# Commit changes and push
 if [ -n "$(git -C $secret_dir diff --staged --name-only)" ]; then
     silent git -C $secret_dir save
     silent git -C $secret_dir push
