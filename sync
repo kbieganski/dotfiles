@@ -1,0 +1,50 @@
+#!/bin/env zsh
+
+dotfiles_dir=$(dirname ${(%):-%N})
+pkg_dir=$dotfiles_dir/pkg
+secret_dir=$dotfiles_dir/ext/dotfiles-secret
+
+function silent {
+    local temp=$(mktemp)
+    $* &> $temp
+    if [ $? -ne 0 ]; then
+        < $temp
+        echo "\e[31mFailed: '\e[0m$*\e[31m'\e[0m"
+        exit 1
+    fi
+}
+
+silent git pull
+silent git submodule update --init --recursive
+silent stow $dotfiles_dir
+
+pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pkg_dir/pacman.txt))
+if [ -n "$pacman_new_pkgs" ]; then
+    silent sudo pacman -S --noconfirm $pacman_new_pkgs
+fi
+
+pacman -Qqne | rg -v "(amd|intel|nvidia|wacom)" | sort > $pkg_dir/pacman.txt
+
+for toolchain in stable nightly; do
+    silent rustup toolchain install --profile default $toolchain
+    while read pkg; do
+        silent rustup +$toolchain component add $pkg
+    done < $pkg_dir/rustup-$toolchain.txt
+    while read pkg; do
+        silent cargo +$toolchain install $pkg
+    done < $pkg_dir/cargo.txt
+    while read pkg; do
+        silent cargo +$toolchain install --git $pkg
+    done < $pkg_dir/cargo-git.txt
+done
+
+if [ -n "$(git -C $secret_dir diff --staged --name-only)" ]; then
+    silent git -C $secret_dir save
+    silent git -C $secret_dir push
+    silent git add $secret_dir
+fi
+
+if [ -n "$(git diff --staged --name-only)" ]; then
+    silent git save
+    silent git push
+fi

@@ -1,3 +1,5 @@
-ext
 \.git
 \.gitignore
+ext
+pkg
+sync
