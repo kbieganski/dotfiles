@@ -3,7 +3,7 @@ function onmod {
 
     declare -a files
 
-    while [ ! -z "$1" ]; do
+    while [ -n "$1" ]; do
         case "$1" in
             -h|--help)
               echo "Usage: $0 [options] [file...] -- command..."

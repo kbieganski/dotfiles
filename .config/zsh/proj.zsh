@@ -1,21 +1,45 @@
 function proj {
-    mkdir -p ~/proj
-    local remote=$(gh repo list --json name | jq -r ".[] | .name" | sort | uniq)
-    local local=$(ls ~/proj)
+    local proj_dir=$HOME/proj
+    local owner=
+    while [ -n "$1" ]; do
+        case "$1" in
+            --work)
+                local proj_dir=$HOME/work
+                shift
+                ;;
+            *)
+                if [ -z $owner ]; then
+                    local owner=$1
+                    shift
+                else
+                    echo "Usage: proj [--work] [OWNER]"
+                    return
+                fi
+                ;;
+        esac
+    done
+    mkdir -p $proj_dir
+    local remote=$(gh repo list $owner --json name | jq -r ".[] | .name" | sort | uniq)
+    local local=$(ls $proj_dir)
     local all=$(echo "$remote\n$local" | sort | uniq)
     local proj=$(echo "$all" | fzf)
-    if [ "$proj" = "dotfiles" ]; then
-        local path=~/$proj
+    if [ -z "$proj" ]; then
+        return
     else
-        local is_local=$(echo "$local" | grep -xc "$proj")
-        if [ $is_local -eq 0 ]; then
-            gh repo clone $proj ~/proj/$proj
+        echo "$local" | grep -xc "$proj" &> /dev/null
+        local is_local=$?
+        echo $is_local
+        if [ $is_local -ne 0 ]; then
+            if [ -z $owner ]; then
+                gh repo clone $proj $proj_dir/$proj
+            else
+                gh repo clone $owner/$proj $proj_dir/$proj
+            fi
         fi
-        local path=~/proj/$proj
     fi
-    git -C $path pull --ff-only
+    git -C $proj_dir/$proj pull --ff-only
 
-    tmux new-session -s $proj -d -c $path 'nvim' \; \
-        split-window -h -c $path -t $proj:1 \; \
+    tmux new-session -s $proj -d -c $proj_dir/$proj 'nvim' \; \
+        split-window -h -c $proj_dir/$proj -t $proj:1 \; \
         switch-client -t $proj
 }
