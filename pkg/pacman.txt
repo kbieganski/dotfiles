@@ -59,7 +59,6 @@ linux-headers
 lld
 lldb
 ltrace
-lua51
 lua-language-server
 make
 man-db

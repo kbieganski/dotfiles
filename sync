@@ -22,7 +22,7 @@ silent stow $dotfiles_dir
 # Install system packages
 pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pkg_dir/pacman.txt))
 if [ -n "$pacman_new_pkgs" ]; then
-    silent sudo pacman -S --noconfirm $pacman_new_pkgs
+    silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
 fi
 
 pacman -Qqne | rg -v "(amd|intel|nvidia|wacom)" | sort > $pkg_dir/pacman.txt

@@ -83,16 +83,6 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-# Environment
-export EDITOR=nvim
-export VISUAL=nvim
-
-export EZA_COLORS="xx=fg:$LS_COLORS"
-
-export FZF_DEFAULT_OPTS="$(< $HOME/.config/fzf)"
-
-export RIPGREP_CONFIG_PATH=$HOME/.config/rg
-
 # Aliases
 alias ..='cd ..'
 alias ...='cd ../..'
