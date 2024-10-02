@@ -7,7 +7,7 @@ secret_dir=ext/dotfiles-secret
 
 function silent {
     local temp=$(mktemp)
-    echo "\e[32mRunning '\e[0m$*\e[34m'\e[0m"
+    echo "\e[34mRunning '\e[0m$*\e[34m'\e[0m"
     $* &> $temp
     if [ $? -ne 0 ]; then
         < $temp
