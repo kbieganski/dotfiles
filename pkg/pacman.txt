@@ -37,6 +37,7 @@ gdb
 ghc
 ghc-static
 git
+git-absorb
 git-delta
 github-cli
 git-lfs
