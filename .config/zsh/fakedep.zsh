@@ -15,5 +15,5 @@ depends=('$(echo $@ | sed "s/\s\+/' '/g")')
 " > $temp/PKGBUILD
     pushd $temp &> /dev/null
     makepkg -si --noconfirm
-    popd
+    popd &> /dev/null
 }
