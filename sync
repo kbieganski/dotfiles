@@ -48,6 +48,9 @@ silent nvim '+Lazy! sync' +qa
 section "Updating bat cache"
 silent bat cache --build
 
+section "Reloading i3"
+silent i3-msg reload
+
 section "Installing Rust packages"
 for toolchain in stable nightly; do
     silent rustup toolchain install --profile default $toolchain
