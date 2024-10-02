@@ -1,11 +1,13 @@
 #!/bin/env zsh
 
 dotfiles_dir=$(dirname ${(%):-%N})
-pkg_dir=$dotfiles_dir/pkg
-secret_dir=$dotfiles_dir/ext/dotfiles-secret
+pkg_dir=pkg
+pacman_pkg_list=$pkg_dir/pacman.txt
+secret_dir=ext/dotfiles-secret
 
 function silent {
     local temp=$(mktemp)
+    echo "\e[32mRunning '\e[0m$*\e[34m'\e[0m"
     $* &> $temp
     if [ $? -ne 0 ]; then
         < $temp
@@ -14,18 +16,28 @@ function silent {
     fi
 }
 
+cd $dotfiles_dir
+
 # Fetch changes
+old_commit=$(git rev-parse HEAD)
 silent git pull
 silent git submodule update --init --recursive
 silent stow $dotfiles_dir
+new_commit=$(git rev-parse HEAD)
 
-# Install system packages
-pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pkg_dir/pacman.txt))
-if [ -n "$pacman_new_pkgs" ]; then
-    silent sudo pacman -Sy --asexplicit --noconfirm ${=pacman_new_pkgs}
+# Delete system packages
+pacman_del_pkgs=$(comm -23 <(git show $old_commit:$pacman_pkg_list | sort) <(sort < $pacman_pkg_list))
+if [ -n "$pacman_del_pkgs" ]; then
+    silent sudo pacman -Rs --noconfirm ${=pacman_del_pkgs}
 fi
 
-pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pkg_dir/pacman.txt
+# Install system packages
+pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pacman_pkg_list))
+if [ -n "$pacman_new_pkgs" ]; then
+    silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
+fi
+
+pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_pkg_list
 
 # Sync Neovim plugins
 silent nvim '+Lazy! sync' +qa
