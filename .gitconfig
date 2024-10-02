@@ -85,6 +85,7 @@
 
     fixup = commit --fixup
     fx = !git fixup
+    ffx = ffixup
 
     p = push
     pf = !git pushf
@@ -94,6 +95,9 @@
     r = remote
     ra = remote add
     rb = rebase
+    rbi = rebase -i
+    frb = frebase
+    frbi = frebase -i
     reword = commit --amend
     rw = !git reword
 

@@ -138,6 +138,8 @@ alias weather='wget -qO- wttr.in/ | sed -e "s:226m:202m:g"'
 
 alias suspend='systemctl suspend'
 
+alias sudo='sudo --preserve-env'
+
 alias vim=nvim
 
 alias icat='kitty +kitten icat'

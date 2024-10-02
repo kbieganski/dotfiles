@@ -1,0 +1,39 @@
+#!/bin/env bash
+
+package=$(cargo read-manifest | jq -r .name)
+history_dir=$HOME/.cargo/tests-history
+mkdir -p $history_dir
+
+watch=false
+args=
+while [ -n "$1" ]; do
+    case "$1" in
+    --watch | -w)
+        watch=true
+        ;;
+    *)
+        args="$args $1"
+        ;;
+    esac
+    shift
+done
+
+test_filter=$(
+    export RUSTFLAGS=-Awarnings
+    cargo +nightly test --quiet -- -Z unstable-options --list --format json |
+        jq -r '.name | select(. != null)' |
+        fzf --exact \
+            --preview='bat $(cargo +nightly test --quiet -- -Z unstable-options --list --format json | jq -r "select(.name == \"$(echo {})\") | \"\(.source_path) --line-range \(.start_line - 1):\"")' \
+            --prompt "Run test 🞂 " \
+            --history "$history_dir/$package" \
+            --bind "load:prev-history" \
+            --bind "alt-enter:print-query+abort"
+)
+
+if [ $? -eq 0 ]; then
+    if $watch; then
+        cargo watch --exec test $test_filter $args
+    else
+        cargo test $test_filter $args
+    fi
+fi

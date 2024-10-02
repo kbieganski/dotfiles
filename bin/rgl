@@ -8,4 +8,3 @@ fzf --disabled --ansi --multi \
     --preview 'bat {1} --color=always --highlight-line {2}' \
     --preview-window '~4,+{2}+4/3,<80(up)' \
     --query "$*"
-

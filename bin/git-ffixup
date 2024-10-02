@@ -1,0 +1,9 @@
+#!/bin/env bash
+
+if ! git status &>/dev/null; then
+    echo "Not in a git repository"
+    exit 1
+fi
+refs=$(git log --format=reference)
+ref=$(printf '%s\n' "${refs[@]}" | fzf | cut -d' ' -f1)
+[ -n "$ref" ] && git fixup "$@" $ref

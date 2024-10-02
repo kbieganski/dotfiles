@@ -28,7 +28,6 @@ function proj {
     else
         echo "$local" | grep -xc "$proj" &> /dev/null
         local is_local=$?
-        echo $is_local
         if [ $is_local -ne 0 ]; then
             if [ -z $owner ]; then
                 gh repo clone $proj $proj_dir/$proj
@@ -39,7 +38,8 @@ function proj {
     fi
     git -C $proj_dir/$proj pull --ff-only
 
-    tmux new-session -s $proj -d -c $proj_dir/$proj 'nvim' \; \
-        split-window -h -c $proj_dir/$proj -t $proj:1 \; \
-        switch-client -t $proj
+    cd $proj_dir/$proj
+    tmux rename-session $proj
+    clear
+    tmux split-window -hb -l66% nvim
 }

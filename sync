@@ -21,7 +21,7 @@ function silent {
 
 cd $dotfiles_dir
 
-section "Fetching changes"
+section "Pulling changes"
 old_commit=$(git rev-parse HEAD)
 silent git pull
 silent git submodule update --init --recursive
