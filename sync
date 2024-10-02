@@ -5,9 +5,12 @@ pkg_dir=pkg
 pacman_pkg_list=$pkg_dir/pacman.txt
 secret_dir=ext/dotfiles-secret
 
+function section {
+    echo "=> \e[34m$*\e[0m"
+}
+
 function silent {
     local temp=$(mktemp)
-    echo "\e[34mRunning '\e[0m$*\e[34m'\e[0m"
     $* &> $temp
     if [ $? -ne 0 ]; then
         < $temp
@@ -18,20 +21,20 @@ function silent {
 
 cd $dotfiles_dir
 
-# Fetch changes
+section "Fetching changes"
 old_commit=$(git rev-parse HEAD)
 silent git pull
 silent git submodule update --init --recursive
 silent stow $dotfiles_dir
 new_commit=$(git rev-parse HEAD)
 
-# Delete system packages
+section "Deleting system packages"
 pacman_del_pkgs=$(comm -23 <(git show $old_commit:$pacman_pkg_list | sort) <(sort < $pacman_pkg_list))
 if [ -n "$pacman_del_pkgs" ]; then
     silent sudo pacman -Rs --noconfirm ${=pacman_del_pkgs}
 fi
 
-# Install system packages
+section "Installing system packages"
 pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pacman_pkg_list))
 if [ -n "$pacman_new_pkgs" ]; then
     silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
@@ -39,13 +42,13 @@ fi
 
 pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_pkg_list
 
-# Sync Neovim plugins
+section "Syncing Neovim plugins"
 silent nvim '+Lazy! sync' +qa
 
-# Update bat cache
+section "Updating bat cache"
 silent bat cache --build
 
-# Install Rust packages
+section "Installing Rust packages"
 for toolchain in stable nightly; do
     silent rustup toolchain install --profile default $toolchain
     while read pkg; do
@@ -59,14 +62,17 @@ for toolchain in stable nightly; do
     done < $pkg_dir/cargo-git.txt
 done
 
-# Commit changes and push
 if [ -n "$(git -C $secret_dir diff --staged --name-only)" ]; then
+    section "Committing and pushing changes"
     silent git -C $secret_dir save
     silent git -C $secret_dir push
     silent git add $secret_dir
-fi
-
-if [ -n "$(git diff --staged --name-only)" ]; then
+    silent git save
+    silent git push
+elif [ -n "$(git diff --staged --name-only)" ]; then
+    section "Committing and pushing changes"
     silent git save
     silent git push
 fi
+
+echo "\e[32mDone.\e[0m"
