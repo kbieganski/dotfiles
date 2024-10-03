@@ -35,7 +35,7 @@ if [ -n "$pacman_del_pkgs" ]; then
 fi
 
 section "Installing system packages"
-pacman_new_pkgs=$(comm -13 <(pacman -Qqne | sort) <(sort < $pacman_pkg_list))
+pacman_new_pkgs=$(comm -13 <(git show $old_commit:$pacman_pkg_list | sort) <(sort < $pacman_pkg_list))
 if [ -n "$pacman_new_pkgs" ]; then
     silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
 fi

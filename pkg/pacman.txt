@@ -43,8 +43,6 @@ github-cli
 git-lfs
 glibc-debug
 go
-gopls
-go-tools
 graphviz
 gtkwave
 haskell-language-server
@@ -93,7 +91,6 @@ picom
 pkgconf
 playerctl
 podman
-presenterm
 python
 python-lsp-server
 python-pip
