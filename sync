@@ -41,6 +41,7 @@ if [ -n "$pacman_new_pkgs" ]; then
 fi
 
 pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_pkg_list
+git add $pacman_pkg_list
 
 section "Syncing Neovim plugins"
 silent nvim '+Lazy! sync' +qa
