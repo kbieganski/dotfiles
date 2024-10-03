@@ -1,0 +1,2 @@
+github.com/air-verse/air@latest
+golang.org/x/tools/gopls@latest

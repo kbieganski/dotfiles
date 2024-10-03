@@ -15,7 +15,7 @@ case "$1" in
     pacman_op="-S"
     ;;
 -R | --remove)
-    pacman_query="-Qq"
+    pacman_query="-Qq | rg"
     pacman_preview="-Qi"
     pacman_op="-R"
     ;;
