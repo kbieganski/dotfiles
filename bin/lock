@@ -21,8 +21,10 @@ i3lock --blur=1 --clock --indicator \
     --modif-color=00AAFFFF \
     --time-color=EEEEEEFF \
     --date-color=EEEEEEFF \
+    --time-str="%H:%M" \
+    --date-str="%a, %b %d" \
     --verif-text="Unlocking" \
     --wrong-text="Incorrect" \
     --noinput-text="No input" \
-    --nofork; killall -SIGUSR2 dunst
+    --nofork
 killall -SIGUSR2 dunst
