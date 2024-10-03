@@ -22,10 +22,8 @@ return {
                 vim.keymap.set('n', '<leader>p', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
                 vim.keymap.set('n', '<leader>P', function() gitsigns.toggle_deleted() end,
                     { buffer = bufnr, desc = 'Toggle deleted hunks' })
-                vim.keymap.set('n', '<leader>r', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
+                vim.keymap.set('n', '<leader>S', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
                 vim.keymap.set('n', '<leader>s', gitsigns.stage_hunk, { buffer = bufnr, desc = 'Stage hunk' })
-                vim.keymap.set('n', '<leader>S', gitsigns.undo_stage_hunk,
-                    { buffer = bufnr, desc = 'Undo stage hunk' })
                 vim.keymap.set('n', '<leader>v', gitsigns.select_hunk,
                     { buffer = bufnr, desc = 'Select hunk' })
                 vim.keymap.set('v', '<leader>r', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })

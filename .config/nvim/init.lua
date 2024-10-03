@@ -26,6 +26,7 @@ vim.o.virtualedit = 'all'                 -- allow virtual editing
 vim.o.visualbell = true                   -- disable bleeping
 vim.o.writebackup = false                 -- disable backup when overwriting
 vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
+vim.g.loaded_netrwPlugin = 1              -- disable netrw
 
 -- Mappings
 vim.g.mapleader = ' '
@@ -85,7 +86,7 @@ vim.keymap.set('v', '<', '<gv', { silent = true })
 vim.keymap.set('v', '>', '>gv', { silent = true })
 
 -- Rename current file
-vim.keymap.set('n', 'zr', function()
+vim.keymap.set('n', '<leader>r', function()
     local filename = vim.api.nvim_buf_get_name(0)
     vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
         if not new_filename or new_filename == '' then
@@ -101,6 +102,59 @@ vim.keymap.set('n', 'zr', function()
         end
     end)
 end, { silent = true, desc = 'Rename current file' })
+
+-- Interactive shell commands
+local function get_visual_selection()
+    if vim.api.nvim_get_mode().mode ~= 'v' then
+        return ''
+    else
+        local _, ls, cs = unpack(vim.fn.getpos('v'))
+        local _, le, ce = unpack(vim.fn.getpos('.'))
+        ls = ls - 1; le = le - 1; cs = cs - 1
+        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
+            math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
+        return table.concat(lines, ' ')
+    end
+end
+
+local function run_get_stdout(cmd, fn)
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_set_current_buf(buf)
+    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+    local tempfile = vim.fn.tempname()
+    vim.fn.termopen(cmd .. ' > ' .. tempfile, {
+        on_exit = function()
+            vim.api.nvim_buf_delete(buf, { force = true })
+            if (vim.fn.filereadable(tempfile) ~= 0) then
+                local selected = vim.fn.readfile(tempfile)[1]
+                fn(selected)
+            end
+        end
+    })
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set('n', '<leader>f',
+    function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
+    { silent = true, desc = 'File browser' })
+vim.keymap.set({ 'n', 'v' }, '|',
+    function()
+        run_get_stdout('fzf --query "' .. get_visual_selection() .. '"', vim.cmd.edit)
+    end,
+    { silent = true, desc = 'Find files' })
+vim.keymap.set({ 'n', 'v' }, '\\',
+    function()
+        run_get_stdout('rgl ' .. get_visual_selection(),
+            function(selected)
+                local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
+                line = tonumber(line)
+                col = tonumber(col) - 1
+                vim.cmd.edit(filename)
+                vim.api.nvim_win_set_cursor(0, { line, col })
+            end)
+    end,
+    { silent = true, desc = 'Live grep' })
 
 -- Autocmds
 -- Check if we need to reload the file when it changed
@@ -150,6 +204,21 @@ vim.api.nvim_create_autocmd('FileType', {
     callback = function(event)
         vim.bo[event.buf].buflisted = false
         vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = event.buf, silent = true })
+    end,
+})
+
+-- Replace netrw with lf
+vim.api.nvim_create_autocmd('BufEnter', {
+    group = vim.api.nvim_create_augroup('open_lf_on_dir', {}),
+    pattern = '*',
+    callback = function(ev)
+        if vim.bo.buftype == 'term' then
+            return
+        end
+        if vim.fn.isdirectory(vim.fn.expand '%') == 1 then
+            vim.api.nvim_buf_delete(ev.buf, { force = true })
+            run_get_stdout('lf -print-selection', vim.cmd.edit)
+        end
     end,
 })
 
@@ -204,56 +273,3 @@ function R(name)
     require 'plenary.reload'.reload_module(name)
     return require(name)
 end
-
--- Interactive shell commands
-local function get_visual_selection()
-    if vim.api.nvim_get_mode().mode ~= 'v' then
-        return ''
-    else
-        local _, ls, cs = unpack(vim.fn.getpos('v'))
-        local _, le, ce = unpack(vim.fn.getpos('.'))
-        ls = ls - 1; le = le - 1; cs = cs - 1
-        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
-            math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
-        return table.concat(lines, ' ')
-    end
-end
-
-local function run_get_stdout(cmd, fn)
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(buf)
-    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
-    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
-    local tempfile = vim.fn.tempname()
-    vim.fn.termopen(cmd .. ' > ' .. tempfile, {
-        on_exit = function()
-            vim.api.nvim_buf_delete(buf, { force = true })
-            if (vim.fn.filereadable(tempfile) ~= 0) then
-                local selected = vim.fn.readfile(tempfile)[1]
-                fn(selected)
-            end
-        end
-    })
-    vim.cmd.startinsert()
-end
-
-vim.keymap.set('n', '<leader>f',
-    function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
-    { silent = true, desc = 'File browser' })
-vim.keymap.set({ 'n', 'v' }, '|',
-    function()
-        run_get_stdout('fzf --query "' .. get_visual_selection() .. '"', vim.cmd.edit)
-    end,
-    { silent = true, desc = 'Find files' })
-vim.keymap.set({ 'n', 'v' }, '\\',
-    function()
-        run_get_stdout('rgl ' .. get_visual_selection(),
-            function(selected)
-                local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
-                line = tonumber(line)
-                col = tonumber(col) - 1
-                vim.cmd.edit(filename)
-                vim.api.nvim_win_set_cursor(0, { line, col })
-            end)
-    end,
-    { silent = true, desc = 'Live grep' })
