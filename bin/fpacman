@@ -29,5 +29,5 @@ reload="reload:pacman $pacman_query {q} || :"
 fzf --disabled --ansi --multi \
     --bind "start:$reload" --bind "change:${reload}:sleep 1" \
     --preview "pacman $pacman_preview {}" \
-    --preview-window '~4,+{2}+4/3,<80(up)' \
+    --preview-window '<80(up)' \
     --bind "enter:become(pacman $pacman_op --noconfirm {})"

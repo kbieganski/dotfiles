@@ -34,7 +34,7 @@ local function on_attach(client, bufnr)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, silent = true, desc = 'Hover' })
     vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action,
         { buffer = bufnr, silent = true, desc = 'Code action' })
-    vim.keymap.set('n', '<leader>n', vim.lsp.buf.rename, { buffer = bufnr, silent = true, desc = 'Rename symbol' })
+    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = bufnr, silent = true, desc = 'Rename symbol' })
     vim.keymap.set('n', '<leader>m', telescope_builtin.lsp_document_symbols,
         { buffer = bufnr, silent = true, desc = 'Find symbol' })
     vim.keymap.set('n', '<leader>M', telescope_builtin.lsp_workspace_symbols,

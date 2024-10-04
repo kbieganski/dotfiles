@@ -1,0 +1,21 @@
+#!/bin/env bash
+
+enter='become(nvim {})'
+alt_enter="become(nvim '$HOME/notes/{q}')"
+if [ "$1" == "--print" ]; then
+    enter="accept"
+    alt_enter="become([ -n '{q}' ] && echo '$HOME/notes/{q}')"
+    shift
+fi
+
+if [ $# -gt 0 ]; then
+    echo "Invalid arguments"
+    exit 1
+fi
+
+mkdir -p "$HOME/notes"
+fzf --walker-root="$HOME/notes" \
+    --delimiter / --with-nth -1 \
+    --bind "enter:$enter" \
+    --bind "alt-enter:$alt_enter" \
+    --preview 'bat {} --color=always'

@@ -86,7 +86,7 @@ vim.keymap.set('v', '<', '<gv', { silent = true })
 vim.keymap.set('v', '>', '>gv', { silent = true })
 
 -- Rename current file
-vim.keymap.set('n', '<leader>r', function()
+vim.keymap.set('n', '<leader>R', function()
     local filename = vim.api.nvim_buf_get_name(0)
     vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
         if not new_filename or new_filename == '' then
@@ -155,6 +155,20 @@ vim.keymap.set({ 'n', 'v' }, '\\',
             end)
     end,
     { silent = true, desc = 'Live grep' })
+vim.keymap.set('n', '<leader>n',
+    function() run_get_stdout('note --print', vim.cmd.edit) end,
+    { silent = true, desc = 'Note find' })
+vim.keymap.set('n', '<leader>N',
+    function()
+        run_get_stdout('notes --print', function(selected)
+            local filename, line = selected:match('^(.*):(%d+)')
+            line = tonumber(line)
+            vim.cmd.edit(filename)
+            vim.api.nvim_win_set_cursor(0, { line, 0 })
+        end)
+    end,
+    { silent = true, desc = 'Note grep' })
+
 
 -- Autocmds
 -- Check if we need to reload the file when it changed

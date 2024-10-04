@@ -12,6 +12,6 @@ function rge() {
         --bind 'alt-a:select-all,alt-d:deselect-all' \
         --delimiter : \
         --preview 'bat {1} --color=always --highlight-line {2}' \
-        --preview-window '~4,+{2}+4/3,<80(up)' \
+        --preview-window '<80(up)' \
         --query "$*"
 }

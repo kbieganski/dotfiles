@@ -1,4 +1,8 @@
 --colors=match:fg:blue
+--colors=path:none
+--colors=path:style:bold
 --colors=line:none
+--colors=line:style:bold
 --colors=column:none
+--colors=column:style:bold
 
