@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Flameshot
-Exec=sh -c "sleep 0.2 && flameshot gui"
+Exec=flameshot gui --delay 200
 Icon=org.flameshot.Flameshot
 Terminal=false
 Type=Application
