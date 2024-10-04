@@ -121,6 +121,7 @@ sudo
 syncthing
 sysstat
 tealdeer
+time
 tmux
 tokei
 tree
