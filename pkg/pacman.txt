@@ -121,7 +121,6 @@ sudo
 syncthing
 sysstat
 tealdeer
-time
 tmux
 tokei
 tree
@@ -132,7 +131,6 @@ unclutter
 unzip
 up
 usbutils
-vale
 valgrind
 verilator
 vscode-css-languageserver

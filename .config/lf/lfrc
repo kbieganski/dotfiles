@@ -64,7 +64,7 @@ map S sh
 # Inside Neovim, ignore e, S
 &{{
     if [ -n "$NVIM" ]; then
-        lf -remote "send $id :map e; map S"
+        lf -remote "send $id :map e open; map S"
     fi
 }}
 

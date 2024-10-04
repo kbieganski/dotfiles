@@ -61,9 +61,6 @@ for toolchain in stable nightly; do
     while read pkg; do
         silent cargo +$toolchain install $pkg
     done < $pkg_dir/cargo.txt
-    while read pkg; do
-        silent cargo +$toolchain install --git $pkg
-    done < $pkg_dir/cargo-git.txt
 done
 
 section "Installing Go packages"

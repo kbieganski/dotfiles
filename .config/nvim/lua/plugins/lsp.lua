@@ -91,7 +91,7 @@ return {
 
             local lspconfig = require 'lspconfig'
 
-            for _, server in pairs { 'bashls', 'cssls', 'gopls', 'hls', 'html', 'jsonls', 'marksman', 'ts_ls', 'vale_ls', 'yamlls', 'zls' } do
+            for _, server in pairs { 'bashls', 'cssls', 'gopls', 'hls', 'html', 'jsonls', 'marksman', 'ts_ls', 'yamlls', 'zls' } do
                 lspconfig[server].setup {
                     capabilities = capabilities,
                     on_attach = function(client, bufnr)
