@@ -17,7 +17,7 @@ signal=1
 
 [wifi]
 label=<small><b>SIG </b></small>
-min_width=<small><b>WLAN </b></small>100%
+min_width=<small><b>SIG </b></small>100%
 interval=10
 
 [ssid]
