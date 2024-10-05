@@ -12,6 +12,7 @@ vim.o.pumheight = 10                      -- limit shown completion items
 vim.o.relativenumber = true               -- show relative line numbers
 vim.o.scrolloff = 10                      -- keep cursor 10 lines from screen edge
 vim.o.shiftwidth = 4                      -- width of indent
+vim.o.showmode = false                    -- don't show mode in command line
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
 vim.o.signcolumn = 'yes:2'                -- 2-wide sign column
 vim.o.smartcase = true                    -- don't ignore case if search string contains uppercase letters
@@ -27,6 +28,18 @@ vim.o.visualbell = true                   -- disable bleeping
 vim.o.writebackup = false                 -- disable backup when overwriting
 vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
 vim.g.loaded_netrwPlugin = 1              -- disable netrw
+
+local diagnostic_signs = {
+    [vim.diagnostic.severity.ERROR] = ' ',
+    [vim.diagnostic.severity.WARN] = ' ',
+    [vim.diagnostic.severity.INFO] = ' ',
+    [vim.diagnostic.severity.HINT] = ' ',
+}
+vim.diagnostic.config {
+    virtual_text = false,
+    update_in_insert = true,
+    signs = { text = diagnostic_signs }
+}
 
 -- Mappings
 vim.g.mapleader = ' '
@@ -268,6 +281,96 @@ vim.api.nvim_create_autocmd('FileType', {
             { buffer = e.buf, silent = true, desc = 'Paste link' })
     end
 })
+
+-- Statusline
+function Statusline()
+    local modes = {
+        ['n'] = 'NORMAL',
+        ['no'] = 'OPERATOR',
+        ['nov'] = 'OPERATOR',
+        ['noV'] = 'OPERATOR',
+        ['no'] = 'OPERATOR',
+        ['niI'] = 'NORMAL',
+        ['niR'] = 'NORMAL',
+        ['niV'] = 'NORMAL',
+        ['nt'] = 'NORMAL',
+        ['ntT'] = 'NORMAL',
+        ['v'] = 'VISUAL',
+        ['vs'] = 'VISUAL',
+        ['V'] = 'VISUAL LINE',
+        ['Vs'] = 'VISUAL LINE',
+        [''] = 'VISUAL BLOCK',
+        ['s'] = 'VISUAL BLOCK',
+        ['s'] = 'SELECT',
+        ['S'] = 'SELECT LINE',
+        [''] = 'SELECT BLOCK',
+        ['i'] = 'INSERT',
+        ['ic'] = 'INSERT',
+        ['ix'] = 'INSERT',
+        ['R'] = 'REPLACE',
+        ['Rc'] = 'REPLACE',
+        ['Rx'] = 'REPLACE',
+        ['Rv'] = 'VIRTUAL REPLACE',
+        ['Rvc'] = 'VIRTUAL REPLACE',
+        ['Rvx'] = 'VIRTUAL REPLACE',
+        ['c'] = 'COMMAND',
+        ['cr'] = 'COMMAND',
+        ['cv'] = 'EX',
+        ['cvr'] = 'EX',
+        ['r'] = 'PROMPT',
+        ['rm'] = 'MORE',
+        ['r?'] = 'CONFIRM',
+        ['!'] = 'SHELL',
+        ['t'] = 'TERMINAL',
+    }
+    local mode = modes[vim.api.nvim_get_mode().mode] or ''
+    local path = ''
+    if vim.api.nvim_buf_get_option(0, 'buftype') ~= 'terminal' then
+        path = vim.fn.fnamemodify(vim.fn.expand '%', ':~:.:h')
+        if path == '' or path == '.' then
+            path = ' '
+        else
+            path = string.format(' %%<%s/', path)
+        end
+    end
+    local filename = ''
+    if vim.api.nvim_buf_get_option(0, 'buftype') ~= 'terminal' then
+        filename = vim.fn.expand '%:t'
+    end
+    local diagnostics = ''
+    for level, sign in pairs(diagnostic_signs) do
+        local level_name = vim.diagnostic.severity[level]
+        local count = #vim.diagnostic.get(0, { severity = level })
+        if count > 0 then
+            diagnostics = diagnostics ..
+                ' %#Diagnostic' .. level_name:sub(1, 1):upper() .. level_name:sub(2):lower() .. '#' .. sign .. count
+        end
+    end
+    diagnostics = diagnostics .. '%#Normal# '
+    local filetype = string.format(' %s ', vim.bo.filetype):upper()
+    local filepos = ' %P %l:%c '
+    local git_dict = vim.b.gitsigns_status_dict
+    local git = ''
+    if git_dict then
+        local added = git_dict.added and git_dict.added > 0 and ('%#Added#+' .. git_dict.added) or ''
+        local changed = git_dict.changed and git_dict.changed > 0 and ('%#Changed#~' .. git_dict.changed) or ''
+        local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
+        git = added .. ' ' .. changed .. ' ' .. removed .. ' %#Normal# ' .. git_dict.head
+    end
+    local searchcount = vim.fn.searchcount()
+    searchcount = searchcount.current .. '/' .. searchcount.total
+    local lsp_loc = ''
+    if #vim.lsp.get_clients { bufnr = 0 } > 0 then
+        local location = require 'nvim-navic'.get_location()
+        if location ~= '' then
+            lsp_loc = '> ' .. location
+        end
+    end
+    return '%#Statusline#' .. mode .. '%#Normal# ' .. path .. filename .. lsp_loc
+        .. diagnostics .. '%=%#StatusLineExtra#' .. git, ' ' .. searchcount .. filetype .. filepos
+end
+
+vim.opt.statusline = [[%!v:lua.Statusline()]]
 
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins

@@ -23,31 +23,6 @@ return {
             },
         },
     },
-    {
-        'nvim-lualine/lualine.nvim',
-        config = function()
-            local searchcount = function()
-                local sc = vim.fn.searchcount()
-                return sc.current .. '/' .. sc.total
-            end
-            require 'lualine'.setup {
-                sections = {
-                    lualine_a = { 'mode', 'selectioncount' },
-                    lualine_b = {},
-                    lualine_c = { 'branch',
-                        { 'filename', path = 3, symbols = { modified = '❬*❭', readonly = '❬ro❭', unnamed = '❬no name❭', new = '❬new❭' } },
-                        function()
-                            if #vim.lsp.get_clients { bufnr = 0 } > 0 then return require 'nvim-navic'.get_location() end
-                            return ''
-                        end
-                    },
-                    lualine_x = {},
-                    lualine_y = { 'diagnostics', 'diff' },
-                    lualine_z = { searchcount, 'progress', 'location' },
-                },
-            }
-        end,
-    },
     'kyazdani42/nvim-web-devicons',
     {
         'stevearc/dressing.nvim',
@@ -71,5 +46,60 @@ return {
                 },
             },
         },
+    },
+    {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        config = function()
+            require 'telescope'.setup {
+                defaults = {
+                    prompt_prefix = '❯ ',
+                    selection_caret = '⏵ ',
+                    borderchars = {
+                        prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+                        results = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
+                        preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
+                    },
+                    layout_strategy = 'vertical',
+                    layout_config = {
+                        flex = { flip_columns = 180 },
+                        vertical = { width = { padding = 0 }, height = { padding = 0 } },
+                        horizontal = { width = { padding = 0 }, height = { padding = 0 } },
+                    },
+                    mappings = {
+                        i = {
+                            ['<ESC>'] = 'close',
+                            ['<down>'] = 'move_selection_next',
+                            ['<M-j>'] = 'move_selection_next',
+                            ['<up>'] = 'move_selection_previous',
+                            ['<M-k>'] = 'move_selection_previous',
+                        },
+                    },
+                },
+            }
+        end,
+        keys = {
+            { '<M-p>',     function() require 'telescope.builtin'.registers() end, desc = 'Paste' },
+            { '<leader>o', function() require 'telescope.builtin'.oldfiles() end,  desc = 'Recent files' },
+        },
+        dependencies = { 'nvim-lua/plenary.nvim' },
+    },
+    {
+        'debugloop/telescope-undo.nvim',
+        dependencies = {
+            'nvim-telescope/telescope.nvim',
+        },
+        keys = {
+            {
+                '<M-u>',
+                function() require 'telescope'.extensions.undo.undo() end,
+                desc = 'undo history',
+            },
+        },
+        opts = {},
+        config = function()
+            require 'telescope'.setup { extensions = { undo = { mappings = { i = { ['<CR>'] = require 'telescope-undo.actions'.restore } } } } }
+            require 'telescope'.load_extension 'undo'
+        end,
     },
 }
