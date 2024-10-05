@@ -8,12 +8,13 @@ instance=spotify
 interval=5
 signal=10
 
-[volume]
+[volume-pipewire]
 label=<big>♪ </big>
+LONG_FORMAT=${VOL}%
 min_width=<big>♪ </big>100%
-instance=Master
-interval=once
-signal=10
+SUBSCRIBE=1
+interval=persist
+signal=1
 
 [iface]
 label=<small><b>IP </b></small>

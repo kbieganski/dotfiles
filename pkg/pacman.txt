@@ -41,7 +41,6 @@ git-absorb
 git-delta
 github-cli
 git-lfs
-glibc-debug
 go
 graphviz
 gtkwave

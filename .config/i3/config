@@ -90,14 +90,16 @@ bindsym $mod+Tab focus mode_toggle
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
-# Brightness
 bindsym XF86MonBrightnessDown exec "brightnessctl set 5%-"
-bindsym XF86MonBrightnessUp exec "brightnessctl set +5%"
+bindsym XF86MonBrightnessUp exec "brightnessctl set 5%+"
 
-# Volume
-bindsym XF86AudioRaiseVolume exec 'amixer set Master 5%+'
-bindsym XF86AudioLowerVolume exec 'amixer set Master 5%-'
-bindsym XF86AudioMute exec 'amixer set Master toggle'
+bindsym XF86AudioRaiseVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%+ --limit 1"
+bindsym XF86AudioLowerVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%- --limit 1"
+bindsym XF86AudioMute exec "wpctl set-mute @DEFAULT_SINK@ toggle"
+
+bindsym XF86AudioNext exec "playerctl next"
+bindsym XF86AudioPrev exec "playerctl previous"
+bindsym XF86AudioPlay exec "playerctl play-pause"
 
 mode "resize" {
     bindsym $left  resize shrink width 10 px or 10 ppt
