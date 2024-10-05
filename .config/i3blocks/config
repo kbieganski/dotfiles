@@ -3,8 +3,7 @@ separator_block_width=10
 markup=pango
 
 [mediaplayer]
-label=<small><b>SONG </b></small>
-instance=spotify
+label=<small>▶ </small>
 interval=5
 signal=10
 
@@ -16,54 +15,50 @@ SUBSCRIBE=1
 interval=persist
 signal=1
 
-[iface]
-label=<small><b>IP </b></small>
-min_width=<small><b>NET </b></small>192.168.1.255
-interval=10
-
 [wifi]
-instance=wlp2s0
+label=<small><b>SIG </b></small>
+min_width=<small><b>WLAN </b></small>100%
 interval=10
 
-[bandwidth]
-label=<small><b>IO </b></small>
-instance=eno1
-min_width=IN 1000K OUT 1000K
-interval=5
+[ssid]
+label=<small><b>NET </b></small>
+interval=60
 
 [memory]
 label=<small><b>RAM </b></small>
-min_width=<small><b>RAM </b></small>00.0G/00.0G (100%)
+min_width=<small><b>RAM </b></small>000.0G/000.0G (100%)
 interval=10
 
 [memory]
 label=<small><b>SWP </b></small>
-min_width=<small><b>SWP </b></small>00.0G/00.0G (100%)
+min_width=<small><b>SWP </b></small>000.0G/000.0G (100%)
 instance=swap
 interval=10
 
-[disk]
-label=<small><b>DSK </b></small>
-min_width=<small><b>DSK </b></small>000.0G
-interval=30
-
 [cpu_usage]
 label=<small><b>CPU </b></small>
+min_width=<small><b>CPU </b></small>0000.00%
 interval=5
-min_width=<small><b>CPU </b></small>000.00%
 align=center
 
-[battery]
-label=<big>⚡</big>
-instance=0
+[disk]
+label=<small><b>DRV </b></small>
+min_width=<small><b>DRV </b></small>0000.0G
 interval=30
 
-[temperature]
-label=<small><b>TEMP </b></small>
-min_width=<small><b>TEMP </b></small>00.0 C
-interval=5
+[battery]
+label=<big><b>⚡︎ </b></big>
+min_width=<big><b>⚡︎ </b></big> 100% HR (00:00)
+interval=30
 
 [time]
-command=date '+%Y-%m-%d %H:%M:%S'
+STRFTIME_FORMAT=%Y-%m-%d %H:%M:%S
+TZONES=$DEFAULT_TZ,-
+TZ_LABELS=,-
 min_width=0000-00-00 00:00:00
 interval=1
+
+[arch-update]
+interval=3600
+QUIET=true
+LABEL=<big> </big>

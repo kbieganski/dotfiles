@@ -1,6 +1,6 @@
 #!/bin/sh
 
-killall -SIGUSR1 dunst
+dunstctl set-paused true
 i3lock --blur=1 --clock --indicator \
     --date-font="Jost*" \
     --time-font="Jost*" \
@@ -27,4 +27,4 @@ i3lock --blur=1 --clock --indicator \
     --wrong-text="Incorrect" \
     --noinput-text="No input" \
     --nofork
-killall -SIGUSR2 dunst
+dunstctl set-paused false
