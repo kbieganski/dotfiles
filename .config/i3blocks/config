@@ -62,3 +62,9 @@ interval=1
 interval=3600
 QUIET=true
 LABEL=<big> </big>
+
+[shutdown_menu]
+full_text=<big> </big>
+ROFI_TEXT=
+ROFI_OPTIONS=-location 5
+LOCKSCRIPT=lock
