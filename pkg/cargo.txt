@@ -8,4 +8,5 @@ cargo-readme
 cargo-tarpaulin
 cargo-vendor
 cargo-watch
+kani-verifier
 flamegraph
