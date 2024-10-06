@@ -1,7 +1,9 @@
 configuration {
-    font: "Jost* 12";
+    font: "Noto Sans 10";
     hover-select: true;
     parse-known-hosts: false;
+    sort: true;
+    sorting-method: "fzf";
     matching: "fuzzy";
     scroll-method: 1;
     kb-row-up: "Up,Alt+k";

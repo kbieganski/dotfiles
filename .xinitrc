@@ -1,9 +1,19 @@
 #!/bin/sh
 
-xrdb ~/.Xresources
+xrdb "$HOME/.Xresources"
 setxkbmap pl
 xbindkeys
+
+xss-lock --transfer-sleep-lock -- lock &
+cat "$HOME/.config/dunst/dunstrc" "$HOME/.config/dunst/theme.conf" | dunst &
 autocutsel -fork -selection CLIPBOARD
-xrandr --output DVI-D-0 --left-of HDMI-0
-xrandr --output DVI-D-0 --rotate left
+udiskie &
+/usr/lib/geoclue-2.0/demos/agent &
+redshift -t 6500:3500 &
+picom &
+
+if [ -f "$HOME/.xinitrc.local" ]; then
+    . "$HOME/.xinitrc.local"
+fi
+
 exec i3

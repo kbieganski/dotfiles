@@ -1,26 +1,14 @@
 #!/bin/sh
+# shellcheck disable=SC2086
 
 dunstctl set-paused true
+theme=$(cat "$HOME/.config/i3/lock-theme")
 i3lock --blur=1 --clock --indicator \
-    --date-font="Jost*" \
-    --time-font="Jost*" \
-    --verif-font="Jost*" \
-    --wrong-font="Jost*" \
-    --inside-color=00000066 \
-    --ring-color=EEEEEEFF \
-    --insidever-color=00000066 \
-    --ringver-color=44FF88FF \
-    --insidewrong-color=00000066 \
-    --ringwrong-color=FF5577FF \
-    --line-color=00000000 \
-    --keyhl-color=00AAFFFF \
-    --bshl-color=FFCC00FF \
-    --separator-color=00000000 \
-    --verif-color=44FF88FF \
-    --wrong-color=FF5577FF \
-    --modif-color=00AAFFFF \
-    --time-color=EEEEEEFF \
-    --date-color=EEEEEEFF \
+    --date-font="Noto Sans" \
+    --time-font="Noto Sans" \
+    --verif-font="Noto Sans" \
+    --wrong-font="Noto Sans" \
+    $theme \
     --time-str="%H:%M" \
     --date-str="%a, %b %d" \
     --verif-text="Unlocking" \
