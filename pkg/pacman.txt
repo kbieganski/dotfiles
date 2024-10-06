@@ -12,6 +12,7 @@ brightnessctl
 cabal-install
 ccache
 clang
+cmake
 cpupower
 cudd
 deno
