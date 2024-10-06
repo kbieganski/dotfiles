@@ -79,6 +79,7 @@ moreutils
 mpv
 neovim
 ninja
+noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 openssh
@@ -87,6 +88,8 @@ parallel
 patch
 perf
 picom
+pipewire-alsa
+pipewire-pulse
 pkgconf
 playerctl
 podman
@@ -142,6 +145,7 @@ vulkan-tools
 vulkan-validation-layers
 wget
 which
+wireplumber
 xbindkeys
 xclip
 xdg-desktop-portal-gnome

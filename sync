@@ -44,7 +44,7 @@ fi
 
 section "Saving Arch package list"
 pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_cur_pkgs
-cp $pacman_req_pkgs $pacman_cur_pkgs
+cp $pacman_cur_pkgs $pacman_req_pkgs
 git add $pacman_req_pkgs
 
 section "Installing AUR packages"
