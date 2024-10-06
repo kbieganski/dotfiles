@@ -11,3 +11,32 @@ configuration {
 }
 
 @theme "theme"
+
+window {
+    padding:          0.5em;
+    width:            25%;
+}
+listview {
+    spacing:   0;
+    scrollbar: true;
+}
+scrollbar {
+    width:            1em;
+    margin:           0 0 0 0.5em;
+}
+element {
+    padding: 0.25em;
+}
+element-icon {
+    vertical-align: 0.5;
+    margin:         0.25em;
+}
+inputbar {
+    padding:  0.25em;
+    children: [ prompt, textbox-prompt-colon, entry ];
+}
+textbox-prompt-colon {
+    expand:     false;
+    str:        "›";
+    margin:     0 0.25em 0 0 ;
+}
