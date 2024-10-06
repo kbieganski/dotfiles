@@ -27,7 +27,9 @@ old_commit=$(git rev-parse HEAD)
 silent git pull
 silent git submodule update --init --recursive
 silent stow $dotfiles_dir
-new_commit=$(git rev-parse HEAD)
+if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
+    exec $0
+fi
 
 section "Deleting Arch packages"
 touch $pacman_cur_pkgs
