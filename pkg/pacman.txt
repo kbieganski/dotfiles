@@ -101,7 +101,6 @@ podman
 python-lsp-server
 python-pip
 python-pipx
-python-virtualenv
 qmk
 qt5-charts
 qt5-tools
