@@ -29,23 +29,30 @@ silent git submodule update --init --recursive
 silent stow $dotfiles_dir
 new_commit=$(git rev-parse HEAD)
 
-section "Deleting system packages"
+section "Deleting Arch packages"
 touch $pacman_cur_pkgs
 pacman_del_pkgs=$(comm -23 <(sort < $pacman_cur_pkgs) <(sort < $pacman_req_pkgs))
 if [ -n "$pacman_del_pkgs" ]; then
     silent sudo pacman -Rs --noconfirm ${=pacman_del_pkgs}
 fi
 
-section "Installing system packages"
+section "Installing Arch packages"
 pacman_new_pkgs=$(comm -13 <(sort < $pacman_cur_pkgs) <(sort < $pacman_req_pkgs))
 if [ -n "$pacman_new_pkgs" ]; then
     silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
 fi
 
-section "Saving system package list"
+section "Saving Arch package list"
 pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_cur_pkgs
 cp $pacman_req_pkgs $pacman_cur_pkgs
 git add $pacman_req_pkgs
+
+section "Installing AUR packages"
+for pkg_path in ext/aur/*; do
+    pushd $pkg_path &>/dev/null
+    makepkg -si
+    popd &>/dev/null
+done
 
 section "Syncing Neovim plugins"
 silent nvim '+Lazy! sync' +qa

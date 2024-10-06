@@ -11,3 +11,15 @@
 	path = ext/dotfiles-secret
 	url = git@github.com:kbieganski/dotfiles-secret
     branch = main
+[submodule "ext/jost"]
+	path = ext/jost
+	url = https://aur.archlinux.org/jost-font.git
+[submodule "ext/rr"]
+	path = ext/aur/rr
+	url = https://aur.archlinux.org/rr.git
+[submodule "ext/i3lock-color"]
+	path = ext/aur/i3lock-color
+	url = https://aur.archlinux.org/i3lock-color.git
+[submodule "ext/aur/jost-font"]
+	path = ext/aur/jost-font
+	url = https://aur.archlinux.org/jost-font.git
