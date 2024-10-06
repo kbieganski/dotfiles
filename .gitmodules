@@ -19,7 +19,3 @@
 	path = ext/aur/i3lock-color
 	url = https://aur.archlinux.org/i3lock-color.git
 	ignore = dirty
-[submodule "ext/aur/jost-font"]
-	path = ext/aur/jost-font
-	url = https://aur.archlinux.org/jost-font.git
-	ignore = dirty

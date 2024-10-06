@@ -126,7 +126,7 @@ gaps inner 4
 gaps outer 8
 
 #--- Titlebar --------------------------------------------------------------
-font pango:Jost* 10
+font pango:Noto Sans 10
 for_window [title="."] title_format "%title"
 for_window [class="firefox"] border pixel 1
 for_window [class="obsidian"] border pixel 1
