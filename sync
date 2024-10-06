@@ -48,9 +48,17 @@ cp $pacman_req_pkgs $pacman_cur_pkgs
 git add $pacman_req_pkgs
 
 section "Installing AUR packages"
+function PKGBUILD_get {
+    grep "$1"= < PKGBUILD | cut -d= -f2
+}
 for pkg_path in ext/aur/*; do
     silent pushd $pkg_path
-    silent makepkg -si --needed --noconfirm
+    pkgname=$(PKGBUILD_get pkgname)
+    pkgver=$(PKGBUILD_get pkgver)
+    pkgrel=$(PKGBUILD_get pkgrel)
+    if [ "$(pacman -Q | grep "$pkgname " | cut -d' ' -f2)" != "$pkgver-$pkgrel" ]; then
+        silent makepkg -si --needed --noconfirm
+    fi
     silent popd
 done
 
