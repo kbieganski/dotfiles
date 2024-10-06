@@ -39,7 +39,7 @@ fi
 section "Installing Arch packages"
 pacman_new_pkgs=$(comm -13 <(sort < $pacman_cur_pkgs) <(sort < $pacman_req_pkgs))
 if [ -n "$pacman_new_pkgs" ]; then
-    silent sudo pacman -Sy --noconfirm ${=pacman_new_pkgs}
+    silent sudo pacman -Sy --noconfirm --needed ${=pacman_new_pkgs}
 fi
 
 section "Saving Arch package list"
@@ -49,9 +49,9 @@ git add $pacman_req_pkgs
 
 section "Installing AUR packages"
 for pkg_path in ext/aur/*; do
-    pushd $pkg_path &>/dev/null
-    makepkg -si
-    popd &>/dev/null
+    silent pushd $pkg_path
+    silent makepkg -si --needed --noconfirm
+    silent popd
 done
 
 section "Syncing Neovim plugins"
@@ -84,7 +84,7 @@ if [ -n "$(git -C $secret_dir diff --staged --name-only)" ] ||
     section "Committing and pushing changes"
     remote=$(git remote get-url origin)
     if [[ "$remote" =~ "https://" ]]; then
-        git remote set-url origin $(echo $remote | sed -E "s/https:\/\/([^/]*)\//git@\1:/")
+        silent git remote set-url origin $(echo $remote | sed -E "s/https:\/\/([^/]*)\//git@\1:/")
     fi
     if [ -n "$(git -C $secret_dir diff --staged --name-only)" ]; then
         silent git -C $secret_dir save
