@@ -65,7 +65,7 @@ for pkg_path in ext/aur/*; do
 done
 
 section "Installing Python packages"
-while read pkg;
+while read pkg; do
     silent pipx install --force $pkg
 done < $pkg_dir/pipx.txt
 
