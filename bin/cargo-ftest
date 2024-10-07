@@ -2,7 +2,7 @@
 
 package=$(cargo read-manifest | jq -r .name)
 history_dir=$HOME/.cargo/tests-history
-mkdir -p $history_dir
+mkdir -p "$history_dir"
 
 watch=false
 args=
@@ -32,8 +32,8 @@ test_filter=$(
 
 if [ $? -eq 0 ]; then
     if $watch; then
-        cargo watch --exec test $test_filter $args
+        cargo watch --exec test "$test_filter" "$args"
     else
-        cargo test $test_filter $args
+        cargo test "$test_filter" "$args"
     fi
 fi

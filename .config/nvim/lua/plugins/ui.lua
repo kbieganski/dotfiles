@@ -60,9 +60,9 @@ return {
                         results = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
                         preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
                     },
-                    layout_strategy = 'vertical',
+                    layout_strategy = 'flex',
                     layout_config = {
-                        flex = { flip_columns = 180 },
+                        flex = { flip_columns = 80 },
                         vertical = { width = { padding = 0 }, height = { padding = 0 } },
                         horizontal = { width = { padding = 0 }, height = { padding = 0 } },
                     },

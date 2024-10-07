@@ -153,7 +153,10 @@ vim.keymap.set('n', '<leader>f',
     { silent = true, desc = 'File browser' })
 vim.keymap.set({ 'n', 'v' }, '|',
     function()
-        run_get_stdout('fzf --query "' .. get_visual_selection() .. '"', vim.cmd.edit)
+        run_get_stdout(
+            'fzf --query "' .. get_visual_selection() ..
+            '" --preview "bat {} --color=always" --preview-window "<80(up)"',
+            vim.cmd.edit)
     end,
     { silent = true, desc = 'Find files' })
 vim.keymap.set({ 'n', 'v' }, '\\',
@@ -284,59 +287,48 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Statusline
 function Statusline()
+    -- Mode
     local modes = {
-        ['n'] = 'NORMAL',
-        ['no'] = 'OPERATOR',
-        ['nov'] = 'OPERATOR',
-        ['noV'] = 'OPERATOR',
-        ['no'] = 'OPERATOR',
-        ['niI'] = 'NORMAL',
-        ['niR'] = 'NORMAL',
-        ['niV'] = 'NORMAL',
-        ['nt'] = 'NORMAL',
-        ['ntT'] = 'NORMAL',
-        ['v'] = 'VISUAL',
-        ['vs'] = 'VISUAL',
-        ['V'] = 'VISUAL LINE',
-        ['Vs'] = 'VISUAL LINE',
-        [''] = 'VISUAL BLOCK',
-        ['s'] = 'VISUAL BLOCK',
-        ['s'] = 'SELECT',
-        ['S'] = 'SELECT LINE',
-        [''] = 'SELECT BLOCK',
-        ['i'] = 'INSERT',
-        ['ic'] = 'INSERT',
-        ['ix'] = 'INSERT',
-        ['R'] = 'REPLACE',
-        ['Rc'] = 'REPLACE',
-        ['Rx'] = 'REPLACE',
-        ['Rv'] = 'VIRTUAL REPLACE',
-        ['Rvc'] = 'VIRTUAL REPLACE',
-        ['Rvx'] = 'VIRTUAL REPLACE',
-        ['c'] = 'COMMAND',
-        ['cr'] = 'COMMAND',
-        ['cv'] = 'EX',
-        ['cvr'] = 'EX',
-        ['r'] = 'PROMPT',
-        ['rm'] = 'MORE',
-        ['r?'] = 'CONFIRM',
-        ['!'] = 'SHELL',
-        ['t'] = 'TERMINAL',
+        NORMAL = { 'n', 'niI', 'niR', 'niV', 'nt', 'ntT' },
+        OPERATOR = { 'no', 'nov', 'noV', 'no' },
+        VISUAL = { 'v', 'vs', 'V', 'Vs', '', 's' },
+        SELECT = { 's', 'S', '' },
+        INSERT = { 'i', 'ic', 'ix' },
+        REPLACE = { 'R', 'Rc', 'Rx', },
+        ['VI RPL'] = { 'Rv', 'Rvc', 'Rvx' },
+        COMMAND = { 'c', 'cr' },
+        EX = { 'cv', 'cvr' },
+        PROMPT = { 'r' },
+        MORE = { 'rm' },
+        CONFIRM = { 'r?' },
+        SHELL = { '!' },
+        TERMINAL = { 't' },
     }
-    local mode = modes[vim.api.nvim_get_mode().mode] or ''
-    local path = ''
-    if vim.api.nvim_buf_get_option(0, 'buftype') ~= 'terminal' then
-        path = vim.fn.fnamemodify(vim.fn.expand '%', ':~:.:h')
-        if path == '' or path == '.' then
-            path = ' '
-        else
-            path = string.format(' %%<%s/', path)
+    local mode_names = {}
+    for mode, ms in pairs(modes) do
+        for _, m in ipairs(ms) do
+            mode_names[m] = mode
         end
     end
-    local filename = ''
+    local mode = mode_names[vim.api.nvim_get_mode().mode] or ''
+    -- File path
+    local filepath = ''
     if vim.api.nvim_buf_get_option(0, 'buftype') ~= 'terminal' then
-        filename = vim.fn.expand '%:t'
+        filepath = vim.fn.expand '%:p'
+        local home = os.getenv 'HOME'
+        if filepath:sub(1, #home) == home then
+            filepath = '~' .. filepath:sub(#home + 1)
+        end
     end
+    -- LSP breadcrumbs
+    local breadcrumbs = ''
+    if #vim.lsp.get_clients { bufnr = 0 } > 0 then
+        local location = require 'nvim-navic'.get_location()
+        if location ~= '' then
+            breadcrumbs = '> ' .. location
+        end
+    end
+    -- Diagnostics
     local diagnostics = ''
     for level, sign in pairs(diagnostic_signs) do
         local level_name = vim.diagnostic.severity[level]
@@ -346,28 +338,23 @@ function Statusline()
                 ' %#Diagnostic' .. level_name:sub(1, 1):upper() .. level_name:sub(2):lower() .. '#' .. sign .. count
         end
     end
-    diagnostics = diagnostics .. '%#Normal# '
-    local filetype = string.format(' %s ', vim.bo.filetype):upper()
-    local filepos = ' %P %l:%c '
+    diagnostics = diagnostics .. '%*'
+    -- Git info
     local git_dict = vim.b.gitsigns_status_dict
-    local git = ''
+    local git_info = ''
     if git_dict then
         local added = git_dict.added and git_dict.added > 0 and ('%#Added#+' .. git_dict.added) or ''
         local changed = git_dict.changed and git_dict.changed > 0 and ('%#Changed#~' .. git_dict.changed) or ''
         local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
-        git = added .. ' ' .. changed .. ' ' .. removed .. ' %#Normal# ' .. git_dict.head
+        git_info = added .. ' ' .. changed .. ' ' .. removed .. ' %* ' .. git_dict.head
     end
+    -- Search, file position, file type
     local searchcount = vim.fn.searchcount()
     searchcount = searchcount.current .. '/' .. searchcount.total
-    local lsp_loc = ''
-    if #vim.lsp.get_clients { bufnr = 0 } > 0 then
-        local location = require 'nvim-navic'.get_location()
-        if location ~= '' then
-            lsp_loc = '> ' .. location
-        end
-    end
-    return '%#Statusline#' .. mode .. '%#Normal# ' .. path .. filename .. lsp_loc
-        .. diagnostics .. '%=%#StatusLineExtra#' .. git, ' ' .. searchcount .. filetype .. filepos
+    local filetype = vim.bo.filetype:upper()
+    local filepos = '%P %l:%c'
+    return '%#Statusline#' .. mode .. '%* ' .. filepath .. ' ' .. breadcrumbs .. diagnostics
+        .. '%=%*' .. git_info .. ' ' .. searchcount .. ' ' .. filepos .. ' ' .. filetype
 end
 
 vim.opt.statusline = [[%!v:lua.Statusline()]]

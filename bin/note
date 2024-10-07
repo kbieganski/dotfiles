@@ -1,6 +1,9 @@
 #!/bin/env bash
 
-if [ $# -gt 0 ]; then
+print=false
+if [ "$1" == "--print" ]; then
+    print=true
+elif [ $# -gt 0 ]; then
     echo "Invalid arguments"
     exit 1
 fi
@@ -14,7 +17,9 @@ note="$notes_dir/$(
         --preview "bat $notes_dir/$(echo {}).md --color=always"
 ).md"
 
-if [ "$1" == "--print" ]; then
+if [ $? -ne 0 ]; then
+    exit 1
+elif $print; then
     echo "$note"
 else
     nvim "$note"

@@ -5,6 +5,6 @@ fzf --disabled --ansi --multi \
     --bind "start:$reload" --bind "change:$reload" \
     --bind 'enter:accept' \
     --delimiter : \
-    --preview 'bat {1} --color=always --highlight-line {2}' \
+    --preview 'bat {1} --color=always --line-range {2}:' \
     --preview-window '<80(up)' \
     --query "$*"
