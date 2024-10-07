@@ -7,7 +7,7 @@ set $right l
 
 set $menu
 
-exec --no-startup-id feh --bg-fill --no-xinerama ~/background.jpg
+exec --no-startup-id feh --bg-fill --no-xinerama ~/background.png
 
 bindsym $mod+Return exec kitty
 

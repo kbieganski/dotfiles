@@ -71,7 +71,7 @@ map S sh
 # y (select for copy) and P to paste soft-link
 # d (select for cut) and P to paste hard-link
 cmd link %{{
-    set -- $(cat ~/.local/share/lf/files)
+    set -- $(cat $HOME/local/share/lf/files)
     mode="$1"
     shift
     if [ "$#" -lt 1 ]; then
@@ -84,7 +84,7 @@ cmd link %{{
         # while a move mode is indicating a hard link
         move) ln -t . -- "$@";;
     esac
-    rm ~/.local/share/lf/files
+    rm $HOME/.local/share/lf/files
     lf -remote "send clear"
 }}
 map P :link

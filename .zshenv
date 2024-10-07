@@ -1,4 +1,4 @@
-export PATH=~/bin:~/.local/bin:~/.cargo/bin:$PATH:~/.config/go/bin
+export PATH=$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH:$HOME/.config/go/bin
 export TERMINAL=kitty
 export EDITOR=nvim
 export VISUAL=nvim
