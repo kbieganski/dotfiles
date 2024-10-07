@@ -30,6 +30,7 @@ eza
 fakeroot
 fd
 feh
+firefox
 flameshot
 flex
 fq
@@ -83,6 +84,7 @@ marksman
 mesa-utils
 mold
 moreutils
+mpv
 neovim
 ninja
 noto-fonts

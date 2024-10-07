@@ -115,7 +115,11 @@ silent i3-msg restart
 section "Restarting systemd services"
 for service in $HOME/.config/systemd/user/*.service; do
     silent systemctl --user daemon-reload
-    silent systemctl --user enable --now $(basename $service)
+    if [ -f ${service%.*}.timer ]; then
+        silent systemctl --user enable --now $(basename ${service%.*}.timer)
+    else
+        silent systemctl --user enable --now $(basename $service)
+    fi
 done
 
 echo "\e[32mDone.\e[0m"
