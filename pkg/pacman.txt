@@ -176,7 +176,6 @@ xss-lock
 xsv
 yaml-language-server
 yosys
-yq
 zenity
 zig
 zip
