@@ -28,6 +28,7 @@ silent git pull
 silent git submodule update --init --recursive --remote
 silent stow $dotfiles_dir
 if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
+    section "Re-running self"
     exec $0
 fi
 
@@ -70,6 +71,7 @@ while read pkg; do
 done < $pkg_dir/pipx.txt
 
 section "Installing Rust packages"
+rustup self upgrade-data
 for toolchain in stable nightly; do
     silent rustup toolchain install --profile default $toolchain
     while read pkg; do
