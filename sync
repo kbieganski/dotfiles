@@ -71,7 +71,7 @@ while read pkg; do
 done < $pkg_dir/pipx.txt
 
 section "Installing Rust packages"
-rustup self upgrade-data
+silent rustup self upgrade-data
 for toolchain in stable nightly; do
     silent rustup toolchain install --profile default $toolchain
     while read pkg; do
