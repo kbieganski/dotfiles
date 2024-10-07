@@ -372,8 +372,8 @@ require 'lazy'.setup {
     { import = 'plugins' }, { import = 'dev' },
 }
 
--- Handy module reload function
+-- Reload module
 function R(name)
-    require 'plenary.reload'.reload_module(name)
+    package.loaded[name] = nil
     return require(name)
 end
