@@ -112,4 +112,10 @@ silent bat cache --build
 section "Restarting i3"
 silent i3-msg restart
 
+section "Restarting systemd services"
+for service in $HOME/.config/systemd/user/*.service; do
+    silent systemctl --user daemon-reload
+    silent systemctl --user enable --now $(basename $service)
+done
+
 echo "\e[32mDone.\e[0m"

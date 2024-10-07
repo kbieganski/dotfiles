@@ -1,3 +1,4 @@
+i3-resurrect
 keepmenu
 python-lsp-server[all]
 virtualenv
