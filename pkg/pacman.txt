@@ -30,7 +30,6 @@ eza
 fakeroot
 fd
 feh
-firefox
 flameshot
 flex
 fq
@@ -47,7 +46,6 @@ git-lfs
 glibc-debug
 go
 graphviz
-gst-plugin-pipewire
 gtkwave
 haskell-language-server
 htop
@@ -85,7 +83,6 @@ marksman
 mesa-utils
 mold
 moreutils
-mpv
 neovim
 ninja
 noto-fonts
@@ -155,12 +152,12 @@ vscode-html-languageserver
 vscode-json-languageserver
 vtr
 vulkan-extra-layers
-vulkan-extra-tools
 vulkan-radeon
 vulkan-tools
 vulkan-validation-layers
 wget
 which
+wireplumber
 xbindkeys
 xclip
 xdg-desktop-portal-gnome
