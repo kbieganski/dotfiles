@@ -154,6 +154,7 @@ vscode-html-languageserver
 vscode-json-languageserver
 vtr
 vulkan-extra-layers
+vulkan-extra-tools
 vulkan-radeon
 vulkan-tools
 vulkan-validation-layers
