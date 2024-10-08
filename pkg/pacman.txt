@@ -160,7 +160,6 @@ vulkan-tools
 vulkan-validation-layers
 wget
 which
-wireplumber
 xbindkeys
 xclip
 xdg-desktop-portal-gnome
@@ -175,7 +174,6 @@ xorg-xrandr
 xss-lock
 xsv
 yaml-language-server
-yosys
 zenity
 zig
 zip
