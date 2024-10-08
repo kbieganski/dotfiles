@@ -19,11 +19,18 @@
     submodule = log
     tool = difftastic
 
+[color "diff"]
+    oldMoved = yellow
+    newMoved = blue
+
 [difftool]
     prompt = false
 
 [delta]
     syntax-theme = lucid
+    plus-style = syntax "#1A3F22"
+    minus-style = syntax "#3F1A1F"
+    map-styles = yellow => syntax "#3F371A", blue => syntax "#232B55"
     navigate = true
     hunk-header-style = omit
     side-by-side = true
