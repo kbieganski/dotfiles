@@ -90,7 +90,6 @@ pipewire-alsa
 pipewire-pulse
 playerctl
 podman
-python-lsp-server
 python-pip
 python-pipx
 python-virtualenv

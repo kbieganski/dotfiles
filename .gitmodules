@@ -19,3 +19,6 @@
 	path = ext/aur/i3lock-color
 	url = https://aur.archlinux.org/i3lock-color.git
 	ignore = dirty
+[submodule "ext/fzf-tab"]
+	path = ext/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab

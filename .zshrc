@@ -67,24 +67,6 @@ _fg() { fg &>/dev/null; zle redisplay }
 zle -N _fg
 bindkey "^Z" _fg
 
-# Completion
-# The following lines were added by compinstall
-
-zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
-zstyle ':completion:*' expand prefix suffix
-zstyle ':completion:*' file-sort name
-zstyle ':completion:*' ignore-parents parent pwd
-zstyle ':completion:*' insert-unambiguous true
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*'
-zstyle ':completion:*' max-errors 2
-zstyle ':completion:*' menu select=1
-zstyle ':completion:*' original true
-zstyle :compinstall filename '/home/krzysztof/dotfiles/zshrc.sh'
-
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
 
 # Aliases
 alias ..='cd ..'
@@ -153,3 +135,10 @@ eval "$(starship init zsh)"
 source <(fzf --zsh)
 source $HOME/dotfiles/ext/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+autoload -U compinit
+compinit
+source $HOME/dotfiles/ext/fzf-tab/fzf-tab.plugin.zsh
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-flags "${=FZF_DEFAULT_OPTS}"

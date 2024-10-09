@@ -53,7 +53,7 @@ return {
         config = function()
             require 'telescope'.setup {
                 defaults = {
-                    prompt_prefix = '❯ ',
+                    prompt_prefix = '',
                     selection_caret = '⏵ ',
                     borderchars = {
                         prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
