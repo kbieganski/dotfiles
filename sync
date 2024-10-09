@@ -46,7 +46,7 @@ if [ -n "$pacman_new_pkgs" ]; then
 fi
 
 section "Saving Arch package list"
-pacman -Qqne | rg -v "(amd|intel|nvidia|cuda|wacom)" | sort > $pacman_cur_pkgs
+pacman -Qqne | rg -v "(amd|ati|intel|nvidia|cuda|mesa|wacom)" | sort > $pacman_cur_pkgs
 cp $pacman_cur_pkgs $pacman_req_pkgs
 git add $pacman_req_pkgs
 

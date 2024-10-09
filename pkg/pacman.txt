@@ -30,7 +30,6 @@ fq
 fzf
 gdb
 ghc
-ghc-static
 git
 git-absorb
 git-delta
@@ -43,7 +42,6 @@ haskell-language-server
 htop
 hyperfine
 i3blocks
-i3status
 i3-wm
 imagemagick
 inetutils
@@ -58,7 +56,6 @@ keepassxc
 kitty
 lcov
 lf
-libva-mesa-driver
 linux
 linux-firmware
 linux-headers
@@ -71,7 +68,6 @@ lua-language-server
 man-db
 man-pages
 marksman
-mesa-utils
 mold
 moreutils
 mpv
@@ -92,9 +88,7 @@ playerctl
 podman
 python-pip
 python-pipx
-python-virtualenv
 qmk
-qt5-charts
 rclone
 redshift
 refind
@@ -107,11 +101,9 @@ rustup
 sd
 shellcheck
 shfmt
-sof-firmware
 sshfs
 stack
 starship
-steam
 stow
 strace
 stylua
@@ -129,7 +121,6 @@ unclutter
 unzip
 up
 usbutils
-vale
 valgrind
 verilator
 vscode-css-languageserver
@@ -140,16 +131,12 @@ vulkan-extra-layers
 vulkan-extra-tools
 vulkan-radeon
 vulkan-tools
-vulkan-validation-layers
 wget
 wireplumber
 xbindkeys
 xclip
-xdg-desktop-portal-gnome
-xdg-user-dirs
 xdot
 xdotool
-xf86-video-ati
 xorg-server
 xorg-xinit
 xorg-xinput
@@ -162,5 +149,4 @@ zig
 zip
 zls
 zoxide
-zram-generator
 zsh
