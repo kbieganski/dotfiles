@@ -6,13 +6,14 @@ if [ -z "$TMUX" ]; then
     fi
 fi
 
+setopt autocd
+setopt appendhistory
 setopt extendedglob
+setopt histignorealldups
+setopt magicequalsubst
 setopt nocaseglob
-setopt rcexpandparam
 setopt numericglobsort
 setopt nobeep
-setopt appendhistory
-setopt histignorealldups
 
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
 
@@ -60,6 +61,7 @@ for key in "^[[B" ${terminfo[kcud1]} j; do
     bindkey -M vicmd $key down-line-or-beginning-search
 done
 
+WORDCHARS=_
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 

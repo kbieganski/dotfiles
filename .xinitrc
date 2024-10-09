@@ -11,6 +11,7 @@ udiskie &
 /usr/lib/geoclue-2.0/demos/agent &
 redshift -t 6500:3500 &
 picom &
+unclutter &
 
 if [ -f "$HOME/.xinitrc.local" ]; then
     . "$HOME/.xinitrc.local"
