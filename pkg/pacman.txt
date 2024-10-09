@@ -116,6 +116,7 @@ tokei
 tree
 ttc-iosevka
 ttf-nerd-fonts-symbols-mono
+typescript-language-server
 udiskie
 unclutter
 unzip

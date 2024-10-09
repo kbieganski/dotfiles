@@ -115,8 +115,10 @@ alias q=exit
 alias cp='cp -vr'
 alias mv='mv -v'
 alias rm='rm -vr'
-alias rip='rip --graveyard $HOME/trash'
 alias r=rip
+
+alias fzf='fzf --bind "enter:become:nvim {}"'
+alias rgl='rgl --bind "enter:become:nvim +{2} {1}"'
 
 alias g=git
 

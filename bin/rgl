@@ -7,4 +7,4 @@ fzf --disabled --ansi --multi \
     --delimiter : \
     --preview 'bat {1} --color=always --line-range {2}:' \
     --preview-window '<80(up)' \
-    --query "$*"
+    "$@"
