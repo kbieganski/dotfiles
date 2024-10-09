@@ -3,6 +3,7 @@
 xrdb "$HOME/.Xresources"
 setxkbmap pl
 xbindkeys
+xset b off
 
 xss-lock --transfer-sleep-lock -- lock &
 cat "$HOME/.config/dunst/dunstrc" "$HOME/.config/dunst/theme.conf" | dunst &
