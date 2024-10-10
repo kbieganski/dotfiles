@@ -17,7 +17,7 @@ setopt nobeep
 
 TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S'
 
-HISTFILE=$HOME/zsh_history
+HISTFILE=$HOME/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
