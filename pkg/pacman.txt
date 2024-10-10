@@ -22,7 +22,6 @@ dunst
 dust
 expect
 eza
-fakeroot
 fd
 feh
 firefox
