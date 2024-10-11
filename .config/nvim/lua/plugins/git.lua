@@ -15,15 +15,11 @@ return {
                     { buffer = bufnr, desc = 'File commits' })
                 vim.keymap.set('n', '<leader>C', function() require 'telescope.builtin'.git_commits() end,
                     { buffer = bufnr, desc = 'Directory commits' })
-                vim.keymap.set('n', '<leader>g', function() require 'telescope.builtin'.git_files() end,
-                    { buffer = bufnr, desc = 'Repo files' })
-                vim.keymap.set('n', '<leader>s', function() require 'telescope.builtin'.git_status() end,
-                    { buffer = bufnr, desc = 'Status' })
-                vim.keymap.set('n', '<leader>p', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
-                vim.keymap.set('n', '<leader>P', function() gitsigns.toggle_deleted() end,
+                vim.keymap.set('n', '<leader>h', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
+                vim.keymap.set('n', '<leader>H', function() gitsigns.toggle_deleted() end,
                     { buffer = bufnr, desc = 'Toggle deleted hunks' })
-                vim.keymap.set('n', '<leader>H', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
-                vim.keymap.set('n', '<leader>h', gitsigns.stage_hunk, { buffer = bufnr, desc = 'Stage hunk' })
+                vim.keymap.set('n', '<leader>x', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
+                vim.keymap.set('n', '<leader>s', gitsigns.stage_hunk, { buffer = bufnr, desc = 'Stage hunk' })
                 vim.keymap.set('n', '<leader>v', gitsigns.select_hunk,
                     { buffer = bufnr, desc = 'Select hunk' })
                 vim.keymap.set('n', '<leader>y', function() require 'gitlinker'.get_buf_range_url('n') end,

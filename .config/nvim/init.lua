@@ -135,6 +135,7 @@ local function run_get_stdout(cmd, fn)
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
     vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
     local tempfile = vim.fn.tempname()
     vim.fn.termopen(cmd .. ' > ' .. tempfile, {
         on_exit = function()
@@ -148,41 +149,36 @@ local function run_get_stdout(cmd, fn)
     vim.cmd.startinsert()
 end
 
+local function edit_grep(selected)
+    local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
+    line = tonumber(line)
+    col = tonumber(col) - 1
+    vim.cmd.edit(filename)
+    vim.api.nvim_win_set_cursor(0, { line, col })
+end
+
+local fzf_preview = ' --preview "bat {} --color=always" --preview-window "<80(up)"'
+
 vim.keymap.set('n', '<leader>f',
     function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
     { silent = true, desc = 'File browser' })
 vim.keymap.set({ 'n', 'v' }, '|',
-    function()
-        run_get_stdout(
-            'fzf --query "' .. get_visual_selection() ..
-            '" --preview "bat {} --color=always" --preview-window "<80(up)"',
-            vim.cmd.edit)
-    end,
-    { silent = true, desc = 'Find files' })
+    function() run_get_stdout('fzf --query "' .. get_visual_selection() .. '"' .. fzf_preview, vim.cmd.edit) end,
+    { silent = true, desc = 'Find file' })
 vim.keymap.set({ 'n', 'v' }, '\\',
-    function()
-        run_get_stdout('rgl ' .. get_visual_selection(),
-            function(selected)
-                local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
-                line = tonumber(line)
-                col = tonumber(col) - 1
-                vim.cmd.edit(filename)
-                vim.api.nvim_win_set_cursor(0, { line, col })
-            end)
-    end,
-    { silent = true, desc = 'Live grep' })
+    function() run_get_stdout('rgl --query "' .. get_visual_selection() .. '"', edit_grep) end,
+    { silent = true, desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '<leader>|',
+    function() run_get_stdout('git fzf --query "' .. get_visual_selection() .. '"' .. fzf_preview, vim.cmd.edit) end,
+    { silent = true, desc = 'Find file in repository' })
+vim.keymap.set({ 'n', 'v' }, '<leader>\\',
+    function() run_get_stdout('git rgl --query "' .. get_visual_selection() .. '"', edit_grep) end,
+    { silent = true, desc = 'Grep repository' })
 vim.keymap.set('n', '<leader>n',
     function() run_get_stdout('note --print', vim.cmd.edit) end,
     { silent = true, desc = 'Note find' })
 vim.keymap.set('n', '<leader>N',
-    function()
-        run_get_stdout('notes --print', function(selected)
-            local filename, line = selected:match('^(.*):(%d+)')
-            line = tonumber(line)
-            vim.cmd.edit(filename)
-            vim.api.nvim_win_set_cursor(0, { line, 0 })
-        end)
-    end,
+    function() run_get_stdout('notes --print', edit_grep) end,
     { silent = true, desc = 'Note grep' })
 
 

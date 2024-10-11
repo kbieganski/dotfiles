@@ -22,8 +22,8 @@ return {
                         enable = true,
                         set_jumps = true,
                         goto_next_start = {
-                            [']a'] = { query = { '@assignment.inner' }, },
-                            [']b'] = { query = { '@block.inner' }, },
+                            [']a'] = { query = { '@assignment.outer' }, },
+                            [']b'] = { query = { '@block.inner', 'block.outer' }, },
                             [']c'] = { query = { '@class.outer' }, desc = 'Next class' },
                             [']f'] = { query = { '@function.outer' }, desc = 'Next function' },
                             [']i'] = { query = { '@conditional.outer', '@loop.outer' }, },
@@ -35,8 +35,8 @@ return {
                             [']C'] = { query = { '@class.outer' }, desc = 'Next class end' },
                             [']F'] = { query = { '@function.outer' }, desc = 'Next function end' },
                             [']M'] = { query = { '@function.outer', '@class.outer' }, desc = 'Next class or function' },
-                            [']B'] = { query = { '@block.inner' }, },
-                            [']A'] = { query = { '@assignment.inner' }, },
+                            [']B'] = { query = { '@block.inner', 'block.outer' }, },
+                            [']A'] = { query = { '@assignment.outer' }, },
                             [']P'] = { query = { '@parameter.inner' }, },
                             [']I'] = { query = { '@conditional.outer', '@loop.outer' }, },
                             [']T'] = { query = { '@*.inner' }, },
@@ -44,8 +44,8 @@ return {
                         goto_previous_start = {
                             ['[c'] = { query = { '@class.outer' }, desc = 'Previous class' },
                             ['[f'] = { query = { '@function.outer' }, desc = 'Previous function' },
-                            ['[b'] = { query = { '@block.inner' }, },
-                            ['[a'] = { query = { '@assignment.inner' }, },
+                            ['[b'] = { query = { '@block.inner', 'block.outer' }, },
+                            ['[a'] = { query = { '@assignment.outer' }, },
                             ['[p'] = { query = { '@parameter.inner' }, },
                             ['[i'] = { query = { '@conditional.outer', '@loop.outer' }, },
                             ['[s'] = { query = { '@statement.outer' }, },
@@ -56,8 +56,8 @@ return {
                             ['[F'] = { query = { '@function.outer' }, desc = 'Previous function end' },
                             ['[M'] = { query = { '@function.outer', '@class.outer' }, desc =
                             'Previous class or function (end)' },
-                            ['[B'] = { query = { '@block.inner' }, },
-                            ['[A'] = { query = { '@assignment.inner' }, },
+                            ['[B'] = { query = { '@block.inner', 'block.outer' }, },
+                            ['[A'] = { query = { '@assignment.outer' }, },
                             ['[P'] = { query = { '@parameter.inner' }, },
                             ['[I'] = { query = { '@conditional.outer', '@loop.outer' }, },
                             ['[T'] = { query = { '@.*.inner' }, },
@@ -66,7 +66,7 @@ return {
                     swap = {
                         enable = true,
                         swap_next = {
-                            gsa = '@assignment.inner',
+                            gsa = '@assignment.outer',
                             gsb = '@block.outer',
                             gsc = '@class.outer',
                             gsf = '@function.outer',
@@ -75,7 +75,7 @@ return {
                             gss = '@statement.outer',
                         },
                         swap_previous = {
-                            gSa = '@assignment.inner',
+                            gSa = '@assignment.outer',
                             gSb = '@block.outer',
                             gSc = '@class.outer',
                             gSf = '@function.outer',

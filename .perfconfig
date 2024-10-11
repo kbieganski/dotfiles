@@ -1,0 +1,8 @@
+[colors]
+    top = red, default
+    medium = yellow, default
+    normal = default, default
+    selected = default, blue
+    jump_arrows = blue, default
+    addr = green, default
+    root = default, gray

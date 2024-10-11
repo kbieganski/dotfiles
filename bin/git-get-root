@@ -1,0 +1,11 @@
+#!/bin/env bash
+
+dir=$(pwd)
+while [ "$dir" != "/" ] && [ ! -d "$dir/.git" ]; do
+    dir=$(dirname "$dir")
+done
+if [ ! -d "$dir/.git" ]; then
+    echo "Error: not in a git repository"
+    exit 1
+fi
+echo "$dir"

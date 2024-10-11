@@ -21,14 +21,14 @@ local function on_attach(client, bufnr)
         require 'nvim-navic'.attach(client, bufnr)
     end
     if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true)
+        -- vim.lsp.inlay_hint.enable(true)
     end
     vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next { float = false } end,
         { buffer = bufnr, silent = true, desc = 'Next diagnostic' })
     vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev { float = false } end,
         { buffer = bufnr, silent = true, desc = 'Previous diagnostic' })
     vim.keymap.set('n', '<leader>d', function() telescope_builtin.diagnostics { bufnr = bufnr } end,
-        { buffer = bufnr, silent = true, desc = 'All diagnostics' })
+        { buffer = bufnr, silent = true, desc = 'Buffer diagnostics' })
     vim.keymap.set('n', '<leader>D', telescope_builtin.diagnostics,
         { buffer = bufnr, silent = true, desc = 'All diagnostics' })
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, silent = true, desc = 'Hover' })

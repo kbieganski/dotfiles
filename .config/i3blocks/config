@@ -11,9 +11,7 @@ signal=10
 label=<big>♪ </big>
 LONG_FORMAT=${VOL}%
 min_width=<big>♪ </big>100%
-SUBSCRIBE=1
-interval=persist
-signal=1
+interval=1
 
 [wifi]
 label=<small><b>SIG </b></small>
