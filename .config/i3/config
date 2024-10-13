@@ -135,3 +135,6 @@ for_window [class="Steam" title="Friends"] floating enable
 title_align center
 tiling_drag titlebar
 smart_borders on
+
+#-- Autostart -------------------------------------------------------------
+exec --no-startup-id picom

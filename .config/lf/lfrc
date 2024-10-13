@@ -47,13 +47,19 @@ map K move-parent up
 
 # | to fzf current dir
 cmd fzf ${{
-    lf -remote "send $id :cd $(dirname $(fzf))"
+    file=$(fzf --preview 'bat {} --color=always' --preview-window='<80(up)')
+    if [ -n "$file" ]; then
+        lf -remote "send $id :select $file"
+    fi
 }}
 map | fzf
 
 # \ to ripgrep current dir
 cmd rg ${{
-    lf -remote "send $id :cd $(dirname $(rgl | cut -d: -f1))"
+    file=$(rgl | cut -d: -f1)
+    if [ -n "$file" ]; then
+        lf -remote "send $id :select $file"
+    fi
 }}
 map \\ rg
 

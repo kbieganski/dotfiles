@@ -76,6 +76,7 @@ ninja
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
+obs-studio
 openssh
 p7zip
 pacman-contrib

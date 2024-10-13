@@ -139,6 +139,7 @@ local function run_get_stdout(cmd, fn)
     local tempfile = vim.fn.tempname()
     vim.fn.termopen(cmd .. ' > ' .. tempfile, {
         on_exit = function()
+            vim.cmd.bp()
             vim.api.nvim_buf_delete(buf, { force = true })
             if (vim.fn.filereadable(tempfile) ~= 0) then
                 local selected = vim.fn.readfile(tempfile)[1]
@@ -157,30 +158,55 @@ local function edit_grep(selected)
     vim.api.nvim_win_set_cursor(0, { line, col })
 end
 
-local fzf_preview = ' --preview "bat {} --color=always" --preview-window "<80(up)"'
+local function fzf_cmd()
+    return 'fzf --query "' ..
+        get_visual_selection() ..
+        '" --preview "bat {} --color=always" --preview-window="<80(up)" --history=' ..
+        vim.fn.stdpath 'data' .. '/fzf-history'
+end
+
+local function rgl_cmd()
+    return 'rgl --query "' .. get_visual_selection() .. '" --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
+end
 
 vim.keymap.set('n', '<leader>f',
     function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
     { silent = true, desc = 'File browser' })
+
 vim.keymap.set({ 'n', 'v' }, '|',
-    function() run_get_stdout('fzf --query "' .. get_visual_selection() .. '"' .. fzf_preview, vim.cmd.edit) end,
+    function() run_get_stdout(fzf_cmd(), vim.cmd.edit) end,
     { silent = true, desc = 'Find file' })
-vim.keymap.set({ 'n', 'v' }, '\\',
-    function() run_get_stdout('rgl --query "' .. get_visual_selection() .. '"', edit_grep) end,
-    { silent = true, desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '<M-|>',
+    function() run_get_stdout(fzf_cmd() .. ' --bind load:prev-history', vim.cmd.edit) end,
+    { silent = true, desc = 'Find file' })
+
 vim.keymap.set({ 'n', 'v' }, '<leader>|',
-    function() run_get_stdout('git fzf --query "' .. get_visual_selection() .. '"' .. fzf_preview, vim.cmd.edit) end,
+    function() run_get_stdout('git ' .. fzf_cmd(), vim.cmd.edit) end,
     { silent = true, desc = 'Find file in repository' })
+vim.keymap.set({ 'n', 'v' }, '<leader><M-|>',
+    function() run_get_stdout('git ' .. fzf_cmd() .. ' --bind load:prev-history', vim.cmd.edit) end,
+    { silent = true, desc = 'Find file in repository' })
+
+vim.keymap.set({ 'n', 'v' }, '\\',
+    function() run_get_stdout(rgl_cmd(), edit_grep) end,
+    { silent = true, desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '<M-\\>',
+    function() run_get_stdout(rgl_cmd() .. ' --bind load:prev-history', edit_grep) end,
+    { silent = true, desc = 'Grep files' })
+
 vim.keymap.set({ 'n', 'v' }, '<leader>\\',
-    function() run_get_stdout('git rgl --query "' .. get_visual_selection() .. '"', edit_grep) end,
+    function() run_get_stdout('git ' .. rgl_cmd(), edit_grep) end,
     { silent = true, desc = 'Grep repository' })
+vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
+    function() run_get_stdout('git ' .. rgl_cmd() .. ' --bind load:prev-history', edit_grep) end,
+    { silent = true, desc = 'Grep repository' })
+
 vim.keymap.set('n', '<leader>n',
     function() run_get_stdout('note --print', vim.cmd.edit) end,
     { silent = true, desc = 'Note find' })
 vim.keymap.set('n', '<leader>N',
     function() run_get_stdout('notes --print', edit_grep) end,
     { silent = true, desc = 'Note grep' })
-
 
 -- Autocmds
 -- Check if we need to reload the file when it changed
@@ -192,8 +218,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained' }, {
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     group = vim.api.nvim_create_augroup('highlight_yank', {}),
-    -- silent! needed to avoid error because of bug with virtual edit
-    command = "silent! lua vim.highlight.on_yank { higroup = 'Search' }",
+    callback = function() vim.highlight.on_yank { higroup = 'Search' } end,
 })
 
 -- Resize splits if window got resized
@@ -211,25 +236,6 @@ vim.api.nvim_create_autocmd('BufReadPost', {
         if mark[1] > 0 and mark[1] <= lcount then
             pcall(vim.api.nvim_win_set_cursor, 0, mark)
         end
-    end,
-})
-
--- Close some filetypes with <q>
-vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup('close_with_q', {}),
-    pattern = {
-        'PlenaryTestPopup',
-        'help',
-        'lspinfo',
-        'man',
-        'notify',
-        'qf',
-        'query', -- :InspectTree
-        'startuptime',
-    },
-    callback = function(event)
-        vim.bo[event.buf].buflisted = false
-        vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = event.buf, silent = true })
     end,
 })
 
