@@ -131,6 +131,7 @@ local function get_visual_selection()
 end
 
 local function run_get_stdout(cmd, fn)
+    local prev_buf = vim.api.nvim_get_current_buf()
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
@@ -139,7 +140,7 @@ local function run_get_stdout(cmd, fn)
     local tempfile = vim.fn.tempname()
     vim.fn.termopen(cmd .. ' > ' .. tempfile, {
         on_exit = function()
-            vim.cmd.bp()
+            vim.api.nvim_set_current_buf(prev_buf)
             vim.api.nvim_buf_delete(buf, { force = true })
             if (vim.fn.filereadable(tempfile) ~= 0) then
                 local selected = vim.fn.readfile(tempfile)[1]
@@ -257,6 +258,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- Markdown-specific settings:
 -- - conceal links
 -- - paste link with title using <leader>l
+-- - open preview with <leader><CR>
 vim.api.nvim_create_autocmd('FileType', {
     group = vim.api.nvim_create_augroup('markdown_filetype', {}),
     pattern = 'markdown',
@@ -284,6 +286,18 @@ vim.api.nvim_create_autocmd('FileType', {
                 end
             end,
             { buffer = e.buf, silent = true, desc = 'Paste link' })
+        vim.keymap.set('n', '<leader><CR>',
+            function()
+                local peek = require 'peek'
+                if peek.is_open() then
+                    peek.close()
+                else
+                    vim.fn.system('i3-msg split horizontal')
+                    peek.open()
+                end
+            end,
+            { buffer = e.buff, silent = true, desc = 'Preview' }
+        )
     end
 })
 

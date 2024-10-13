@@ -133,6 +133,7 @@ vulkan-extra-layers
 vulkan-extra-tools
 vulkan-radeon
 vulkan-tools
+webkit2gtk
 wget
 wireplumber
 xbindkeys

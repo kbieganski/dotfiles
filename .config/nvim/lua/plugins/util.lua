@@ -17,22 +17,6 @@ return {
         config = function()
             require 'peek'.setup { theme = 'dark' }
         end,
-        keys = {
-            {
-                '<leader><CR>',
-                function()
-                    local peek = require 'peek'
-                    if peek.is_open() then
-                        peek.close()
-                    else
-                        vim.fn.system('i3-msg split horizontal')
-                        peek.open()
-                    end
-                end,
-                desc = 'Preview'
-            },
-        },
-        ft = { 'markdown' },
     },
     {
         'numToStr/Navigator.nvim',

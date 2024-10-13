@@ -48,6 +48,15 @@ return {
         },
     },
     {
+        'rachartier/tiny-inline-diagnostic.nvim',
+        opts = {
+            signs = {
+                left = " ",
+                right = " ",
+            },
+        },
+    },
+    {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
         config = function()

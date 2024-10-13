@@ -132,6 +132,7 @@ for_window [class="Spotify"] border pixel 0
 for_window [class="Steam"] border pixel 2
 for_window [class="Steam" title="Steam - News.*"] floating enable
 for_window [class="Steam" title="Friends"] floating enable
+no_focus [title="^deno$|^Peek preview$"]
 title_align center
 tiling_drag titlebar
 smart_borders on
