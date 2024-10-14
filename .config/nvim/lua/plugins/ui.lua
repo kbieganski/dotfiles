@@ -69,6 +69,7 @@ return {
                         results = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
                         preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
                     },
+                    path_display = { 'truncate' },
                     layout_strategy = 'flex',
                     layout_config = {
                         flex = { flip_columns = 80 },

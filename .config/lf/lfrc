@@ -12,17 +12,19 @@ set selectfmt "\033[7;34m"
 set tagfmt "\033[37m"
 
 # Batch rename
-cmd rename ${{
+cmd rename &{{
     old="$(mktemp)"
     new="$(mktemp)"
+    echo "${fs[@]}" > ~/test.txt
     if [ -n "$fs" ]; then
-        fs="$(basename -a -- $fs)"
+        while IFS= read -r f; do
+            echo "$(basename "$f")" >> "$old"
+        done <<< "$fs"
     else
-        fs="$(ls)"
+        echo "$(basename "$f")" > "$old"
     fi
-    printf '%s\n' "$fs" > "$old"
-    printf '%s\n' "$fs" > "$new"
-    $EDITOR "$new"
+    cat "$old" > "$new"
+    tmux display-popup -E $EDITOR "$new"
     [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
     paste "$old" "$new" | while IFS= read -r names; do
         src="$(printf '%s' "$names" | cut -f1)"

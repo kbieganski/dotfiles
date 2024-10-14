@@ -103,10 +103,6 @@ alias c=clear
 
 alias term=kill
 alias kill='kill -9'
-alias ps=procs
-alias pt='procs --tree'
-alias pw='procs --watch'
-alias pwt='procs --watch --tree'
 alias uptime='uptime -p'
 alias free='free -h'
 alias e=exit
