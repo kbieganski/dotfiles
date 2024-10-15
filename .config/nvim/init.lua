@@ -14,7 +14,6 @@ vim.o.scrolloff = 10                      -- keep cursor 10 lines from screen ed
 vim.o.shiftwidth = 4                      -- width of indent
 vim.o.showmode = false                    -- don't show mode in command line
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.signcolumn = 'yes:2'                -- 2-wide sign column
 vim.o.smartcase = true                    -- don't ignore case if search string contains uppercase letters
 vim.o.smartindent = true                  -- indent based on syntax
 vim.o.spelllang = 'en_us,pl'              -- check English and Polish spelling
