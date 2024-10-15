@@ -9,10 +9,7 @@ set disassembly-flavor intel
 set pagination off
 set debuginfod enabled on
 
-python
-import os
-gdb.execute(f"source {os.getenv('DOTFILES')}/ext/gdb-dashboard/.gdbinit")
-end
+source ~/dotfiles/ext/gdb-dashboard/.gdbinit
 
 dashboard -layout assembly breakpoints expressions history memory registers stack threads variables
 dashboard -style prompt_running '\\[\\e[1;31m\\]>>>\\[\\e[0m\\]'

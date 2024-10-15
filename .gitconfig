@@ -13,7 +13,7 @@
 
 [diff]
     algorithm = patience
-    colorMoved = default
+    colorMoved = blocks
     colorMovedWS = ignore-all-space
     mnemonicPrefix = true
     submodule = log
