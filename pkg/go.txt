@@ -1,3 +1,4 @@
 github.com/air-verse/air@latest
 golang.org/x/tools/gopls@latest
+github.com/go-delve/delve/cmd/dlv@latest
 github.com/mikefarah/yq/v4@latest
