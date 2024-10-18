@@ -7,6 +7,7 @@ vim.o.foldenable = false                  -- no code folding
 vim.o.hlsearch = false                    -- do not highlight all search matches
 vim.o.ignorecase = true                   -- when searching
 vim.o.laststatus = 3                      -- single, global statusline
+vim.o.linebreak = true                    -- break on whitespace
 vim.o.number = true                       -- show line numbers
 vim.o.pumheight = 10                      -- limit shown completion items
 vim.o.relativenumber = true               -- show relative line numbers
@@ -170,7 +171,7 @@ local function rgl_cmd()
 end
 
 vim.keymap.set('n', '<leader>f',
-    function() run_get_stdout('lf -print-selection', vim.cmd.edit) end,
+    function() run_get_stdout('lf -print-selection ' .. vim.fn.expand '%', vim.cmd.edit) end,
     { silent = true, desc = 'File browser' })
 
 vim.keymap.set({ 'n', 'v' }, '|',
@@ -249,7 +250,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
         end
         if vim.fn.isdirectory(vim.fn.expand '%') == 1 then
             vim.api.nvim_buf_delete(ev.buf, { force = true })
-            run_get_stdout('lf -print-selection', vim.cmd.edit)
+            run_get_stdout('lf -print-selection ' .. vim.fn.expand '%', vim.cmd.edit)
         end
     end,
 })
