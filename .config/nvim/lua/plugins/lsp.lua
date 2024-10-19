@@ -76,40 +76,38 @@ local function on_attach(client, bufnr, opts)
         })
     end
     if client.server_capabilities.workspaceSymbolProvider then
-        vim.keymap.set('n', '<leader>M', workspace_symbols, { buffer = bufnr, silent = true, desc = 'Workspace symbols' })
+        vim.keymap.set('n', '<leader>M', workspace_symbols, { buffer = bufnr, desc = 'Workspace symbols' })
     end
     if client.server_capabilities.documentSymbolProvider then
         require 'nvim-navic'.attach(client, bufnr)
-        vim.keymap.set('n', '<leader>m', document_symbols, { buffer = bufnr, silent = true, desc = 'Document symbols' })
+        vim.keymap.set('n', '<leader>m', document_symbols, { buffer = bufnr, desc = 'Document symbols' })
     end
     if client.server_capabilities.incomingCallsProvider then
-        vim.keymap.set('n', 'gci', vim.lsp.buf.incoming_calls, { buffer = bufnr, silent = true, desc = 'Incoming calls' })
+        vim.keymap.set('n', 'gci', vim.lsp.buf.incoming_calls, { buffer = bufnr, desc = 'Incoming calls' })
     end
     if client.server_capabilities.outgoingCallsProvider then
-        vim.keymap.set('n', 'gco', vim.lsp.buf.outgoing_calls, { buffer = bufnr, silent = true, desc = 'Outgoing calls' })
+        vim.keymap.set('n', 'gco', vim.lsp.buf.outgoing_calls, { buffer = bufnr, desc = 'Outgoing calls' })
     end
     if client.server_capabilities.codeActionProvider then
-        vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action,
-            { buffer = bufnr, silent = true, desc = 'Code action' })
+        vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
     end
     if client.server_capabilities.renameProvider then
-        vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = bufnr, silent = true, desc = 'Rename symbol' })
+        vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })
     end
     if client.server_capabilities.definitionProvider then
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, silent = true, desc = 'Definition' })
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, desc = 'Definition' })
     end
     if client.server_capabilities.declarationProvider then
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = bufnr, silent = true, desc = 'Declaration' })
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = bufnr, desc = 'Declaration' })
     end
     if client.server_capabilities.typeDefinitionProvider then
-        vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition,
-            { buffer = bufnr, silent = true, desc = 'Type definition' })
+        vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, { buffer = bufnr, desc = 'Type definition' })
     end
     if client.server_capabilities.typeHierarchyProvider then
-        vim.keymap.set('n', 'gh', vim.lsp.buf.typehierarchy, { buffer = bufnr, silent = true, desc = 'Type hierarchy' })
+        vim.keymap.set('n', 'gh', vim.lsp.buf.typehierarchy, { buffer = bufnr, desc = 'Type hierarchy' })
     end
     if client.server_capabilities.documentFormattingProvider then
-        vim.keymap.set('n', 'gq', vim.lsp.buf.format, { buffer = bufnr, silent = true, desc = 'Format entire buffer' })
+        vim.keymap.set('n', 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format entire buffer' })
         if opts.autoformat then
             vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
                 buffer = bufnr,
@@ -118,16 +116,16 @@ local function on_attach(client, bufnr, opts)
         end
     end
     if client.server_capabilities.referencesProvider then
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = bufnr, silent = true, desc = 'Reference' })
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = bufnr, desc = 'Reference' })
     end
     if client.server_capabilities.implementationProvider then
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, silent = true, desc = 'Implementation' })
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, desc = 'Implementation' })
     end
     if client.server_capabilities.inlayHintProvider then
         vim.lsp.inlay_hint.enable(true)
     end
-    vim.keymap.set('n', '<leader>d', buffer_diagnostics, { buffer = bufnr, silent = true, desc = 'Document diagnostics' })
-    vim.keymap.set('n', '<leader>D', all_diagnostics, { buffer = bufnr, silent = true, desc = 'All diagnostics' })
+    vim.keymap.set('n', '<leader>d', buffer_diagnostics, { buffer = bufnr, desc = 'Document diagnostics' })
+    vim.keymap.set('n', '<leader>D', all_diagnostics, { buffer = bufnr, desc = 'All diagnostics' })
 end
 
 local function setup_lsp()

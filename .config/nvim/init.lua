@@ -46,58 +46,59 @@ vim.diagnostic.config {
 vim.g.mapleader = ' '
 
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
-vim.keymap.set('n', '<C-c>', '<esc>', { silent = true })
+vim.keymap.set('n', '<C-c>', '<esc>')
 
 -- Easier save
-vim.keymap.set('n', '<leader>w', vim.cmd.w, { silent = true, desc = 'Write file' })
-vim.keymap.set('n', '<leader>W', vim.cmd.wa, { silent = true, desc = 'Write all files' })
+vim.keymap.set('n', '<leader>w', vim.cmd.w, { desc = 'Write file' })
+vim.keymap.set('n', '<leader>W', vim.cmd.wa, { desc = 'Write all files' })
 
 -- Unmap useless stuff
-for _, keys in ipairs({ 'za', 'zA', 'zc', 'zC', 'zd', 'zD', 'ze', 'zE', 'zH', 'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' }) do
-    vim.keymap.set({ 'n', 'v' }, keys, function() end, { silent = true, desc = '' })
+for _, keys in ipairs { 'za', 'zA', 'zc', 'zC', 'zd', 'zD', 'ze', 'zE', 'zH',
+    'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' } do
+    vim.keymap.set({ 'n', 'v' }, keys, function() end, { desc = '' })
 end
 
 -- Delete without yanking with x/X
-vim.keymap.set('n', 'x', '"_x', { silent = true })
-vim.keymap.set('n', 'X', '"_dd', { silent = true })
-vim.keymap.set('v', 'x', '"_x', { silent = true })
-vim.keymap.set('v', 'X', '"_dd', { silent = true })
+vim.keymap.set('n', 'x', '"_x')
+vim.keymap.set('n', 'X', '"_dd')
+vim.keymap.set('v', 'x', '"_x')
+vim.keymap.set('v', 'X', '"_dd')
 
 -- Replace without yanking the replaced text
-vim.keymap.set('v', 'p', '"_dP', { silent = true })
+vim.keymap.set('v', 'p', '"_dP')
 
 -- Newline does not switch mode; newline in insert mode
-vim.keymap.set('n', 'o', 'o<esc>kj', { silent = true })
-vim.keymap.set('n', 'O', 'O<esc>jk', { silent = true })
-vim.keymap.set('i', '<M-o>', '<esc>o', { silent = true })
-vim.keymap.set('i', '<M-O>', '<esc>O', { silent = true })
+vim.keymap.set('n', 'o', 'o<esc>kj')
+vim.keymap.set('n', 'O', 'O<esc>jk')
+vim.keymap.set('i', '<M-o>', '<esc>o')
+vim.keymap.set('i', '<M-O>', '<esc>O')
 
 -- Move up/down on visual lines
-vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { silent = true, expr = true })
-vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { silent = true, expr = true })
+vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { expr = true })
+vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
 
 -- Move selected lines up/down
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { silent = true })
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { silent = true })
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- Window management with alt
-vim.keymap.set('n', '<M-q>', vim.cmd.close, { silent = true })
-vim.keymap.set('n', '<M-b>', vim.cmd.split, { silent = true })
-vim.keymap.set('n', '<M-v>', vim.cmd.vsplit, { silent = true })
-vim.keymap.set('n', '<M-H>', '<C-w><S-h>', { silent = true })
-vim.keymap.set('n', '<M-J>', '<C-w><S-j>', { silent = true })
-vim.keymap.set('n', '<M-K>', '<C-w><S-k>', { silent = true })
-vim.keymap.set('n', '<M-L>', '<C-w><S-l>', { silent = true })
+vim.keymap.set('n', '<M-q>', vim.cmd.close)
+vim.keymap.set('n', '<M-b>', vim.cmd.split)
+vim.keymap.set('n', '<M-v>', vim.cmd.vsplit)
+vim.keymap.set('n', '<M-H>', '<C-w><S-h>')
+vim.keymap.set('n', '<M-J>', '<C-w><S-j>')
+vim.keymap.set('n', '<M-K>', '<C-w><S-k>')
+vim.keymap.set('n', '<M-L>', '<C-w><S-l>')
 
 -- Tab management
-vim.keymap.set('n', '<C-t>', vim.cmd.tabnew, { silent = true })
-vim.keymap.set('n', '<C-w>', vim.cmd.tabclose, { silent = true })
-vim.keymap.set('n', '<C-tab>', vim.cmd.tabnext, { silent = true })
-vim.keymap.set('n', '<C-S-tab>', vim.cmd.tabprev, { silent = true })
+vim.keymap.set('n', '<C-t>', vim.cmd.tabnew)
+vim.keymap.set('n', '<C-w>', vim.cmd.tabclose)
+vim.keymap.set('n', '<C-tab>', vim.cmd.tabnext)
+vim.keymap.set('n', '<C-S-tab>', vim.cmd.tabprev)
 
 -- Make < and > keep selection
-vim.keymap.set('v', '<', '<gv', { silent = true })
-vim.keymap.set('v', '>', '>gv', { silent = true })
+vim.keymap.set('v', '<', '<gv')
+vim.keymap.set('v', '>', '>gv')
 
 -- Rename current file
 vim.keymap.set('n', '<leader>R', function()
@@ -115,7 +116,7 @@ vim.keymap.set('n', '<leader>R', function()
             vim.api.nvim_buf_set_name(0, new_filename)
         end
     end)
-end, { silent = true, desc = 'Rename current file' })
+end, { desc = 'Rename current file' })
 
 -- Interactive shell commands
 local function get_visual_selection()
@@ -212,49 +213,41 @@ vim.keymap.set('n', '<leader>o',
             :filter(function(f) return f ~= vim.api.nvim_buf_get_name(0) end):join('\n')
         termrun('echo "' .. files .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,
-    { silent = true, desc = 'Old files' })
+    { desc = 'Old files' })
 
 vim.keymap.set('n', '<leader>f',
     function() termrun('lf -print-selection ' .. vim.api.nvim_buf_get_name(0), edit_or_qfl) end,
-    { silent = true, desc = 'File browser' })
+    { desc = 'File browser' })
 
-vim.keymap.set({ 'n', 'v' }, '|',
-    function() termrun(fzf_cmd(), edit_or_qfl) end,
-    { silent = true, desc = 'Find file' })
+vim.keymap.set({ 'n', 'v' }, '|', function() termrun(fzf_cmd(), edit_or_qfl) end, { desc = 'Find file' })
 vim.keymap.set({ 'n', 'v' }, '<M-|>',
     function() termrun(fzf_cmd() .. ' --bind load:prev-history', edit_or_qfl) end,
-    { silent = true, desc = 'Find file' })
+    { desc = 'Find file' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>|',
     function() termrun('git ' .. fzf_cmd(), function(selected) edit_or_qfl(selected, git_root()) end) end,
-    { silent = true, desc = 'Find file in repository' })
+    { desc = 'Find file in repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-|>',
     function()
         termrun('git ' .. fzf_cmd() .. ' --bind load:prev-history',
             function(selected) edit_or_qfl(selected, git_root()) end)
     end,
-    { silent = true, desc = 'Find file in repository' })
+    { desc = 'Find file in repository' })
 
-vim.keymap.set({ 'n', 'v' }, '\\',
-    function() termrun(rgl_cmd(), grep_edit_or_qfl) end,
-    { silent = true, desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '\\', function() termrun(rgl_cmd(), grep_edit_or_qfl) end, { desc = 'Grep files' })
 vim.keymap.set({ 'n', 'v' }, '<M-\\>',
     function() termrun(rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
-    { silent = true, desc = 'Grep files' })
+    { desc = 'Grep files' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>\\',
     function() termrun('git ' .. rgl_cmd(), grep_edit_or_qfl) end,
-    { silent = true, desc = 'Grep repository' })
+    { desc = 'Grep repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
     function() termrun('git ' .. rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
-    { silent = true, desc = 'Grep repository' })
+    { desc = 'Grep repository' })
 
-vim.keymap.set('n', '<leader>n',
-    function() termrun('note --print', edit_or_qfl) end,
-    { silent = true, desc = 'Note find' })
-vim.keymap.set('n', '<leader>N',
-    function() termrun('notes --print', grep_edit_or_qfl) end,
-    { silent = true, desc = 'Note grep' })
+vim.keymap.set('n', '<leader>n', function() termrun('note --print', edit_or_qfl) end, { desc = 'Note find' })
+vim.keymap.set('n', '<leader>N', function() termrun('notes --print', grep_edit_or_qfl) end, { desc = 'Note grep' })
 
 -- Undotree
 local function undotree()
@@ -304,7 +297,7 @@ local function undotree()
         end
     end)
 end
-vim.keymap.set('n', '<leader>u', undotree, { silent = true, desc = 'Undo tree' })
+vim.keymap.set('n', '<leader>u', undotree, { desc = 'Undo tree' })
 
 -- Autocmds
 -- Check if we need to reload the file when it changed
@@ -370,7 +363,7 @@ vim.api.nvim_create_autocmd('FileType', {
                 local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
                 vim.api.nvim_set_current_line(new_line)
             end,
-            { buffer = e.buf, silent = true, desc = 'Paste link' })
+            { buffer = e.buf, desc = 'Paste link' })
         vim.keymap.set('n', '<leader>p',
             function()
                 local peek = require 'peek'
@@ -381,7 +374,7 @@ vim.api.nvim_create_autocmd('FileType', {
                     peek.open()
                 end
             end,
-            { buffer = e.buff, silent = true, desc = 'Preview' }
+            { buffer = e.buff, desc = 'Preview' }
         )
     end
 })
