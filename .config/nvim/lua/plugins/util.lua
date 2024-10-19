@@ -13,6 +13,7 @@ return {
     },
     {
         'toppair/peek.nvim',
+        lazy = true,
         build = 'deno task --quiet build:fast',
         config = function()
             require 'peek'.setup { theme = 'dark' }

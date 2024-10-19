@@ -11,10 +11,6 @@ return {
                 vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })
                 vim.keymap.set('n', '[h', gitsigns.prev_hunk, { buffer = bufnr, desc = 'Previous hunk' })
                 vim.keymap.set('n', '<leader>b', gitsigns.blame_line, { buffer = bufnr, desc = 'Blame line' })
-                vim.keymap.set('n', '<leader>c', function() require 'telescope.builtin'.git_bcommits() end,
-                    { buffer = bufnr, desc = 'File commits' })
-                vim.keymap.set('n', '<leader>C', function() require 'telescope.builtin'.git_commits() end,
-                    { buffer = bufnr, desc = 'Directory commits' })
                 vim.keymap.set('n', '<leader>h', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
                 vim.keymap.set('n', '<leader>H', function() gitsigns.toggle_deleted() end,
                     { buffer = bufnr, desc = 'Toggle deleted hunks' })
@@ -32,7 +28,6 @@ return {
     },
     {
         'akinsho/git-conflict.nvim',
-        lazy = true,
         opts = {
             default_mappings = {
                 ours = '<leader>xo',

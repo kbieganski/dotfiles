@@ -11,6 +11,8 @@ set previewer bat
 set selectfmt "\033[7;34m"
 set tagfmt "\033[37m"
 
+map <esc> quit
+
 # Batch rename
 cmd rename &{{
     old="$(mktemp)"

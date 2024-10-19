@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 reload='reload:rg --column --color=always --smart-case {q} || :'
-fzf --disabled --ansi --multi \
+fzf --disabled --ansi \
     --bind "start:$reload" --bind "change:$reload" \
     --bind 'enter:accept' \
     --delimiter : \

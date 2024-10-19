@@ -1,5 +1,6 @@
 -- Options
 vim.o.autochdir = true                    -- change working dir to buffer dir
+vim.o.autowriteall = true                 -- auto save files
 vim.o.clipboard = 'unnamedplus'           -- use system clipboard
 vim.o.cursorline = true                   -- highlight line with cursor
 vim.o.expandtab = true                    -- insert spaces with tab
@@ -13,8 +14,8 @@ vim.o.pumheight = 10                      -- limit shown completion items
 vim.o.relativenumber = true               -- show relative line numbers
 vim.o.scrolloff = 10                      -- keep cursor 10 lines from screen edge
 vim.o.shiftwidth = 4                      -- width of indent
-vim.o.showmode = false                    -- don't show mode in command line
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
+vim.o.showmode = false                    -- don't show mode in command line
 vim.o.smartcase = true                    -- don't ignore case if search string contains uppercase letters
 vim.o.smartindent = true                  -- indent based on syntax
 vim.o.spelllang = 'en_us,pl'              -- check English and Polish spelling
@@ -130,7 +131,7 @@ local function get_visual_selection()
     end
 end
 
-local function run_get_stdout(cmd, fn)
+local function termrun(cmd, fn)
     local prev_buf = vim.api.nvim_get_current_buf()
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
@@ -143,7 +144,7 @@ local function run_get_stdout(cmd, fn)
             vim.api.nvim_set_current_buf(prev_buf)
             vim.api.nvim_buf_delete(buf, { force = true })
             if (vim.fn.filereadable(tempfile) ~= 0) then
-                local selected = vim.fn.readfile(tempfile)[1]
+                local selected = vim.fn.readfile(tempfile)
                 fn(selected)
             end
         end
@@ -151,63 +152,154 @@ local function run_get_stdout(cmd, fn)
     vim.cmd.startinsert()
 end
 
-local function edit_grep(selected)
-    local filename, line, col = selected:match('^(.*):(%d+):(%d+):')
-    line = tonumber(line)
+local function grep_parse(selected, root)
+    local filename, lnum, col, text = selected:match('^(.*):(%d+):(%d+):(.*)')
+    lnum = tonumber(lnum)
     col = tonumber(col) - 1
-    vim.cmd.edit(filename)
-    vim.api.nvim_win_set_cursor(0, { line, col })
+    return root .. filename, lnum, col, text
 end
 
-local function fzf_cmd()
-    return 'fzf --query "' ..
-        get_visual_selection() ..
-        '" --preview "bat {} --color=always" --preview-window="<80(up)" --history=' ..
-        vim.fn.stdpath 'data' .. '/fzf-history'
+local function grep_edit_or_qfl(selected, root)
+    root = root and root .. '/' or ''
+    if #selected == 1 then
+        local filename, lnum, col, _ = grep_parse(selected[1], root)
+        vim.cmd.edit(filename)
+        vim.api.nvim_win_set_cursor(0, { lnum, col })
+    elseif #selected > 1 then
+        vim.fn.setqflist(vim.tbl_map(
+            function(item)
+                local filename, lnum, col, text = grep_parse(item, root)
+                return { filename = filename, lnum = lnum, col = col, text = text }
+            end, selected))
+        vim.cmd.copen()
+    end
+end
+
+local function fzf_cmd(opts)
+    opts.history = opts.history or true
+    return 'fzf --multi --query "' .. get_visual_selection()
+        .. '" --preview "bat {} --color=always" --preview-window="<80(up)" '
+        .. (opts.history and '--history=' .. vim.fn.stdpath 'data' .. '/fzf-history' or '')
+end
+
+local function edit_or_qfl(selected, root)
+    root = root and root .. '/' or ''
+    if #selected == 1 then
+        vim.cmd.edit(root .. selected[1])
+    elseif #selected > 1 then
+        vim.fn.setqflist(vim.tbl_map(function(item) return { filename = root .. item } end, selected))
+        vim.cmd.copen()
+    end
+end
+
+local function git_root()
+    local dot_git = vim.fn.finddir('.git', '.;')
+    return vim.fn.fnamemodify(dot_git, ':h')
 end
 
 local function rgl_cmd()
-    return 'rgl --query "' .. get_visual_selection() .. '" --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
+    return 'rgl --multi --query "' .. get_visual_selection() .. '" --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
 end
 
+vim.keymap.set('n', '<leader>o',
+    function()
+        local oldfiles = vim.tbl_filter(function(f) return vim.fn.filereadable(f) == 1 end, vim.v.oldfiles)
+        oldfiles = table.concat(oldfiles, '\n')
+        termrun('echo "' .. oldfiles .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
+    end,
+    { silent = true, desc = 'Old files' })
+
 vim.keymap.set('n', '<leader>f',
-    function() run_get_stdout('lf -print-selection ' .. vim.fn.expand '%', vim.cmd.edit) end,
+    function() termrun('lf -print-selection ' .. vim.fn.expand '%', edit_or_qfl) end,
     { silent = true, desc = 'File browser' })
 
 vim.keymap.set({ 'n', 'v' }, '|',
-    function() run_get_stdout(fzf_cmd(), vim.cmd.edit) end,
+    function() termrun(fzf_cmd(), edit_or_qfl) end,
     { silent = true, desc = 'Find file' })
 vim.keymap.set({ 'n', 'v' }, '<M-|>',
-    function() run_get_stdout(fzf_cmd() .. ' --bind load:prev-history', vim.cmd.edit) end,
+    function() termrun(fzf_cmd() .. ' --bind load:prev-history', edit_or_qfl) end,
     { silent = true, desc = 'Find file' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>|',
-    function() run_get_stdout('git ' .. fzf_cmd(), vim.cmd.edit) end,
+    function() termrun('git ' .. fzf_cmd(), function(selected) edit_or_qfl(selected, git_root()) end) end,
     { silent = true, desc = 'Find file in repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-|>',
-    function() run_get_stdout('git ' .. fzf_cmd() .. ' --bind load:prev-history', vim.cmd.edit) end,
+    function()
+        termrun('git ' .. fzf_cmd() .. ' --bind load:prev-history',
+            function(selected) edit_or_qfl(selected, git_root()) end)
+    end,
     { silent = true, desc = 'Find file in repository' })
 
 vim.keymap.set({ 'n', 'v' }, '\\',
-    function() run_get_stdout(rgl_cmd(), edit_grep) end,
+    function() termrun(rgl_cmd(), grep_edit_or_qfl) end,
     { silent = true, desc = 'Grep files' })
 vim.keymap.set({ 'n', 'v' }, '<M-\\>',
-    function() run_get_stdout(rgl_cmd() .. ' --bind load:prev-history', edit_grep) end,
+    function() termrun(rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
     { silent = true, desc = 'Grep files' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>\\',
-    function() run_get_stdout('git ' .. rgl_cmd(), edit_grep) end,
+    function() termrun('git ' .. rgl_cmd(), grep_edit_or_qfl) end,
     { silent = true, desc = 'Grep repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
-    function() run_get_stdout('git ' .. rgl_cmd() .. ' --bind load:prev-history', edit_grep) end,
+    function() termrun('git ' .. rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
     { silent = true, desc = 'Grep repository' })
 
 vim.keymap.set('n', '<leader>n',
-    function() run_get_stdout('note --print', vim.cmd.edit) end,
+    function() termrun('note --print', edit_or_qfl) end,
     { silent = true, desc = 'Note find' })
 vim.keymap.set('n', '<leader>N',
-    function() run_get_stdout('notes --print', edit_grep) end,
+    function() termrun('notes --print', grep_edit_or_qfl) end,
     { silent = true, desc = 'Note grep' })
+
+-- Undotree
+local function undotree()
+    local tree = vim.fn.undotree()
+    local entries = tree.entries
+    if not entries then
+        return
+    end
+    local i = 1
+    while i <= #entries do
+        local entry = entries[i]
+        entry.level = entry.level or 1
+        for j, child_entry in ipairs(entry.alt or {}) do
+            child_entry.level = entry.level + 1
+            child_entry.last = j == #entry.alt
+            table.insert(entries, i + j - 1, child_entry)
+        end
+        i = entry.alt and i or i + 1
+        entry.alt = nil
+    end
+    entries[#entries].last = true
+    for i = 1, math.floor(#entries / 2) do
+        local j = #entries - i + 1
+        entries[i], entries[j] = entries[j], entries[i]
+    end
+    vim.ui.select(entries, {
+        prompt = 'Undo',
+        format_item = function(entry)
+            local dt = vim.fn.localtime() - entry.time
+            local ago
+            if dt < 60 then
+                ago = math.floor(dt) .. 's ago'
+            elseif dt < 3600 then
+                ago = math.floor(dt / 60) .. 'm ago'
+            elseif dt < 24 * 3600 then
+                ago = math.floor(dt / 3600) .. 'h ago'
+            else
+                ago = math.floor(dt / (24 * 3600)) .. 'd ago'
+            end
+            local prefix = (' │ '):rep(entry.level - 1) .. (entry.last and ' ┌─' or ' ├─')
+            local caret = entry.seq == tree.seq_cur and '⮜' or ''
+            return string.format('%s#%d (%s) %s', prefix, entry.seq, ago, caret)
+        end,
+    }, function(choice)
+        if choice then
+            vim.cmd('undo ' .. choice.seq)
+        end
+    end)
+end
+vim.keymap.set('n', '<leader>u', undotree, { silent = true, desc = 'Undo tree' })
 
 -- Autocmds
 -- Check if we need to reload the file when it changed
@@ -248,9 +340,10 @@ vim.api.nvim_create_autocmd('BufEnter', {
         if vim.bo.buftype == 'term' then
             return
         end
-        if vim.fn.isdirectory(vim.fn.expand '%') == 1 then
+        local path = vim.fn.expand '%'
+        if vim.fn.isdirectory(path) == 1 then
             vim.api.nvim_buf_delete(ev.buf, { force = true })
-            run_get_stdout('lf -print-selection ' .. vim.fn.expand '%', vim.cmd.edit)
+            termrun('lf -print-selection ' .. path, edit_or_qfl)
         end
     end,
 })
@@ -258,7 +351,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- Markdown-specific settings:
 -- - conceal links
 -- - paste link with title using <leader>l
--- - open preview with <leader><CR>
+-- - open preview with <leader>p
 vim.api.nvim_create_autocmd('FileType', {
     group = vim.api.nvim_create_augroup('markdown_filetype', {}),
     pattern = 'markdown',
@@ -286,7 +379,7 @@ vim.api.nvim_create_autocmd('FileType', {
                 end
             end,
             { buffer = e.buf, silent = true, desc = 'Paste link' })
-        vim.keymap.set('n', '<leader><CR>',
+        vim.keymap.set('n', '<leader>p',
             function()
                 local peek = require 'peek'
                 if peek.is_open() then
@@ -329,7 +422,7 @@ function Statusline()
     local mode = mode_names[vim.api.nvim_get_mode().mode] or ''
     -- File path
     local filepath = ''
-    if vim.api.nvim_buf_get_option(0, 'buftype') ~= 'terminal' then
+    if vim.api.nvim_get_option_value('buftype', { buf = 0 }) ~= 'terminal' then
         filepath = vim.fn.expand '%:p'
         local home = os.getenv 'HOME'
         if filepath:sub(1, #home) == home then
@@ -367,10 +460,9 @@ function Statusline()
     -- Search, file position, file type
     local searchcount = vim.fn.searchcount()
     searchcount = searchcount.current .. '/' .. searchcount.total
-    local filetype = vim.bo.filetype:upper()
     local filepos = '%P %l:%c'
-    return '%#Statusline#' .. mode .. '%* ' .. filepath .. ' ' .. breadcrumbs .. diagnostics
-        .. '%=%*' .. git_info .. ' ' .. searchcount .. ' ' .. filepos .. ' ' .. filetype
+    return '%#Statusline#' .. mode .. '%* ' .. filepath .. ' ' .. breadcrumbs
+        .. diagnostics .. '%=%*' .. git_info .. ' ' .. searchcount .. ' ' .. filepos
 end
 
 vim.opt.statusline = [[%!v:lua.Statusline()]]
