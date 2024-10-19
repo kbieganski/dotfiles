@@ -106,7 +106,7 @@ vim.keymap.set('n', '<leader>R', function()
         if not new_filename or new_filename == '' then
             return
         end
-        if vim.fn.filereadable(filename) == 1 then
+        if vim.uv.fs_stat(filename) then
             vim.cmd.write(new_filename)
             vim.cmd.bdelete(1)
             vim.cmd.edit(new_filename)
@@ -143,7 +143,7 @@ local function termrun(cmd, fn)
         on_exit = function()
             vim.api.nvim_set_current_buf(prev_buf)
             vim.api.nvim_buf_delete(buf, { force = true })
-            if (vim.fn.filereadable(tempfile) ~= 0) then
+            if vim.uv.fs_stat(tempfile) then
                 local selected = vim.fn.readfile(tempfile)
                 fn(selected)
             end
@@ -203,14 +203,19 @@ end
 
 vim.keymap.set('n', '<leader>o',
     function()
-        local oldfiles = vim.tbl_filter(function(f) return vim.fn.filereadable(f) == 1 end, vim.v.oldfiles)
-        oldfiles = table.concat(oldfiles, '\n')
-        termrun('echo "' .. oldfiles .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
+        local buffers = vim.iter(vim.api.nvim_list_bufs())
+            :map(function(b) return vim.api.nvim_buf_get_name(b) end)
+            :filter(function(f) return vim.uv.fs_stat(f) end):skip(1):totable()
+        local oldfiles = vim.iter(vim.v.oldfiles):filter(
+            function(f) return vim.uv.fs_stat(f) and not vim.tbl_contains(buffers, f) end):totable()
+        local files = vim.iter { buffers, oldfiles }:flatten()
+            :filter(function(f) return f ~= vim.api.nvim_buf_get_name(0) end):join('\n')
+        termrun('echo "' .. files .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,
     { silent = true, desc = 'Old files' })
 
 vim.keymap.set('n', '<leader>f',
-    function() termrun('lf -print-selection ' .. vim.fn.expand '%', edit_or_qfl) end,
+    function() termrun('lf -print-selection ' .. vim.api.nvim_buf_get_name(0), edit_or_qfl) end,
     { silent = true, desc = 'File browser' })
 
 vim.keymap.set({ 'n', 'v' }, '|',
@@ -278,7 +283,7 @@ local function undotree()
     vim.ui.select(entries, {
         prompt = 'Undo',
         format_item = function(entry)
-            local dt = vim.fn.localtime() - entry.time
+            local dt = os.time() - entry.time
             local ago
             if dt < 60 then
                 ago = math.floor(dt) .. 's ago'
@@ -304,43 +309,38 @@ vim.keymap.set('n', '<leader>u', undotree, { silent = true, desc = 'Undo tree' }
 -- Autocmds
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained' }, {
-    group = vim.api.nvim_create_augroup('checktime', {}),
     callback = function() vim.cmd.checktime() end,
 })
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
-    group = vim.api.nvim_create_augroup('highlight_yank', {}),
     callback = function() vim.highlight.on_yank { higroup = 'Search' } end,
 })
 
 -- Resize splits if window got resized
 vim.api.nvim_create_autocmd('VimResized', {
-    group = vim.api.nvim_create_augroup('resize_splits', {}),
     callback = function() vim.cmd.tabdo 'wincmd =' end,
 })
 
 -- Go to last location when opening a buffer
 vim.api.nvim_create_autocmd('BufReadPost', {
-    group = vim.api.nvim_create_augroup('last_loc', {}),
     callback = function()
         local mark = vim.api.nvim_buf_get_mark(0, '"')
         local lcount = vim.api.nvim_buf_line_count(0)
         if mark[1] > 0 and mark[1] <= lcount then
-            pcall(vim.api.nvim_win_set_cursor, 0, mark)
+            vim.api.nvim_win_set_cursor(0, mark)
         end
     end,
 })
 
 -- Replace netrw with lf
 vim.api.nvim_create_autocmd('BufEnter', {
-    group = vim.api.nvim_create_augroup('open_lf_on_dir', {}),
     pattern = '*',
     callback = function(ev)
         if vim.bo.buftype == 'term' then
             return
         end
-        local path = vim.fn.expand '%'
+        local path = vim.api.nvim_buf_get_name(ev.buf)
         if vim.fn.isdirectory(path) == 1 then
             vim.api.nvim_buf_delete(ev.buf, { force = true })
             termrun('lf -print-selection ' .. path, edit_or_qfl)
@@ -353,7 +353,6 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- - paste link with title using <leader>l
 -- - open preview with <leader>p
 vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup('markdown_filetype', {}),
     pattern = 'markdown',
     callback = function(e)
         vim.opt_local.conceallevel = 2 -- conceal links
@@ -361,22 +360,15 @@ vim.api.nvim_create_autocmd('FileType', {
             function()
                 local url = vim.fn.getreg '+'
                 if url == '' then return end
-                local cmd = 'curl -L ' .. vim.fn.shellescape(url) .. ' 2>/dev/null'
-                local handle = io.popen(cmd)
+                local handle = io.popen('curl -L ' .. vim.fn.shellescape(url) .. ' 2>/dev/null')
                 if not handle then return end
                 local html = handle:read '*a'
                 handle:close()
-                local pattern = '<title>(.-)</title>'
-                local title = string.match(html, pattern)
-                if title then
-                    local pos = vim.api.nvim_win_get_cursor(0)[2]
-                    local line = vim.api.nvim_get_current_line()
-                    local link = '[' .. title .. '](' .. url .. ')'
-                    local new_line = line:sub(0, pos) .. link .. line:sub(pos + 1)
-                    vim.api.nvim_set_current_line(new_line)
-                else
-                    vim.notify('Title not found for link')
-                end
+                local title = string.match(html, '<title>(.-)</title>') or 'Untitled'
+                local pos = vim.api.nvim_win_get_cursor(0)[2]
+                local line = vim.api.nvim_get_current_line()
+                local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
+                vim.api.nvim_set_current_line(new_line)
             end,
             { buffer = e.buf, silent = true, desc = 'Paste link' })
         vim.keymap.set('n', '<leader>p',
@@ -395,47 +387,45 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- Statusline
+local modes = {}
+for mode, ms in pairs {
+    NORMAL = { 'n', 'niI', 'niR', 'niV', 'nt', 'ntT' },
+    OPERATOR = { 'no', 'nov', 'noV', 'no' },
+    VISUAL = { 'v', 'vs', 'V', 'Vs', '', 's' },
+    SELECT = { 's', 'S', '' },
+    INSERT = { 'i', 'ic', 'ix' },
+    REPLACE = { 'R', 'Rc', 'Rx', },
+    ['VI RPL'] = { 'Rv', 'Rvc', 'Rvx' },
+    COMMAND = { 'c', 'cr' },
+    EX = { 'cv', 'cvr' },
+    PROMPT = { 'r' },
+    MORE = { 'rm' },
+    CONFIRM = { 'r?' },
+    SHELL = { '!' },
+    TERMINAL = { 't' },
+} do
+    for _, m in ipairs(ms) do modes[m] = mode end
+end
+
 function Statusline()
     -- Mode
-    local modes = {
-        NORMAL = { 'n', 'niI', 'niR', 'niV', 'nt', 'ntT' },
-        OPERATOR = { 'no', 'nov', 'noV', 'no' },
-        VISUAL = { 'v', 'vs', 'V', 'Vs', '', 's' },
-        SELECT = { 's', 'S', '' },
-        INSERT = { 'i', 'ic', 'ix' },
-        REPLACE = { 'R', 'Rc', 'Rx', },
-        ['VI RPL'] = { 'Rv', 'Rvc', 'Rvx' },
-        COMMAND = { 'c', 'cr' },
-        EX = { 'cv', 'cvr' },
-        PROMPT = { 'r' },
-        MORE = { 'rm' },
-        CONFIRM = { 'r?' },
-        SHELL = { '!' },
-        TERMINAL = { 't' },
-    }
-    local mode_names = {}
-    for mode, ms in pairs(modes) do
-        for _, m in ipairs(ms) do
-            mode_names[m] = mode
-        end
-    end
-    local mode = mode_names[vim.api.nvim_get_mode().mode] or ''
+    local mode = modes[vim.api.nvim_get_mode().mode] or ''
     -- File path
     local filepath = ''
     if vim.api.nvim_get_option_value('buftype', { buf = 0 }) ~= 'terminal' then
-        filepath = vim.fn.expand '%:p'
+        filepath = vim.api.nvim_buf_get_name(0)
+        -- vim.fn.fnamemodify(0)
         local home = os.getenv 'HOME'
         if filepath:sub(1, #home) == home then
             filepath = '~' .. filepath:sub(#home + 1)
         end
+        filepath = filepath .. (vim.api.nvim_get_option_value('modified', { buf = 0 }) and '*' or '')
     end
     -- LSP breadcrumbs
     local breadcrumbs = ''
     if #vim.lsp.get_clients { bufnr = 0 } > 0 then
         local location = require 'nvim-navic'.get_location()
-        if location ~= '' then
-            breadcrumbs = '> ' .. location
-        end
+        breadcrumbs = location ~= '' and '> ' .. location or ''
     end
     -- Diagnostics
     local diagnostics = ''
@@ -470,18 +460,10 @@ vim.opt.statusline = [[%!v:lua.Statusline()]]
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system {
-        'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath
-    }
+if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
 end
 vim.opt.rtp:prepend(lazypath)
 require 'lazy'.setup {
     { import = 'plugins' }, { import = 'dev' },
 }
-
--- Reload module
-function R(name)
-    package.loaded[name] = nil
-    return require(name)
-end
