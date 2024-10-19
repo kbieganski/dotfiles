@@ -1,24 +1,5 @@
 -- Language Server Protocol
 
-local function highlight_refs()
-    vim.lsp.buf.clear_references()
-    vim.lsp.buf.document_highlight()
-end
-
-local function all_diagnostics()
-    vim.diagnostic.setqflist { title = 'All diangostics' }
-end
-
-local function buffer_diagnostics()
-    local win = vim.api.nvim_get_current_win()
-    local bufnr = vim.api.nvim_win_get_buf(win)
-    local items = vim.diagnostic.toqflist(vim.diagnostic.get(bufnr))
-    vim.fn.setloclist(win, {}, ' ', { title = 'Document diagnostics', items = items })
-    if vim.api.nvim_get_current_win() == win then
-        vim.cmd.lopen()
-    end
-end
-
 local decl_syms = { 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 22, 23 }
 
 local function document_symbols()
@@ -71,7 +52,10 @@ local function on_attach(client, bufnr, opts)
     -- Highlight matching identifiers
     if client.server_capabilities.documentHighlightProvider then
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            callback = highlight_refs,
+            callback = function()
+                vim.lsp.buf.clear_references()
+                vim.lsp.buf.document_highlight()
+            end,
             buffer = bufnr,
         })
     end
@@ -124,8 +108,6 @@ local function on_attach(client, bufnr, opts)
     if client.server_capabilities.inlayHintProvider then
         vim.lsp.inlay_hint.enable(true)
     end
-    vim.keymap.set('n', '<leader>d', buffer_diagnostics, { buffer = bufnr, desc = 'Document diagnostics' })
-    vim.keymap.set('n', '<leader>D', all_diagnostics, { buffer = bufnr, desc = 'All diagnostics' })
 end
 
 local function setup_lsp()
@@ -140,7 +122,6 @@ local function setup_lsp()
             on_attach = on_attach,
         }
     end
-
 
     lspconfig.clangd.setup {
         capabilities = capabilities,

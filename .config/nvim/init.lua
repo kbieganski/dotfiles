@@ -100,6 +100,20 @@ vim.keymap.set('n', '<C-S-tab>', vim.cmd.tabprev)
 vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
+-- Diagnostics
+vim.keymap.set('n', '<leader>d', function()
+    local win = vim.api.nvim_get_current_win()
+    local bufnr = vim.api.nvim_win_get_buf(win)
+    local items = vim.diagnostic.toqflist(vim.diagnostic.get(bufnr))
+    vim.fn.setloclist(win, {}, ' ', { title = 'Document diagnostics', items = items })
+    if vim.api.nvim_get_current_win() == win and #items > 0 then
+        vim.cmd.lopen()
+    end
+end, { desc = 'Document diagnostics' })
+vim.keymap.set('n', '<leader>D',
+    function() vim.diagnostic.setqflist { title = 'All diangostics' } end,
+    { desc = 'All diagnostics' })
+
 -- Rename current file
 vim.keymap.set('n', '<leader>R', function()
     local filename = vim.api.nvim_buf_get_name(0)
