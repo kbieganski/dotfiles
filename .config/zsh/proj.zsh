@@ -22,7 +22,7 @@ function proj {
     local remote=$(gh repo list $owner --json name | jq -r ".[] | .name" | sort | uniq)
     local local=$(ls $proj_dir)
     local all=$(echo "$remote\n$local" | sort | uniq)
-    local proj=$(echo "$all" | fzf)
+    local proj=$(echo "$all" | \fzf)
     if [ -z "$proj" ]; then
         return
     else

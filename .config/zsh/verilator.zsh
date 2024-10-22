@@ -13,10 +13,10 @@ function verilator-test {
 
     local tests=$(
         fd ".*\.py" t | sed "s/.*t\/\(.*\)\.py/\1/g" |
-            fzf --preview="(bat $bat_opts t/{}.v || clear) && bat $bat_opts t/{}.py" \
-                --multi --prompt "Run Verilator test 🞂 " \
-                --history "$HOME/.verilator-tests" \
-                --bind "load:prev-history"
+            \fzf --preview="(bat $bat_opts t/{}.v || clear) && bat $bat_opts t/{}.py" \
+                 --multi --prompt "Run Verilator test 🞂 " \
+                 --history "$HOME/.verilator-tests" \
+                 --bind "load:prev-history"
     )
 
     for test in $tests; do

@@ -112,6 +112,9 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+tiling_drag titlebar
+focus_wrapping no
+
 #--- Bar ------------------------------------------------------------------
 set $status_command i3blocks
 set $i3bar_command i3bar --transparency
@@ -134,8 +137,7 @@ for_window [class="Steam" title="Steam - News.*"] floating enable
 for_window [class="Steam" title="Friends"] floating enable
 no_focus [title="^deno$|^Peek preview$"]
 title_align center
-tiling_drag titlebar
-smart_borders on
+hide_edge_borders smart
 
 #-- Autostart -------------------------------------------------------------
 exec --no-startup-id picom
