@@ -48,7 +48,7 @@ vim.g.mapleader = ' '
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
 vim.keymap.set('n', '<C-c>', '<esc>')
 
--- Easier save
+-- Faster save
 vim.keymap.set('n', '<leader>w', vim.cmd.w, { desc = 'Write file' })
 vim.keymap.set('n', '<leader>W', vim.cmd.wa, { desc = 'Write all files' })
 
@@ -57,6 +57,14 @@ for _, keys in ipairs { 'za', 'zA', 'zc', 'zC', 'zd', 'zD', 'ze', 'zE', 'zH',
     'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' } do
     vim.keymap.set({ 'n', 'v' }, keys, function() end, { desc = '' })
 end
+
+-- Next, previous error
+vim.keymap.set('n', ']e',
+    function() vim.diagnostic.goto_next { severity = 1, open_float = false } end,
+    { desc = 'Next error' })
+vim.keymap.set('n', '[e',
+    function() vim.diagnostic.goto_next { severity = 1, open_float = false } end,
+    { desc = 'Previous error' })
 
 -- Delete without yanking with x/X
 vim.keymap.set('n', 'x', '"_x')
@@ -137,8 +145,8 @@ local function get_visual_selection()
     if vim.api.nvim_get_mode().mode ~= 'v' then
         return ''
     else
-        local _, ls, cs = unpack(vim.fn.getpos('v'))
-        local _, le, ce = unpack(vim.fn.getpos('.'))
+        local _, ls, cs = unpack(vim.fn.getpos 'v')
+        local _, le, ce = unpack(vim.fn.getpos '.')
         ls = ls - 1; le = le - 1; cs = cs - 1
         local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
             math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
@@ -168,7 +176,7 @@ local function termrun(cmd, fn)
 end
 
 local function grep_parse(selected, root)
-    local filename, lnum, col, text = selected:match('^(.*):(%d+):(%d+):(.*)')
+    local filename, lnum, col, text = selected:match '^(.*):(%d+):(%d+):(.*)'
     lnum = tonumber(lnum)
     col = tonumber(col) - 1
     return root .. filename, lnum, col, text
@@ -224,7 +232,7 @@ vim.keymap.set('n', '<leader>o',
         local oldfiles = vim.iter(vim.v.oldfiles):filter(
             function(f) return vim.uv.fs_stat(f) and not vim.tbl_contains(buffers, f) end):totable()
         local files = vim.iter { buffers, oldfiles }:flatten()
-            :filter(function(f) return f ~= vim.api.nvim_buf_get_name(0) end):join('\n')
+            :filter(function(f) return f ~= vim.api.nvim_buf_get_name(0) end):join '\n'
         termrun('echo "' .. files .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,
     { desc = 'Old files' })
@@ -367,10 +375,8 @@ vim.api.nvim_create_autocmd('FileType', {
             function()
                 local url = vim.fn.getreg '+'
                 if url == '' then return end
-                local handle = io.popen('curl -L ' .. vim.fn.shellescape(url) .. ' 2>/dev/null')
-                if not handle then return end
-                local html = handle:read '*a'
-                handle:close()
+                local html = vim.system({ 'curl', '-L', url, }, { stderr = false }):wait().stdout
+                assert(type(html) == 'string')
                 local title = string.match(html, '<title>(.-)</title>') or 'Untitled'
                 local pos = vim.api.nvim_win_get_cursor(0)[2]
                 local line = vim.api.nvim_get_current_line()
@@ -421,7 +427,6 @@ function Statusline()
     local filepath = ''
     if vim.api.nvim_get_option_value('buftype', { buf = 0 }) ~= 'terminal' then
         filepath = vim.api.nvim_buf_get_name(0)
-        -- vim.fn.fnamemodify(0)
         local home = os.getenv 'HOME'
         if filepath:sub(1, #home) == home then
             filepath = '~' .. filepath:sub(#home + 1)

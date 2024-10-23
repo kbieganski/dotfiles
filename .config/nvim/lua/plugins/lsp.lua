@@ -48,7 +48,7 @@ end
 
 local function on_attach(client, bufnr, opts)
     opts = opts or {}
-    opts.autoformat = opts.autoformat or true
+    opts.autoformat = opts.autoformat ~= false
     -- Highlight matching identifiers
     if client.server_capabilities.documentHighlightProvider then
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
