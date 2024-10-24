@@ -10,9 +10,7 @@ vim.o.ignorecase = true                   -- when searching
 vim.o.laststatus = 3                      -- single, global statusline
 vim.o.linebreak = true                    -- break on whitespace
 vim.o.number = true                       -- show line numbers
-vim.o.pumheight = 10                      -- limit shown completion items
 vim.o.relativenumber = true               -- show relative line numbers
-vim.o.scrolloff = 10                      -- keep cursor 10 lines from screen edge
 vim.o.shiftwidth = 4                      -- width of indent
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
 vim.o.showmode = false                    -- don't show mode in command line
@@ -25,10 +23,9 @@ vim.o.termguicolors = true                -- 24-bit color support
 vim.o.undofile = true                     -- persistent undo
 vim.o.updatetime = 1000                   -- time for various update events
 vim.o.virtualedit = 'all'                 -- allow virtual editing
-vim.o.visualbell = true                   -- disable bleeping
+vim.o.visualbell = true                   -- disable beeping
 vim.o.writebackup = false                 -- disable backup when overwriting
 vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
-vim.g.loaded_netrwPlugin = 1              -- disable netrw
 
 local diagnostic_signs = {
     [vim.diagnostic.severity.ERROR] = ' ',
@@ -52,10 +49,10 @@ vim.keymap.set('n', '<C-c>', '<esc>')
 vim.keymap.set('n', '<leader>w', vim.cmd.w, { desc = 'Write file' })
 vim.keymap.set('n', '<leader>W', vim.cmd.wa, { desc = 'Write all files' })
 
--- Unmap useless stuff
-for _, keys in ipairs { 'za', 'zA', 'zc', 'zC', 'zd', 'zD', 'ze', 'zE', 'zH',
-    'zi', 'zL', 'zm', 'zM', 'zo', 'zO', 'zr', 'zR', 'zs', 'zv', 'zx', 'zf' } do
-    vim.keymap.set({ 'n', 'v' }, keys, function() end, { desc = '' })
+-- Unmap folds
+for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f',
+    'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
+    vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
 end
 
 -- Next, previous error
@@ -66,20 +63,20 @@ vim.keymap.set('n', '[e',
     function() vim.diagnostic.goto_next { severity = 1, open_float = false } end,
     { desc = 'Previous error' })
 
--- Delete without yanking with x/X
-vim.keymap.set('n', 'x', '"_x')
-vim.keymap.set('n', 'X', '"_dd')
-vim.keymap.set('v', 'x', '"_x')
-vim.keymap.set('v', 'X', '"_dd')
+-- Delete without yanking with s/S/x/X
+vim.keymap.set({ 'n', 'v' }, 'x', '"-x')
+vim.keymap.set({ 'n', 'v' }, 'X', '"-X')
+vim.keymap.set({ 'n', 'v' }, 's', '"-xi')
+vim.keymap.set('n', 'S', '0"-D')
 
 -- Replace without yanking the replaced text
-vim.keymap.set('v', 'p', '"_dP')
+vim.keymap.set('v', 'p', '"_dhp')
 
--- Newline does not switch mode; newline in insert mode
-vim.keymap.set('n', 'o', 'o<esc>kj')
-vim.keymap.set('n', 'O', 'O<esc>jk')
-vim.keymap.set('i', '<M-o>', '<esc>o')
-vim.keymap.set('i', '<M-O>', '<esc>O')
+-- New keymaps for deleting/replacing without yanking
+vim.keymap.set('n', 'zx', '"_dd', { desc = 'Delete line' })
+vim.keymap.set('v', 'zx', '"_d', { desc = 'Delete selection' })
+vim.keymap.set('n', 'zj', 'o<esc>kj', { desc = 'Insert line below' })
+vim.keymap.set('n', 'zk', 'O<esc>jk', { desc = 'Insert line above' })
 
 -- Move up/down on visual lines
 vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { expr = true })
@@ -99,10 +96,11 @@ vim.keymap.set('n', '<M-K>', '<C-w><S-k>')
 vim.keymap.set('n', '<M-L>', '<C-w><S-l>')
 
 -- Tab management
-vim.keymap.set('n', '<C-t>', vim.cmd.tabnew)
-vim.keymap.set('n', '<C-w>', vim.cmd.tabclose)
-vim.keymap.set('n', '<C-tab>', vim.cmd.tabnext)
-vim.keymap.set('n', '<C-S-tab>', vim.cmd.tabprev)
+vim.keymap.set('n', '<M-t>', vim.cmd.tabnew)
+vim.keymap.set('n', '<M-T>', function() vim.cmd.wincmd 'T' end)
+vim.keymap.set('n', '<M-Q>', vim.cmd.tabclose, { nowait = true })
+vim.keymap.set('n', '<M-.>', vim.cmd.tabnext)
+vim.keymap.set('n', '<M-,>', vim.cmd.tabprev)
 
 -- Make < and > keep selection
 vim.keymap.set('v', '<', '<gv')
@@ -123,7 +121,7 @@ vim.keymap.set('n', '<leader>D',
     { desc = 'All diagnostics' })
 
 -- Rename current file
-vim.keymap.set('n', '<leader>R', function()
+vim.keymap.set('n', '<leader>r', function()
     local filename = vim.api.nvim_buf_get_name(0)
     vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
         if not new_filename or new_filename == '' then
@@ -200,8 +198,8 @@ end
 
 local function fzf_cmd(opts)
     opts.history = opts.history or true
-    return 'fzf --multi --query "' .. get_visual_selection()
-        .. '" --preview "bat {} --color=always" --preview-window="<80(up)" '
+    return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
+        .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
         .. (opts.history and '--history=' .. vim.fn.stdpath 'data' .. '/fzf-history' or '')
 end
 
@@ -221,25 +219,40 @@ local function git_root()
 end
 
 local function rgl_cmd()
-    return 'rgl --multi --query "' .. get_visual_selection() .. '" --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
+    return 'rgl --multi --query ' .. vim.fn.shellescape(get_visual_selection())
+        .. ' --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
 end
 
 vim.keymap.set('n', '<leader>o',
     function()
         local current_buf = vim.api.nvim_get_current_buf()
-        local buffers = vim.iter(vim.api.nvim_list_bufs())
-            :filter(function(b) return b ~= current_buf and vim.api.nvim_get_option_value('buftype', { buf = b }) == '' end)
-            :map(function(b) return vim.api.nvim_buf_get_name(b) end):totable()
-        local oldfiles = vim.iter(vim.v.oldfiles):filter(
-            function(f) return vim.uv.fs_stat(f) and not vim.tbl_contains(buffers, f) end):totable()
+        local buf_map = {}
+        local buffers = vim.iter(vim.fn.getjumplist()[1]):rev()
+            :map(function(jump) return jump.bufnr end)
+            :filter(function(b)
+                if buf_map[b] then return false end
+                if vim.api.nvim_buf_is_loaded(b) then return false end
+                buf_map[b] = vim.api.nvim_buf_get_name(b)
+                return b ~= current_buf and vim.api.nvim_get_option_value('buftype', { buf = b }) == ''
+            end)
+            :map(function(b) return buf_map[b] end):totable()
+        buf_map = vim.iter(pairs(buf_map))
+            :fold({}, function(set, b, f)
+                set[f] = b
+                return set
+            end)
+        local oldfiles = vim.iter(vim.v.oldfiles)
+            :filter(function(f) return vim.uv.fs_stat(f) and not buf_map[f] end)
+            :totable()
         local files = vim.iter { buffers, oldfiles }:flatten()
-            :filter(function(f) return f ~= vim.api.nvim_buf_get_name(0) end):join '\n'
-        termrun('echo "' .. files .. '" | ' .. fzf_cmd { history = false }, edit_or_qfl)
+            :filter(function(f) return f:sub(#f - 18, #f) ~= '.git/COMMIT_EDITMSG' end)
+            :join '\n'
+        termrun('echo ' .. vim.fn.shellescape(files) .. ' | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,
     { desc = 'Old files' })
 
 vim.keymap.set('n', '<leader>f',
-    function() termrun('lf -print-selection ' .. vim.api.nvim_buf_get_name(0), edit_or_qfl) end,
+    function() termrun('lf -print-selection ' .. vim.fn.shellescape(vim.api.nvim_buf_get_name(0)), edit_or_qfl) end,
     { desc = 'File browser' })
 
 vim.keymap.set({ 'n', 'v' }, '|', function() termrun(fzf_cmd(), edit_or_qfl) end, { desc = 'Find file' })
@@ -292,10 +305,7 @@ local function undotree()
         entry.alt = nil
     end
     entries[#entries].last = true
-    for i = 1, math.floor(#entries / 2) do
-        local j = #entries - i + 1
-        entries[i], entries[j] = entries[j], entries[i]
-    end
+    entries = vim.iter(entries):rev():totable()
     vim.ui.select(entries, {
         prompt = 'Undo',
         format_item = function(entry)
@@ -438,7 +448,7 @@ function Statusline()
     local breadcrumbs = ''
     if #vim.lsp.get_clients { bufnr = 0 } > 0 then
         local location = require 'nvim-navic'.get_location()
-        breadcrumbs = location ~= '' and '> ' .. location or ''
+        if location ~= '' then breadcrumbs = '> ' .. location end
     end
     -- Diagnostics
     local diagnostics = ''
@@ -480,3 +490,4 @@ vim.opt.rtp:prepend(lazypath)
 require 'lazy'.setup {
     { import = 'plugins' }, { import = 'dev' },
 }
+

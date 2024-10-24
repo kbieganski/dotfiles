@@ -63,15 +63,20 @@ return {
                 local gitsigns = require 'gitsigns'
                 vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })
                 vim.keymap.set('n', '[h', gitsigns.prev_hunk, { buffer = bufnr, desc = 'Previous hunk' })
-                vim.keymap.set('n', '<leader>b', gitsigns.blame_line, { buffer = bufnr, desc = 'Blame line' })
-                vim.keymap.set('n', '<leader>h', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
-                vim.keymap.set('n', '<leader>H', gitsigns.toggle_deleted,
+                vim.keymap.set('n', '<leader>b', gitsigns.blame, { buffer = bufnr, desc = 'Blame line' })
+                vim.keymap.set('n', '<leader>g', gitsigns.setloclist, { buffer = bufnr, desc = 'Select hunk' })
+                vim.keymap.set('n', '<leader>G', function() gitsigns.setqflist('all') end,
+                    { buffer = bufnr, desc = 'Select hunk' })
+                vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
+                vim.keymap.set('n', '<leader>hd', gitsigns.toggle_deleted,
                     { buffer = bufnr, desc = 'Toggle deleted hunks' })
-                vim.keymap.set('n', '<leader>x', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
+                vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { buffer = bufnr, desc = 'Reset hunk' })
                 vim.keymap.set('n', '<leader>s', gitsigns.stage_hunk, { buffer = bufnr, desc = 'Stage hunk' })
-                vim.keymap.set('n', '<leader>v', gitsigns.select_hunk, { buffer = bufnr, desc = 'Select hunk' })
-                vim.keymap.set('n', '<leader>y', git_link_to_clipboard, { buffer = bufnr, desc = 'Yank link to line' })
-                vim.keymap.set('v', '<leader>y', git_link_to_clipboard, { buffer = bufnr, desc = 'Yank link to lines' })
+                vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { buffer = bufnr, desc = 'Stage hunk' })
+                vim.keymap.set('n', '<leader>hv', gitsigns.select_hunk, { buffer = bufnr, desc = 'Select hunk' })
+                vim.keymap.set({ 'n', 'v' }, '<leader>y', git_link_to_clipboard,
+                    { buffer = bufnr, desc = 'Yank link to repo' })
+                require 'which-key'.add { { '<leader>h', desc = 'Git hunk' } }
                 require 'git-conflict' -- Load git-conflict
             end
         },

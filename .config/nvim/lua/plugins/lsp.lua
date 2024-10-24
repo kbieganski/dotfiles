@@ -8,15 +8,7 @@ local function document_symbols()
     vim.lsp.buf_request(bufnr, 'textDocument/documentSymbol', vim.lsp.util.make_position_params(win),
         function(_, result, _)
             local decls = vim.tbl_filter(function(symbol) return vim.tbl_contains(decl_syms, symbol.kind) end, result)
-            local items = vim.tbl_map(function(symbol)
-                local range = symbol.range
-                local start = range.start
-                local lnum = start.line + 1
-                local col = start.character + 1
-                local text = symbol.name ..
-                    (symbol.detail and ' | ' .. symbol.detail .. ' (' .. symbol.kind .. ')' or '')
-                return { lnum = lnum, col = col, text = text }
-            end, decls)
+            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
             vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = items })
             if vim.api.nvim_get_current_win() == win then
                 vim.cmd.lopen()
@@ -30,17 +22,6 @@ local function workspace_symbols()
         function(_, result, ctx)
             local decls = vim.tbl_filter(function(symbol) return vim.tbl_contains(decl_syms, symbol.kind) end, result)
             local items = vim.lsp.util.symbols_to_items(decls, bufnr)
-            local client = vim.lsp.get_clients { bufnr = bufnr, id = ctx.client_id }[1]
-            local root = client.config.root_dir
-            items = vim.tbl_map(function(item)
-                if item.filename:sub(1, #root) == root then
-                    item.filename = item.filename:sub(#root + 1)
-                    if item.filename:sub(1, 1) == '/' then
-                        item.filename = item.filename:sub(2)
-                    end
-                end
-                return item
-            end, items)
             vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = items })
             vim.cmd.copen()
         end)
@@ -60,11 +41,11 @@ local function on_attach(client, bufnr, opts)
         })
     end
     if client.server_capabilities.workspaceSymbolProvider then
-        vim.keymap.set('n', '<leader>M', workspace_symbols, { buffer = bufnr, desc = 'Workspace symbols' })
+        vim.keymap.set('n', '<leader>J', workspace_symbols, { buffer = bufnr, desc = 'Workspace symbols' })
     end
     if client.server_capabilities.documentSymbolProvider then
         require 'nvim-navic'.attach(client, bufnr)
-        vim.keymap.set('n', '<leader>m', document_symbols, { buffer = bufnr, desc = 'Document symbols' })
+        vim.keymap.set('n', '<leader>j', document_symbols, { buffer = bufnr, desc = 'Document symbols' })
     end
     if client.server_capabilities.incomingCallsProvider then
         vim.keymap.set('n', 'gci', vim.lsp.buf.incoming_calls, { buffer = bufnr, desc = 'Incoming calls' })
@@ -73,10 +54,10 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set('n', 'gco', vim.lsp.buf.outgoing_calls, { buffer = bufnr, desc = 'Outgoing calls' })
     end
     if client.server_capabilities.codeActionProvider then
-        vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
+        vim.keymap.set({ 'n', 'v' }, 'za', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
     end
     if client.server_capabilities.renameProvider then
-        vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })
+        vim.keymap.set('n', 'cn', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })
     end
     if client.server_capabilities.definitionProvider then
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, desc = 'Definition' })
