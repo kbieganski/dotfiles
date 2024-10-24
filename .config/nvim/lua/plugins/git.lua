@@ -1,12 +1,5 @@
 -- Git
 
-local function run_cmd(cmd)
-    local handle = io.popen('curl -L ' .. vim.fn.shellescape(url) .. ' 2>/dev/null')
-    if not handle then return end
-    local html = handle:read '*a'
-    handle:close()
-end
-
 local function git_root()
     local dot_git = vim.fn.finddir('.git', '.;')
     return vim.fn.fnamemodify(dot_git, ':h')
