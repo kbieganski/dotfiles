@@ -226,9 +226,10 @@ end
 
 vim.keymap.set('n', '<leader>o',
     function()
+        local current_buf = vim.api.nvim_get_current_buf()
         local buffers = vim.iter(vim.api.nvim_list_bufs())
-            :map(function(b) return vim.api.nvim_buf_get_name(b) end)
-            :filter(function(f) return vim.uv.fs_stat(f) end):skip(1):totable()
+            :filter(function(b) return b ~= current_buf and vim.api.nvim_get_option_value('buftype', { buf = b }) == '' end)
+            :map(function(b) return vim.api.nvim_buf_get_name(b) end):totable()
         local oldfiles = vim.iter(vim.v.oldfiles):filter(
             function(f) return vim.uv.fs_stat(f) and not vim.tbl_contains(buffers, f) end):totable()
         local files = vim.iter { buffers, oldfiles }:flatten()
