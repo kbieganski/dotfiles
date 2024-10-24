@@ -63,10 +63,10 @@ return {
                 local gitsigns = require 'gitsigns'
                 vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })
                 vim.keymap.set('n', '[h', gitsigns.prev_hunk, { buffer = bufnr, desc = 'Previous hunk' })
-                vim.keymap.set('n', '<leader>b', gitsigns.blame, { buffer = bufnr, desc = 'Blame line' })
-                vim.keymap.set('n', '<leader>g', gitsigns.setloclist, { buffer = bufnr, desc = 'Select hunk' })
+                vim.keymap.set('n', '<leader>b', gitsigns.blame, { buffer = bufnr, desc = 'Blame' })
+                vim.keymap.set('n', '<leader>g', gitsigns.setloclist, { buffer = bufnr, desc = 'File hunks' })
                 vim.keymap.set('n', '<leader>G', function() gitsigns.setqflist('all') end,
-                    { buffer = bufnr, desc = 'Select hunk' })
+                    { buffer = bufnr, desc = 'All hunks' })
                 vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { buffer = bufnr, desc = 'Preview hunk' })
                 vim.keymap.set('n', '<leader>hd', gitsigns.toggle_deleted,
                     { buffer = bufnr, desc = 'Toggle deleted hunks' })
