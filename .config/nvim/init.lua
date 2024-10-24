@@ -124,9 +124,7 @@ vim.keymap.set('n', '<leader>D',
 vim.keymap.set('n', '<leader>r', function()
     local filename = vim.api.nvim_buf_get_name(0)
     vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
-        if not new_filename or new_filename == '' then
-            return
-        end
+        if not new_filename or new_filename == '' then return end
         if vim.uv.fs_stat(filename) then
             vim.cmd.write(new_filename)
             vim.cmd.bdelete(1)

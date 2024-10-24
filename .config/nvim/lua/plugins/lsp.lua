@@ -72,7 +72,8 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set('n', 'gh', vim.lsp.buf.typehierarchy, { buffer = bufnr, desc = 'Type hierarchy' })
     end
     if client.server_capabilities.documentFormattingProvider then
-        vim.keymap.set('n', 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format entire buffer' })
+        vim.keymap.set({ 'n', 'v' }, 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
+        vim.keymap.set({ 'n', 'v' }, '=', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         if opts.autoformat then
             vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
                 buffer = bufnr,
