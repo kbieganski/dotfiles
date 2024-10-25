@@ -229,21 +229,24 @@ vim.keymap.set('n', '<leader>o',
             :map(function(jump) return jump.bufnr end)
             :filter(function(b)
                 if buf_map[b] then return false end
-                if vim.api.nvim_buf_is_loaded(b) then return false end
-                buf_map[b] = vim.api.nvim_buf_get_name(b)
+                if not vim.api.nvim_buf_is_loaded(b) then return false end
+                local name = vim.api.nvim_buf_get_name(b)
+                if name == '' then return false end
+                buf_map[b] = name
                 return b ~= current_buf and vim.api.nvim_get_option_value('buftype', { buf = b }) == ''
             end)
             :map(function(b) return buf_map[b] end):totable()
         buf_map = vim.iter(pairs(buf_map))
-            :fold({}, function(set, b, f)
-                set[f] = b
-                return set
+            :fold({}, function(tbl, b, f)
+                tbl[f] = b
+                return tbl
             end)
         local oldfiles = vim.iter(vim.v.oldfiles)
             :filter(function(f) return vim.uv.fs_stat(f) and not buf_map[f] end)
             :totable()
         local files = vim.iter { buffers, oldfiles }:flatten()
             :filter(function(f) return f:sub(#f - 18, #f) ~= '.git/COMMIT_EDITMSG' end)
+            :filter(function(f) return f:sub(1, 9) ~= '/tmp/tmp.' end)
             :join '\n'
         termrun('echo ' .. vim.fn.shellescape(files) .. ' | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,

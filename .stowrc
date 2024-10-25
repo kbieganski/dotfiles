@@ -1,1 +1,7 @@
 --dotfiles
+--ignore='\.git'
+--ignore='\.gitignore'
+--ignore='\.gitmodule'
+--ignore='ext'
+--ignore='pkg'
+--ignore='sync'
