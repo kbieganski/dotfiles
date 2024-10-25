@@ -4,7 +4,6 @@ arc-gtk-theme
 arc-icon-theme
 base
 base-devel
-bash-language-server
 bat
 bc
 bear
@@ -118,7 +117,6 @@ tokei
 tree
 ttc-iosevka
 ttf-nerd-fonts-symbols-mono
-typescript-language-server
 udiskie
 unclutter
 unzip
@@ -126,9 +124,6 @@ up
 usbutils
 valgrind
 verilator
-vscode-css-languageserver
-vscode-html-languageserver
-vscode-json-languageserver
 vtr
 vulkan-extra-layers
 vulkan-extra-tools
@@ -146,7 +141,6 @@ xorg-xinit
 xorg-xinput
 xss-lock
 xsv
-yaml-language-server
 yosys
 zenity
 zig
