@@ -1,0 +1,19 @@
+#!/bin/env bash
+
+reload='reload:rg --column --color=always --smart-case {q} || :'
+enter='accept'
+if [ -z "$NVIM" ]; then
+    enter='become:if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+                      nvim {1} +{2}
+                  else
+                      nvim +cw -q {+f}
+                  fi'
+fi
+fzf --disabled --ansi --multi \
+    --bind "start:$reload" --bind "change:$reload" \
+    --bind 'alt-a:select-all,alt-d:deselect-all' \
+    --bind "enter:$enter" \
+    --delimiter : \
+    --preview 'bat {1} --color=always --line-range {2}:' \
+    --preview-window '<80(up)' \
+    "$@"

@@ -216,9 +216,9 @@ local function git_root()
     return vim.fn.fnamemodify(dot_git, ':h')
 end
 
-local function rgl_cmd()
-    return 'rgl --multi --query ' .. vim.fn.shellescape(get_visual_selection())
-        .. ' --history=' .. vim.fn.stdpath 'data' .. '/rgl-history'
+local function fzg_cmd()
+    return 'fzg --multi --query ' .. vim.fn.shellescape(get_visual_selection())
+        .. ' --history=' .. vim.fn.stdpath 'data' .. '/fzg-history'
 end
 
 vim.keymap.set('n', '<leader>o',
@@ -268,16 +268,16 @@ vim.keymap.set({ 'n', 'v' }, '<leader><M-|>',
     end,
     { desc = 'Find file in repository' })
 
-vim.keymap.set({ 'n', 'v' }, '\\', function() termrun(rgl_cmd(), grep_edit_or_qfl) end, { desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '\\', function() termrun(fzg_cmd(), grep_edit_or_qfl) end, { desc = 'Grep files' })
 vim.keymap.set({ 'n', 'v' }, '<M-\\>',
-    function() termrun(rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
+    function() termrun(fzg_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
     { desc = 'Grep files' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>\\',
-    function() termrun('git ' .. rgl_cmd(), grep_edit_or_qfl) end,
+    function() termrun('git ' .. fzg_cmd(), grep_edit_or_qfl) end,
     { desc = 'Grep repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
-    function() termrun('git ' .. rgl_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
+    function() termrun('git ' .. fzg_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
     { desc = 'Grep repository' })
 
 vim.keymap.set('n', '<leader>n', function() termrun('note --print', edit_or_qfl) end, { desc = 'Note find' })

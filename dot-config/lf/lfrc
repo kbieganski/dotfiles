@@ -60,7 +60,7 @@ map | fzf
 
 # \ to ripgrep current dir
 cmd rg ${{
-    file=$(rgl | cut -d: -f1)
+    file=$(fzf | cut -d: -f1)
     if [ -n "$file" ]; then
         lf -remote "send $id :select $file"
     fi
