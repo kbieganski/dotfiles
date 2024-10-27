@@ -13,8 +13,10 @@ ccache
 clang
 cmake
 cpupower
+crun
 deno
 dhcpcd
+distrobox
 dsq
 duf
 dunst
@@ -55,6 +57,7 @@ keepassxc
 kitty
 lcov
 lf
+libvirt
 linux
 linux-firmware
 linux-headers
@@ -89,6 +92,7 @@ playerctl
 podman
 python-pip
 python-pipx
+qemu-full
 qmk
 rclone
 redshift
