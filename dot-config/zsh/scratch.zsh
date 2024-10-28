@@ -21,7 +21,7 @@ module test;
     initial #1000 \$stop;
 endmodule
         " > test.sv
-        tmux split-window -d "onmod test.sv -- 'verilator --binary test.sv --prefix test && obj_dir/test'"
-        vim test.sv
+        tmux split-window -h -c $(pwd) -d "watchexec 'verilator --binary *.sv --prefix test && obj_dir/test'"
+        $EDITOR test.sv
     fi
 }

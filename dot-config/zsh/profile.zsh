@@ -20,7 +20,7 @@ function profile {
 
     if [ -z "$1" ]; then
         echo "Usage: profile [--fn <function_name>] <command>"
-        exit 1
+        return 1
     fi
     if [ -z "$elf" ]; then
         local elf=$1
