@@ -70,7 +70,7 @@ vim.keymap.set({ 'n', 'v' }, 's', '"-xi')
 vim.keymap.set('n', 'S', '0"-D')
 
 -- Replace without yanking the replaced text
-vim.keymap.set('v', 'p', '"_dhp')
+vim.keymap.set('v', 'p', '"_dP')
 
 -- New keymaps for deleting/replacing without yanking
 vim.keymap.set('n', 'zx', '"_dd', { desc = 'Delete line' })
@@ -195,6 +195,7 @@ local function grep_edit_or_qfl(selected, root)
 end
 
 local function fzf_cmd(opts)
+    opts = opts or {}
     opts.history = opts.history or true
     return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
         .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
