@@ -150,6 +150,10 @@ local function get_visual_selection()
 end
 
 local function termrun(cmd, fn)
+    if vim.fn.reg_recording() ~= '' then
+        vim.notify('Cannot do that while recording macro', vim.log.levels.ERROR)
+        return
+    end
     local prev_buf = vim.api.nvim_get_current_buf()
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
@@ -283,8 +287,8 @@ vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
     function() termrun('git ' .. fzg_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
     { desc = 'Grep repository' })
 
-vim.keymap.set('n', '<leader>n', function() termrun('note --print', edit_or_qfl) end, { desc = 'Note find' })
-vim.keymap.set('n', '<leader>N', function() termrun('notes --print', grep_edit_or_qfl) end, { desc = 'Note grep' })
+vim.keymap.set('n', '<leader>n', function() termrun('note', edit_or_qfl) end, { desc = 'Note find' })
+vim.keymap.set('n', '<leader>N', function() termrun('note --grep', grep_edit_or_qfl) end, { desc = 'Note grep' })
 
 -- Undotree
 local function undotree()

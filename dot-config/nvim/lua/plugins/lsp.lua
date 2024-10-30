@@ -54,7 +54,7 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set('n', 'gco', vim.lsp.buf.outgoing_calls, { buffer = bufnr, desc = 'Outgoing calls' })
     end
     if client.server_capabilities.codeActionProvider then
-        vim.keymap.set({ 'n', 'v' }, 'za', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
+        vim.keymap.set({ 'n', 'v' }, 'ga', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
     end
     if client.server_capabilities.renameProvider then
         vim.keymap.set('n', 'cn', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })

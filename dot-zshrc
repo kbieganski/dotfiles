@@ -114,6 +114,7 @@ alias rm='rm -vr'
 alias r=rip
 
 alias fzf='fzf --bind "enter:become:nvim {}"'
+alias noteg='note --grep'
 
 alias g=git
 

@@ -1,8 +1,13 @@
 #!/bin/env bash
 
 print=false
-if [ "$1" == "--print" ]; then
+if [ -n "$NVIM" ]; then
     print=true
+fi
+grep=false
+if [ "$1" == "--grep" ]; then
+    grep=true
+    shift
 elif [ $# -gt 0 ]; then
     echo "Invalid arguments"
     exit 1
@@ -10,17 +15,30 @@ fi
 
 notes_dir="$HOME/notes"
 mkdir -p "$notes_dir"
-note="$notes_dir/$(
-    fzf --bind "start:reload:fd '.*\\.md' --base-directory '$notes_dir' | sed 's/.md$//'" \
-        --bind "enter:accept" \
-        --bind "alt-enter:print-query+abort" \
-        --preview "bat $notes_dir/$(echo {}).md --color=always"
-).md"
+cd "$notes_dir" &>/dev/null
 
-if [ $? -ne 0 ]; then
-    exit 1
-elif $print; then
-    echo "$note"
+action="accept"
+
+if $grep; then
+    if ! $print; then
+        action="become(nvim +{2} {1})"
+    fi
+
+    reload='reload:rg --line-number --color=always --smart-case {q} || :'
+    fzf --disabled --ansi --multi \
+        --bind "start:$reload" --bind "change:$reload" \
+        --bind "enter:$action" \
+        --delimiter : \
+        --preview 'bat {1} --color=always --highlight-line {2}' \
+        --preview-window '<80(up)' \
+        --query "$*"
 else
-    nvim "$note"
+    if ! $print; then
+        action="become(nvim {})"
+    fi
+
+    fzf --bind "start:reload:fd '.*\\.md' --base-directory '$notes_dir' | sed 's/.md$//'" \
+        --bind "enter:$action" \
+        --bind "alt-enter:print-query+abort" \
+        --preview "bat $(echo {}).md --color=always"
 fi

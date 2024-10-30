@@ -1,0 +1,6 @@
+#!/bin/sh
+
+filename=$(mktemp)
+scp kbieganski-antmicro:work/OpenROAD-flow-scripts/flow/results/asap7/$1/base/$2.odb $filename
+~/OpenROAD/bin/openroad -gui <(echo "read_db $filename")
+
