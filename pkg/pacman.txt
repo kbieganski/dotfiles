@@ -16,6 +16,7 @@ cpupower
 crun
 deno
 dhcpcd
+difftastic
 distrobox
 dsq
 duf
