@@ -50,8 +50,7 @@ vim.keymap.set('n', '<leader>w', vim.cmd.w, { desc = 'Write file' })
 vim.keymap.set('n', '<leader>W', vim.cmd.wa, { desc = 'Write all files' })
 
 -- Unmap folds
-for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f',
-    'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
+for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f', 'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
     vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
 end
 

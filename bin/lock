@@ -2,7 +2,6 @@
 # shellcheck disable=SC2086
 
 dunstctl set-paused true
-killall picom
 theme=$(cat "$HOME/.config/i3/lock-theme")
 i3lock --blur=1 --clock --indicator \
     --date-font="Noto Sans" \
@@ -16,8 +15,4 @@ i3lock --blur=1 --clock --indicator \
     --wrong-text="Incorrect" \
     --noinput-text="No input" \
     --nofork
-(
-    set -m
-    picom &
-)
 dunstctl set-paused false
