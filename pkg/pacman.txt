@@ -13,7 +13,6 @@ ccache
 clang
 cmake
 cpupower
-crun
 deno
 dhcpcd
 difftastic
