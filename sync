@@ -27,6 +27,9 @@ old_commit=$(git rev-parse HEAD)
 silent git pull
 silent git submodule update --init --recursive
 silent stow $dotfiles_dir
+if ! [ -d /var/screenshots/ ]; then
+    silent sudo ln -s $HOME/screenshots/ /var
+fi
 if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
     section "Re-running self"
     exec $0

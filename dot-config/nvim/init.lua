@@ -492,6 +492,10 @@ if not vim.uv.fs_stat(lazypath) then
     vim.fn.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
 end
 vim.opt.rtp:prepend(lazypath)
-require 'lazy'.setup {
-    { import = 'plugins' }, { import = 'dev' },
-}
+local plugins = { { import = 'plugins' }, { import = 'dev' } }
+local localpath = vim.fn.stdpath 'config' .. 'nvim-local'
+if vim.uv.fs_stat(localpath) then
+    plugins[#plugins + 1] = { import = 'local' }
+    vim.opt.rtp:append(localpath)
+end
+require 'lazy'.setup(plugins)

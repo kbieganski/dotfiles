@@ -1,1 +1,4 @@
-ext/dotfiles-secret/.gitconfig
+[user]
+    email = kbieganski@antmicro.com
+    name = Krzysztof Bieganski
+
