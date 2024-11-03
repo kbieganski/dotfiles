@@ -3,7 +3,7 @@
 
 dunstctl set-paused true
 theme=$(cat "$HOME/.config/i3/lock-theme")
-i3lock --blur=1 --clock --indicator \
+i3lock --blur=4 --clock --indicator \
     --date-font="Noto Sans" \
     --time-font="Noto Sans" \
     --verif-font="Noto Sans" \

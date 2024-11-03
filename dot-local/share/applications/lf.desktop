@@ -1,9 +1,7 @@
 [Desktop Entry]
-Type=Application
 Name=lf
-Comment=Launches the lf file manager
+Type=Application
 Icon=utilities-terminal
-Terminal=false
-Exec=kitty lf %u
+Exec=kitty --single-instance lf %f
 Categories=ConsoleOnly;System;FileTools;FileManager
 MimeType=inode/directory;

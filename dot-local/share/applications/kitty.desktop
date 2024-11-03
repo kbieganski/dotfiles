@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=kitty
+Type=Application
+Icon=kitty
+StartupNotify=true
+TryExec=kitty --single-instance
+Exec=kitty
+Categories=System;TerminalEmulator;

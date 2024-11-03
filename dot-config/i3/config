@@ -9,7 +9,7 @@ set $menu
 
 exec --no-startup-id feh --bg-fill --no-xinerama ~/background.png
 
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec kitty --single-instance
 
 bindsym $mod+BackSpace exec lock
 
@@ -117,27 +117,21 @@ focus_wrapping no
 
 #--- Bar ------------------------------------------------------------------
 set $status_command i3blocks
-set $i3bar_command i3bar --transparency
+set $i3bar_command i3bar
 set $tray_output primary
 include bar.conf
 
 #--- Theme ----------------------------------------------------------------
 include theme.conf
 font pango:Noto Sans 10
-gaps inner 4
-gaps outer 8
+default_border normal 1
 for_window [title="."] title_format "%title"
 for_window [class="firefox"] border pixel 1
-for_window [class="obsidian"] border pixel 1
-for_window [class="Zenity"] border pixel 1
-for_window [class="Chromium"] border pixel 2
-for_window [class="Spotify"] border pixel 0
-for_window [class="Steam"] border pixel 2
+for_window [class="Chromium"] border pixel 1
+for_window [class="Spotify"] border pixel 1
+for_window [class="Steam"] border pixel 1
 for_window [class="Steam" title="Steam - News.*"] floating enable
 for_window [class="Steam" title="Friends"] floating enable
 no_focus [title="^deno$|^Peek preview$"]
 title_align center
 hide_edge_borders smart
-
-#-- Autostart -------------------------------------------------------------
-exec --no-startup-id picom
