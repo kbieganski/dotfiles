@@ -175,7 +175,7 @@ local function termrun(cmd, fn)
 end
 
 local function grep_parse(selected, root)
-    local filename, lnum, col, text = selected:match '^(.*):(%d+):(%d+):(.*)'
+    local filename, lnum, col, text = selected:match '^(.*):(%d+):(%d+):?(.*)'
     lnum = tonumber(lnum)
     col = tonumber(col) - 1
     return root .. filename, lnum, col, text
@@ -216,8 +216,7 @@ local function edit_or_qfl(selected, root)
 end
 
 local function git_root()
-    local dot_git = vim.fn.finddir('.git', '.;')
-    return vim.fn.fnamemodify(dot_git, ':h')
+    return vim.system { 'git', 'get-root' }:wait().stdout
 end
 
 local function fzg_cmd()

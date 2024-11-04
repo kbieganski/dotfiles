@@ -15,16 +15,13 @@ fi
 
 notes_dir="$HOME/notes"
 mkdir -p "$notes_dir"
-cd "$notes_dir" &>/dev/null
-
-action="accept"
+cd "$notes_dir"
 
 if $grep; then
-    if ! $print; then
-        action="become(nvim +{2} {1})"
-    fi
+    action="become(nvim +{2} {1})"
+    $print && action="become(echo -n $notes_dir/{1}:{2}:{3})"
 
-    reload='reload:rg --line-number --color=always --smart-case {q} || :'
+    reload='reload:rg --column --color=always --smart-case {q} || :'
     fzf --disabled --ansi --multi \
         --bind "start:$reload" --bind "change:$reload" \
         --bind "enter:$action" \
@@ -33,12 +30,11 @@ if $grep; then
         --preview-window '<80(up)' \
         --query "$*"
 else
-    if ! $print; then
-        action="become(nvim {})"
-    fi
+    action="become(nvim {}.md)"
+    $print && action="become(echo -n $notes_dir/{}.md)"
 
-    fzf --bind "start:reload:fd '.*\\.md' --base-directory '$notes_dir' | sed 's/.md$//'" \
+    fzf --bind "start:reload:fd '.*\\.md' | sed 's/.md$//'" \
         --bind "enter:$action" \
         --bind "alt-enter:print-query+abort" \
-        --preview "bat $(echo {}).md --color=always"
+        --preview "bat {}.md --color=always"
 fi

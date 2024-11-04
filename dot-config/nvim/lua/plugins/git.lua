@@ -1,12 +1,7 @@
 -- Git
 
-local function git_root()
-    local dot_git = vim.fn.finddir('.git', '.;')
-    return vim.fn.fnamemodify(dot_git, ':h')
-end
-
 local function path_relative_to_git_root()
-    local root = git_root()
+    local root = vim.system { 'git', 'get-root' }:wait().stdout
     if not root then return nil end
     local filepath = vim.api.nvim_buf_get_name(0)
     if filepath:sub(1, #root) == root then
