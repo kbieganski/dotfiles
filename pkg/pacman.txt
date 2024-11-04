@@ -85,7 +85,6 @@ p7zip
 pacman-contrib
 parallel
 perf
-picom
 pipewire-alsa
 pipewire-pulse
 playerctl
