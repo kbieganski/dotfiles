@@ -117,11 +117,14 @@ silent nvim '+Lazy! sync' +qa
 section "Updating bat cache"
 silent bat cache --build
 
+section "Updating .desktop database"
+update-desktop-database ~/.local/share/applications
+
 section "Restarting i3"
 silent i3-msg restart
 
 section "Restarting systemd services"
-for service in $HOME/.config/systemd/user/*.service; do
+for service in ~/.config/systemd/user/*.service; do
     silent systemctl --user daemon-reload
     if [ -f ${service%.*}.timer ]; then
         silent systemctl --user enable --now $(basename ${service%.*}.timer)

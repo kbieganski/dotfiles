@@ -34,6 +34,9 @@ return {
                         show_numbers = false,
                         border = 'single',
                         relative = 'win',
+                        win_options = {
+                            winhighlight = 'CursorLine:PmenuSel',
+                        },
                     },
                 },
             }
