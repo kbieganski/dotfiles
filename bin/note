@@ -31,10 +31,14 @@ if $grep; then
         --query "$*"
 else
     action="become(nvim {}.md)"
-    $print && action="become(echo -n $notes_dir/{}.md)"
+    alt_action="become(nvim {q}.md)"
+    if $print; then
+        action="become(echo -n $notes_dir/{}.md)"
+        alt_action="become(echo -n $notes_dir/{q}.md)"
+    fi
 
     fzf --bind "start:reload:fd '.*\\.md' | sed 's/.md$//'" \
         --bind "enter:$action" \
-        --bind "alt-enter:print-query+abort" \
+        --bind "alt-enter:$alt_action" \
         --preview "bat {}.md --color=always"
 fi

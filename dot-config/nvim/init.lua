@@ -27,6 +27,7 @@ vim.o.visualbell = true                   -- disable beeping
 vim.o.writebackup = false                 -- disable backup when overwriting
 vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
 
+-- Diagnostics
 local diagnostic_signs = {
     [vim.diagnostic.severity.ERROR] = ' ',
     [vim.diagnostic.severity.WARN] = ' ',
@@ -38,6 +39,17 @@ vim.diagnostic.config {
     update_in_insert = true,
     signs = { text = diagnostic_signs }
 }
+
+-- Custom filetypes
+vim.filetype.add { filename = {
+    ['dot-gdbinit'] = 'gdb',
+    ['dot-gitconfig'] = 'gitconfig',
+    ['dot-gitconfig-work'] = 'gitconfig',
+    ['dot-tmux.conf'] = 'tmux',
+    ['dot-zprofile'] = 'zsh',
+    ['dot-zshrc'] = 'zsh',
+    ['dot-zshenv'] = 'zsh',
+} }
 
 -- Mappings
 vim.g.mapleader = ' '
