@@ -7,7 +7,7 @@ if [ -z "$TMUX" ]; then
 fi
 
 setopt autocd
-setopt appendhistory
+setopt incappendhistory
 setopt extendedglob
 setopt histignorealldups
 setopt magicequalsubst
