@@ -390,6 +390,18 @@ vim.api.nvim_create_autocmd('BufEnter', {
     end,
 })
 
+-- Inserts given URL as Markdown link at cursor position
+local function insert_markdown_link(url)
+    if not url or url == '' then return end
+    local html = vim.system({ 'curl', '-L', url, }, { stderr = false }):wait().stdout
+    assert(type(html) == 'string')
+    local title = html:match('<title>(.-)</title>') or 'Untitled'
+    local pos = vim.api.nvim_win_get_cursor(0)[2]
+    local line = vim.api.nvim_get_current_line()
+    local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
+    vim.api.nvim_set_current_line(new_line)
+end
+
 -- Markdown-specific settings:
 -- - conceal links
 -- - paste link with title using <leader>l
@@ -400,24 +412,30 @@ vim.api.nvim_create_autocmd('FileType', {
         vim.opt_local.conceallevel = 2 -- conceal links
         vim.keymap.set('n', '<leader>l',
             function()
-                local url = vim.fn.getreg '+'
-                if url == '' then return end
-                local html = vim.system({ 'curl', '-L', url, }, { stderr = false }):wait().stdout
-                assert(type(html) == 'string')
-                local title = string.match(html, '<title>(.-)</title>') or 'Untitled'
-                local pos = vim.api.nvim_win_get_cursor(0)[2]
-                local line = vim.api.nvim_get_current_line()
-                local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
-                vim.api.nvim_set_current_line(new_line)
+                local clipboard = vim.fn.getreg '+'
+                if clipboard:match '^https?://' then
+                    insert_markdown_link(clipboard)
+                else
+                    vim.ui.input({ prompt = 'URL: ' }, insert_markdown_link)
+                end
             end,
-            { buffer = e.buf, desc = 'Paste link' })
+            { buffer = e.buf, desc = 'Insert link' })
+        vim.keymap.set('v', '<leader>l',
+            function()
+                local selected = get_visual_selection()
+                if selected:match '^https?://' then
+                    vim.cmd 'normal! x'
+                    insert_markdown_link(selected)
+                end
+            end,
+            { buffer = e.buf, desc = 'Turn into link' })
         vim.keymap.set('n', '<leader>p',
             function()
                 local peek = require 'peek'
                 if peek.is_open() then
                     peek.close()
                 else
-                    vim.fn.system('i3-msg split horizontal')
+                    vim.system { 'i3-msg', 'split', 'horizontal' }
                     peek.open()
                 end
             end,
@@ -500,7 +518,7 @@ vim.opt.statusline = [[%!v:lua.Statusline()]]
 -- Bootstrap lazy.nvim and setup plugins
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
+    vim.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = { { import = 'plugins' }, { import = 'dev' } }
