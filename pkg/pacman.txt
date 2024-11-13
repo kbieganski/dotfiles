@@ -1,6 +1,5 @@
 acpi
 act
-alacritty
 arc-gtk-theme
 arc-icon-theme
 base
@@ -120,8 +119,8 @@ tmux
 tokei
 tree
 ttc-iosevka
+ttf-fira-code
 ttf-nerd-fonts-symbols-mono
-ttyd
 udiskie
 unclutter
 unzip
@@ -135,7 +134,6 @@ vulkan-extra-tools
 vulkan-radeon
 vulkan-tools
 webkit2gtk
-wezterm
 wget
 wireplumber
 xbindkeys
