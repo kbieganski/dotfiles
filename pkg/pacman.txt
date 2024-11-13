@@ -119,7 +119,6 @@ tmux
 tokei
 tree
 ttc-iosevka
-ttf-fira-code
 ttf-nerd-fonts-symbols-mono
 udiskie
 unclutter
