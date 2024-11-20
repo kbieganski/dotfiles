@@ -44,7 +44,6 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set('n', '<leader>J', workspace_symbols, { buffer = bufnr, desc = 'Workspace symbols' })
     end
     if client.server_capabilities.documentSymbolProvider then
-        require 'nvim-navic'.attach(client, bufnr)
         vim.keymap.set('n', '<leader>j', document_symbols, { buffer = bufnr, desc = 'Document symbols' })
     end
     if client.server_capabilities.incomingCallsProvider then
@@ -173,7 +172,6 @@ return {
             { 'mrcjkb/rustaceanvim' },
             { 'folke/lazydev.nvim',      opts = {}, },
             { 'kosayoda/nvim-lightbulb', },
-            { 'SmiteshP/nvim-navic', },
         },
         config = setup_lsp,
         ft = { 'bash', 'c', 'cpp', 'css', 'go', 'haskell', 'html', 'javascript', 'json', 'lua',

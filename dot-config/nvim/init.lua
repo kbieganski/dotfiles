@@ -25,14 +25,13 @@ vim.o.updatetime = 1000                   -- time for various update events
 vim.o.virtualedit = 'all'                 -- allow virtual editing
 vim.o.visualbell = true                   -- disable beeping
 vim.o.writebackup = false                 -- disable backup when overwriting
-vim.g.python_indent = 'shiftwidth()'      -- set Python auto-indent to shiftwidth
 
 -- Diagnostics
 local diagnostic_signs = {
-    [vim.diagnostic.severity.ERROR] = ' ',
-    [vim.diagnostic.severity.WARN] = ' ',
+    [vim.diagnostic.severity.ERROR] = ' ',
+    [vim.diagnostic.severity.WARN] = ' ',
     [vim.diagnostic.severity.INFO] = ' ',
-    [vim.diagnostic.severity.HINT] = ' ',
+    [vim.diagnostic.severity.HINT] = ' ',
 }
 vim.diagnostic.config {
     virtual_text = false,
@@ -468,22 +467,6 @@ end
 function Statusline()
     -- Mode
     local mode = modes[vim.api.nvim_get_mode().mode] or ''
-    -- File path
-    local filepath = ''
-    if vim.api.nvim_get_option_value('buftype', { buf = 0 }) ~= 'terminal' then
-        filepath = vim.api.nvim_buf_get_name(0)
-        local home = os.getenv 'HOME'
-        if filepath:sub(1, #home) == home then
-            filepath = '~' .. filepath:sub(#home + 1)
-        end
-        filepath = filepath .. (vim.api.nvim_get_option_value('modified', { buf = 0 }) and '*' or '')
-    end
-    -- LSP breadcrumbs
-    local breadcrumbs = ''
-    if #vim.lsp.get_clients { bufnr = 0 } > 0 then
-        local location = require 'nvim-navic'.get_location()
-        if location ~= '' then breadcrumbs = '> ' .. location end
-    end
     -- Diagnostics
     local diagnostics = ''
     for level, sign in pairs(diagnostic_signs) do
@@ -494,7 +477,7 @@ function Statusline()
                 ' %#Diagnostic' .. level_name:sub(1, 1):upper() .. level_name:sub(2):lower() .. '#' .. sign .. count
         end
     end
-    diagnostics = diagnostics .. '%*'
+    diagnostics = diagnostics .. '%* '
     -- Git info
     local git_dict = vim.b.gitsigns_status_dict
     local git_info = ''
@@ -502,14 +485,13 @@ function Statusline()
         local added = git_dict.added and git_dict.added > 0 and ('%#Added#+' .. git_dict.added) or ''
         local changed = git_dict.changed and git_dict.changed > 0 and ('%#Changed#~' .. git_dict.changed) or ''
         local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
-        git_info = added .. ' ' .. changed .. ' ' .. removed .. ' %* ' .. git_dict.head
+        git_info = '  ' .. git_dict.head .. ' ' .. added .. ' ' .. changed .. ' ' .. removed .. '%* '
     end
     -- Search, file position, file type
     local searchcount = vim.fn.searchcount()
     searchcount = searchcount.current .. '/' .. searchcount.total
-    local filepos = '%P %l:%c'
-    return '%#Statusline#' .. mode .. '%* ' .. filepath .. ' ' .. breadcrumbs
-        .. diagnostics .. '%=%*' .. git_info .. ' ' .. searchcount .. ' ' .. filepos
+    local filepos = ' %P %l:%c'
+    return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. searchcount .. filepos
 end
 
 vim.opt.statusline = [[%!v:lua.Statusline()]]

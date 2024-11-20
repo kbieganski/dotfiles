@@ -62,4 +62,31 @@ return {
             },
         },
     },
+    {
+        'Bekaboo/dropbar.nvim',
+        opts = {
+            sources = {
+                path = {
+                    relative_to = function(_, _) return os.getenv 'HOME' end
+                }
+            }
+        }
+    },
+    {
+        "karb94/neoscroll.nvim",
+        opts = {
+            mappings = {},
+        },
+        keys = {
+            { "<C-u>", function() require 'neoscroll'.ctrl_u({ duration = 100 }) end },
+            { "<C-d>", function() require 'neoscroll'.ctrl_d({ duration = 100 }) end },
+            { "<C-b>", function() require 'neoscroll'.ctrl_b({ duration = 200 }) end },
+            { "<C-f>", function() require 'neoscroll'.ctrl_f({ duration = 200 }) end },
+            { "<C-y>", function() require 'neoscroll'.scroll(-0.1, { move_cursor = false, duration = 20 }) end },
+            { "<C-e>", function() require 'neoscroll'.scroll(0.1, { move_cursor = false, duration = 20 }) end },
+            { "zt",    function() require 'neoscroll'.zt({ half_win_duration = 10 }) end },
+            { "zz",    function() require 'neoscroll'.zz({ half_win_duration = 10 }) end },
+            { "zb",    function() require 'neoscroll'.zb({ half_win_duration = 10 }) end },
+        },
+    },
 }

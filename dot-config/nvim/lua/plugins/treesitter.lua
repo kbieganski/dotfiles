@@ -120,15 +120,6 @@ return {
         ft = langs,
     },
     {
-        'nvim-treesitter/nvim-treesitter-context',
-        opts = {
-            max_lines = 1,
-            mode = 'topline',
-        },
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
-        ft = langs,
-    },
-    {
         'kylechui/nvim-surround',
         opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
