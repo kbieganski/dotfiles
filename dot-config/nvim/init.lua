@@ -67,10 +67,10 @@ end
 
 -- Next, previous error
 vim.keymap.set('n', ']e',
-    function() vim.diagnostic.goto_next { severity = 1, open_float = false } end,
+    function() vim.diagnostic.goto_next { severity = 1, float = false } end,
     { desc = 'Next error' })
 vim.keymap.set('n', '[e',
-    function() vim.diagnostic.goto_next { severity = 1, open_float = false } end,
+    function() vim.diagnostic.goto_prev { severity = 1, float = false } end,
     { desc = 'Previous error' })
 
 -- Delete without yanking with s/S/x/X
@@ -494,7 +494,7 @@ function Statusline()
     return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. searchcount .. filepos
 end
 
-vim.opt.statusline = [[%!v:lua.Statusline()]]
+vim.go.statusline = [[%!v:lua.Statusline()]]
 
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins

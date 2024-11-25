@@ -86,9 +86,6 @@ local function on_attach(client, bufnr, opts)
     if client.server_capabilities.implementationProvider then
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, desc = 'Implementation' })
     end
-    if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true)
-    end
 end
 
 local function setup_lsp()
