@@ -12,24 +12,27 @@ return {
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-cmdline',
-            'dcampos/nvim-snippy',
             {
-                'zbirenbaum/copilot.lua',
-                cmd = "Copilot",
-                build = ":Copilot auth",
-                config = function()
-                    require 'copilot'.setup {
-                        -- as recommended by copilot_cmp readme, disable these:
-                        suggestion = { enabled = false },
-                        panel = { enabled = false },
-                    }
-                end,
+                'zbirenbaum/copilot-cmp',
+                dependencies = {
+                    {
+                        'zbirenbaum/copilot.lua',
+                        cmd = "Copilot",
+                        build = ":Copilot auth",
+                        config = function()
+                            require 'copilot'.setup {
+                                -- as recommended by copilot_cmp readme, disable these:
+                                suggestion = { enabled = false },
+                                panel = { enabled = false },
+                            }
+                        end,
+                    },
+                },
+                opts = {}
             },
-            { 'zbirenbaum/copilot-cmp', opts = {} },
         },
         config = function()
             local cmp = require 'cmp'
-            local snippy = require 'snippy'
             local lsp_cmp_format = require 'lspkind'.cmp_format { mode = 'symbol', maxwidth = 20 }
             local has_words_before = function()
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -40,7 +43,12 @@ return {
                 preselect = cmp.PreselectMode.None, -- Otherwise doesn't work well with Copilot
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp_signature_help' },
-                    { name = 'nvim_lsp' },
+                    {
+                        name = "nvim_lsp",
+                        entry_filter = function(entry, _)
+                            return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind()
+                        end,
+                    },
                     { name = 'nvim_lua' },
                     { name = 'copilot' },
                 }, {
@@ -53,8 +61,6 @@ return {
                     ['<Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif snippy.can_expand_or_advance() then
-                            snippy.expand_or_advance()
                         elseif has_words_before() then
                             cmp.complete()
                         else
@@ -64,8 +70,6 @@ return {
                     ['<S-Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_prev_item()
-                        elseif snippy.can_jump(-1) then
-                            snippy.previous()
                         else
                             fallback()
                         end
@@ -99,11 +103,6 @@ return {
                         border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' },
                         winhighlight = '',
                     },
-                },
-                snippet = {
-                    expand = function(args)
-                        snippy.expand_snippet(args.body)
-                    end,
                 },
                 experimental = { ghost_text = true },
             }
