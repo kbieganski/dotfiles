@@ -1,15 +1,18 @@
 -- Language Server Protocol
 
-local decl_syms = { 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 22, 23 }
+local decl_syms = { 'File', 'Module', 'Namespace', 'Package', 'Class', 'Method',
+    'Field', 'Constructor', 'Enum', 'Interface', 'Function', 'EnumMember', 'Struct',
+}
 
 local function document_symbols()
     local win = vim.api.nvim_get_current_win()
     local bufnr = vim.api.nvim_win_get_buf(win)
-    vim.lsp.buf_request(bufnr, 'textDocument/documentSymbol', vim.lsp.util.make_position_params(win),
-        function(_, result, _)
-            local decls = vim.tbl_filter(function(symbol) return vim.tbl_contains(decl_syms, symbol.kind) end, result)
-            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
-            vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = items })
+    vim.lsp.buf_request(bufnr, vim.lsp.protocol.Methods.textDocument_documentSymbol,
+        vim.lsp.util.make_position_params(win),
+        function(_, result)
+            local items = vim.lsp.util.symbols_to_items(result, bufnr)
+            local decls = vim.tbl_filter(function(item) return vim.tbl_contains(decl_syms, item.kind) end, items)
+            vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = decls })
             if vim.api.nvim_get_current_win() == win then
                 vim.cmd.lopen()
             end
@@ -18,11 +21,11 @@ end
 
 local function workspace_symbols()
     local bufnr = vim.api.nvim_get_current_buf()
-    vim.lsp.buf_request(bufnr, 'workspace/symbol', { query = '' },
-        function(_, result, ctx)
-            local decls = vim.tbl_filter(function(symbol) return vim.tbl_contains(decl_syms, symbol.kind) end, result)
-            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
-            vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = items })
+    vim.lsp.buf_request(bufnr, vim.lsp.protocol.Methods.workspace_symbol, { query = '' },
+        function(_, result)
+            local items = vim.lsp.util.symbols_to_items(result, bufnr)
+            local decls = vim.tbl_filter(function(item) return vim.tbl_contains(decl_syms, item.kind) end, items)
+            vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = decls })
             vim.cmd.copen()
         end)
 end
@@ -166,9 +169,10 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            { 'mrcjkb/rustaceanvim' },
-            { 'folke/lazydev.nvim',      opts = {}, },
-            { 'kosayoda/nvim-lightbulb', },
+            'onsails/lspkind-nvim',
+            'mrcjkb/rustaceanvim',
+            { 'folke/lazydev.nvim', opts = {}, },
+            'kosayoda/nvim-lightbulb',
         },
         config = setup_lsp,
         ft = { 'bash', 'c', 'cpp', 'css', 'go', 'haskell', 'html', 'javascript', 'json', 'lua',

@@ -67,10 +67,10 @@ end
 
 -- Next, previous error
 vim.keymap.set('n', ']e',
-    function() vim.diagnostic.goto_next { severity = 1, float = false } end,
+    function() vim.diagnostic.goto_next { severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Next error' })
 vim.keymap.set('n', '[e',
-    function() vim.diagnostic.goto_prev { severity = 1, float = false } end,
+    function() vim.diagnostic.goto_prev { severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Previous error' })
 
 -- Delete without yanking with s/S/x/X

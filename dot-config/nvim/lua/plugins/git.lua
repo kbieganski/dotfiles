@@ -25,13 +25,17 @@ return {
                     { buffer = bufnr, desc = 'Open in browser' })
                 vim.keymap.set('n', '<leader>Y', function() require 'gitportal'.open_file_in_neovim() end,
                     { buffer = bufnr, desc = 'Open repo link in Neovim' })
-                require 'which-key'.add { { '<leader>h', desc = 'Git hunk' } }
-                require 'git-conflict' -- Load git-conflict
+                vim.keymap.set('n', '<leader>X', ':GitConflictListQf<CR>', { buffer = bufnr, desc = 'Git conflicts' })
+                require 'which-key'.add { { '<leader>h', desc = 'Git hunk' }, { '<leader>x', desc = 'Git conflict' } }
+                -- Load and refresh git-conflict
+                require 'git-conflict'
+                vim.cmd 'GitConflictRefresh'
             end
         },
     },
     {
         'akinsho/git-conflict.nvim',
+        version = "*",
         lazy = true,
         opts = {
             default_mappings = {
@@ -43,10 +47,6 @@ return {
                 prev = '[x',
             },
             disable_diagnostics = true,
-            highlights = {
-                incoming = 'DiffText',
-                current = 'DiffAdd',
-            },
         },
     },
     {

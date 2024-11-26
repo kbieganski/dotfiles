@@ -89,4 +89,15 @@ return {
             { "zb",    function() require 'neoscroll'.zb({ half_win_duration = 10 }) end,                       mode = { 'n', 'v' } },
         },
     },
+    {
+        'yorickpeterse/nvim-pqf',
+        opts = {
+            signs = {
+                error = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.ERROR], hl = 'DiagnosticSignError' },
+                warning = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.WARN], hl = 'DiagnosticSignWarn' },
+                info = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.INFO], hl = 'DiagnosticSignInfo' },
+                hint = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.HINT], hl = 'DiagnosticSignHint' },
+            },
+        }
+    }
 }
