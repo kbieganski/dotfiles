@@ -404,7 +404,6 @@ end
 -- Markdown-specific settings:
 -- - conceal links
 -- - paste link with title using <leader>l
--- - open preview with <leader>p
 vim.api.nvim_create_autocmd('FileType', {
     pattern = 'markdown',
     callback = function(e)
@@ -428,18 +427,6 @@ vim.api.nvim_create_autocmd('FileType', {
                 end
             end,
             { buffer = e.buf, desc = 'Turn into link' })
-        vim.keymap.set('n', '<leader>p',
-            function()
-                local peek = require 'peek'
-                if peek.is_open() then
-                    peek.close()
-                else
-                    vim.system { 'i3-msg', 'split', 'horizontal' }
-                    peek.open()
-                end
-            end,
-            { buffer = e.buff, desc = 'Preview' }
-        )
     end
 })
 
@@ -503,10 +490,14 @@ if not vim.uv.fs_stat(lazypath) then
     vim.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
 end
 vim.opt.rtp:prepend(lazypath)
-local plugins = { { import = 'plugins' }, { import = 'dev' } }
-local localpath = vim.fn.stdpath 'config' .. 'nvim-local'
-if vim.uv.fs_stat(localpath) then
-    plugins[#plugins + 1] = { import = 'local' }
-    vim.opt.rtp:append(localpath)
-end
-require 'lazy'.setup(plugins)
+require 'lazy'.setup {
+    spec = { { import = 'plugins' }, { import = 'dev' } },
+    dev = {
+        path = '~/proj',
+        fallback = true,
+    },
+    install = {
+        colorscheme = { 'austere-theme' },
+    },
+    ui = { border = 'single' }
+}

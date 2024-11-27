@@ -1,4 +1,4 @@
-add-auto-load-safe-path /
+add-auto-load-safe-path ~
 set history save
 set verbose off
 set print pretty on
@@ -8,6 +8,14 @@ set python print-stack full
 set disassembly-flavor intel
 set pagination off
 set debuginfod enabled on
+
+python
+import os, sys
+virtualenv = os.getenv('VIRTUAL_ENV')
+if virtualenv:
+    version = sys.version_info
+    sys.path.append(f'{virtualenv}/lib/python{version.major}.{version.minor}/site-packages')
+end
 
 source ~/dotfiles/ext/gdb-dashboard/.gdbinit
 

@@ -2,6 +2,12 @@ command=~/.config/i3blocks/blocks/$BLOCK_NAME/$BLOCK_NAME
 separator_block_width=10
 markup=pango
 
+[arch-update]
+interval=3600
+QUIET=true
+LABEL=<big> </big>
+UPDATE_COLOR=#E9E9E9
+
 [mediaplayer]
 label=<small>▶ </small>
 interval=5
@@ -17,6 +23,7 @@ interval=1
 label=<small><b>SIG </b></small>
 min_width=<small><b>SIG </b></small>100%
 interval=10
+COLOR_GE80=#E9E9E9
 
 [ssid]
 label=<small><b>NET </b></small>
@@ -38,6 +45,7 @@ label=<small><b>CPU </b></small>
 min_width=<small><b>CPU </b></small>0000.00%
 interval=5
 align=center
+COLOR_NORMAL=#E9E9E9
 
 [disk]
 label=<small><b>DRV </b></small>
@@ -55,14 +63,3 @@ TZONES=$DEFAULT_TZ,-
 TZ_LABELS=,-
 min_width=0000-00-00 00:00:00
 interval=1
-
-[arch-update]
-interval=3600
-QUIET=true
-LABEL=<big> </big>
-
-[shutdown_menu]
-full_text=<big> </big>
-ROFI_TEXT=
-ROFI_OPTIONS=-location 5
-LOCKSCRIPT=lock

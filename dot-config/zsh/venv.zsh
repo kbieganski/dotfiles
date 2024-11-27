@@ -4,7 +4,7 @@ function venv {
     venv=$(ls "$venv_dir" | \fzf --preview "source $venv_dir/{}/bin/activate; pip list --local" \
         --bind "alt-enter:print-query+abort")
     if [ "$?" -ne 0 ]; then
-        return
+        return 1
     fi
     if [ ! -d "$venv_dir/$venv" ]; then
         virtualenv "$venv_dir/$venv"

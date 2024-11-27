@@ -12,14 +12,6 @@ return {
         opts = {},
     },
     {
-        'toppair/peek.nvim',
-        lazy = true,
-        build = 'deno task --quiet build:fast',
-        config = function()
-            require 'peek'.setup { theme = 'dark' }
-        end,
-    },
-    {
         'numToStr/Navigator.nvim',
         config = function()
             local pane_at = {
