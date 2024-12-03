@@ -1,7 +1,11 @@
 -- Utility
 
 return {
-    { 'Saecki/crates.nvim', ft = 'toml', opts = {} },
+    {
+        'Saecki/crates.nvim',
+        event = 'BufRead Cargo.toml',
+        opts = {}
+    },
     {
         'lewis6991/spaceless.nvim',
         event = 'InsertEnter',
