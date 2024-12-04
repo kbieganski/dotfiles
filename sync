@@ -21,7 +21,7 @@ function silent {
 
 cd "$dotfiles_dir" || exit 1
 
-if grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
+if ! grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
     section "Setting zsh as default shell"
     sudo chsh -s "$(which zsh)"
 fi
@@ -43,7 +43,7 @@ section "Deleting Arch packages"
 touch $pacman_cur_pkgs
 pacman_del_pkgs=$(comm -23 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
 if [ -n "$pacman_del_pkgs" ]; then
-    silent sudo pacman -Rs --noconfirm "$pacman_del_pkgs" #TODO
+    silent sudo pacman -Rs --noconfirm "$pacman_del_pkgs"
 fi
 
 section "Installing Arch packages"

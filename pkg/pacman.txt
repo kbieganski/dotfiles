@@ -7,7 +7,6 @@ base-devel
 bat
 bc
 bear
-bridge-utils
 brightnessctl
 cabal-install
 ccache
@@ -18,7 +17,6 @@ deno
 dhcpcd
 difftastic
 distrobox
-dnsmasq
 dsq
 duf
 dunst
@@ -42,7 +40,6 @@ go
 graphviz
 gtkwave
 haskell-language-server
-helm
 htop
 hyperfine
 i3blocks
@@ -58,7 +55,6 @@ jc
 jq
 keepassxc
 kitty
-kubectl
 lcov
 lf
 libvirt
@@ -90,7 +86,6 @@ p7zip
 pacman-contrib
 parallel
 perf
-perl-image-exiftool
 pipewire-alsa
 pipewire-pulse
 playerctl
@@ -120,9 +115,7 @@ strace
 stylua
 syncthing
 sysstat
-talosctl
 tealdeer
-testdisk
 time
 tmux
 tokei
