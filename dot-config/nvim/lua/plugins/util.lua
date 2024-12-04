@@ -41,10 +41,10 @@ return {
             require 'Navigator'.setup { disable_on_zoom = true, mux = tmux_navigator:new() }
         end,
         keys = {
-            { '<M-h>', function() require 'Navigator'.left() end,  desc = 'Window left' },
-            { '<M-j>', function() require 'Navigator'.down() end,  desc = 'Window down' },
-            { '<M-k>', function() require 'Navigator'.up() end,    desc = 'Window up' },
-            { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right' },
+            { '<M-h>', function() require 'Navigator'.left() end,  desc = 'Window left',  mode = { 'n', 'v', 'i', 't' } },
+            { '<M-j>', function() require 'Navigator'.down() end,  desc = 'Window down',  mode = { 'n', 'v', 'i', 't' } },
+            { '<M-k>', function() require 'Navigator'.up() end,    desc = 'Window up',    mode = { 'n', 'v', 'i', 't' } },
+            { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right', mode = { 'n', 'v', 'i', 't' } },
         },
     },
     {
