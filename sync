@@ -62,7 +62,7 @@ function PKGBUILD_get {
     grep "$1"= <PKGBUILD | cut -d= -f2
 }
 for pkg_path in ext/aur/*; do
-    silent pushd "$pkg_path"
+    silent pushd "$pkg_path" #TODO
     pkgname=$(PKGBUILD_get pkgname)
     pkgver=$(PKGBUILD_get pkgver)
     pkgrel=$(PKGBUILD_get pkgrel)
