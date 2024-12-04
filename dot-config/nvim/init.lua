@@ -452,36 +452,39 @@ for mode, ms in pairs {
 end
 
 function Statusline()
-    -- Mode
-    local mode = modes[vim.api.nvim_get_mode().mode] or ''
-    -- Diagnostics
-    local diagnostics = ''
-    for level, sign in pairs(diagnostic_signs) do
-        local level_name = vim.diagnostic.severity[level]
-        local count = #vim.diagnostic.get(0, { severity = level })
-        if count > 0 then
-            diagnostics = diagnostics ..
-                ' %#Diagnostic' .. level_name:sub(1, 1):upper() .. level_name:sub(2):lower() .. '#' .. sign .. count
+    ok, statusline = pcall(function()
+        -- Mode
+        local mode = modes[vim.api.nvim_get_mode().mode] or ''
+        -- Diagnostics
+        local diagnostics = ''
+        for level, sign in pairs(diagnostic_signs) do
+            local level_name = vim.diagnostic.severity[level]
+            local count = #vim.diagnostic.get(0, { severity = level })
+            if count > 0 then
+                diagnostics = diagnostics ..
+                    ' %#Diagnostic' .. level_name:sub(1, 1):upper() .. level_name:sub(2):lower() .. '#' .. sign .. count
+            end
         end
-    end
-    diagnostics = diagnostics .. '%* '
-    -- Git info
-    local git_dict = vim.b.gitsigns_status_dict
-    local git_info = ''
-    if git_dict then
-        local added = git_dict.added and git_dict.added > 0 and ('%#Added#+' .. git_dict.added) or ''
-        local changed = git_dict.changed and git_dict.changed > 0 and ('%#Changed#~' .. git_dict.changed) or ''
-        local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
-        git_info = '  ' .. git_dict.head .. ' ' .. added .. ' ' .. changed .. ' ' .. removed .. '%* '
-    end
-    -- Search, file position, file type
-    local searchcount = vim.fn.searchcount()
-    searchcount = searchcount.current .. '/' .. searchcount.total
-    local filepos = ' %P %l:%c'
-    return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. searchcount .. filepos
+        diagnostics = diagnostics .. '%* '
+        -- Git info
+        local git_dict = vim.b.gitsigns_status_dict
+        local git_info = ''
+        if git_dict then
+            local added = git_dict.added and git_dict.added > 0 and ('%#Added#+' .. git_dict.added) or ''
+            local changed = git_dict.changed and git_dict.changed > 0 and ('%#Changed#~' .. git_dict.changed) or ''
+            local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
+            git_info = '  ' .. git_dict.head .. ' ' .. added .. ' ' .. changed .. ' ' .. removed .. '%* '
+        end
+        -- Search, file position, file type
+        local searchcount = vim.fn.searchcount()
+        searchcount = searchcount.current .. '/' .. searchcount.total
+        local filepos = ' %P %l:%c'
+        return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. searchcount .. filepos
+    end)
+    return ok and statusline or ''
 end
 
-vim.go.statusline = [[%!v:lua.Statusline()]]
+vim.o.statusline = [[%!v:lua.Statusline()]]
 
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins
