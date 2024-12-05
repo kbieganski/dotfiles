@@ -43,13 +43,13 @@ section "Deleting Arch packages"
 touch $pacman_cur_pkgs
 pacman_del_pkgs=$(comm -23 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
 if [ -n "$pacman_del_pkgs" ]; then
-    silent sudo pacman -Rs --noconfirm "$pacman_del_pkgs"
+    silent sudo pacman -Rs --noconfirm $pacman_del_pkgs
 fi
 
 section "Installing Arch packages"
 pacman_new_pkgs=$(comm -13 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
 if [ -n "$pacman_new_pkgs" ]; then
-    silent sudo pacman -Sy --noconfirm --needed "$pacman_new_pkgs"
+    silent sudo pacman -Sy --noconfirm --needed $pacman_new_pkgs
 fi
 
 section "Saving Arch package list"
@@ -62,7 +62,7 @@ function PKGBUILD_get {
     grep "$1"= <PKGBUILD | cut -d= -f2
 }
 for pkg_path in ext/aur/*; do
-    silent pushd "$pkg_path" #TODO
+    silent pushd "$pkg_path"
     pkgname=$(PKGBUILD_get pkgname)
     pkgver=$(PKGBUILD_get pkgver)
     pkgrel=$(PKGBUILD_get pkgrel)
