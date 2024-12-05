@@ -71,7 +71,7 @@ return {
                         return false
                     end
                     local bufname = vim.api.nvim_buf_get_name(buf)
-                    return vim.uv.fs_stat(bufname) and vim.bo[buf].ft ~= 'help'
+                    return bufname:sub(1, 5) ~= '/tmp/' and vim.uv.fs_stat(bufname) and vim.bo[buf].ft ~= 'help'
                 end
             },
             sources = {

@@ -5,7 +5,6 @@ vim.o.clipboard = 'unnamedplus'           -- use system clipboard
 vim.o.cursorline = true                   -- highlight line with cursor
 vim.o.expandtab = true                    -- insert spaces with tab
 vim.o.foldenable = false                  -- no code folding
-vim.o.hlsearch = false                    -- do not highlight all search matches
 vim.o.ignorecase = true                   -- when searching
 vim.o.laststatus = 3                      -- single, global statusline
 vim.o.linebreak = true                    -- break on whitespace
@@ -355,7 +354,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained' }, {
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
-    callback = function() vim.highlight.on_yank { higroup = 'Search' } end,
+    callback = function() vim.highlight.on_yank() end,
 })
 
 -- Resize splits if window got resized
@@ -429,6 +428,16 @@ vim.api.nvim_create_autocmd('FileType', {
             { buffer = e.buf, desc = 'Turn into link' })
     end
 })
+
+-- Auto-highlight search
+vim.on_key(function(char)
+    local key = vim.fn.keytrans(char)
+    local keys = { '<CR>', 'n', 'N', '*', '#', '?', '/' }
+    local modes = { 'n', 'v', 'V', '' }
+    if vim.tbl_contains(modes, vim.fn.mode()) then
+        vim.o.hlsearch = vim.tbl_contains(keys, key)
+    end
+end)
 
 -- Statusline
 local modes = {}
