@@ -109,7 +109,6 @@ shellcheck
 shfmt
 sshfs
 stack
-starship
 stow
 strace
 stylua
