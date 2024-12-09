@@ -10,6 +10,7 @@ vim.o.laststatus = 3                      -- single, global statusline
 vim.o.linebreak = true                    -- break on whitespace
 vim.o.number = true                       -- show line numbers
 vim.o.relativenumber = true               -- show relative line numbers
+vim.o.shada = "!,'1000,<50,s10,h"         -- default except 1000 oldfiles
 vim.o.shiftwidth = 4                      -- width of indent
 vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
 vim.o.showmode = false                    -- don't show mode in command line

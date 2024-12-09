@@ -12,7 +12,7 @@ return {
     },
     {
         'NMAC427/guess-indent.nvim',
-        event = 'InsertEnter',
+        event = 'BufReadPre',
         opts = {},
     },
     {

@@ -131,7 +131,7 @@ alias icat='kitty +kitten icat'
 
 source <(cat $(dirname ${(%):-%N})/.config/zsh/*.zsh)
 
-eval "$(starship init zsh)"
+source "$HOME/dotfiles/ext/spaceship/spaceship.zsh"
 
 source <(fzf --zsh)
 

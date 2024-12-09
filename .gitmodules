@@ -1,24 +1,27 @@
-[submodule "ext/zsh-syntax-highlighting"]
-	path = ext/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule "ext/gdb-dashboard"]
-	path = ext/gdb-dashboard
-	url = https://github.com/cyrus-and/gdb-dashboard
-[submodule "ext/i3blocks"]
-	path = ext/i3blocks
-	url = https://github.com/vivien/i3blocks-contrib
-[submodule "ext/dotfiles-secret"]
-	path = ext/dotfiles-secret
-	url = git@github.com:kbieganski/dotfiles-secret
-    branch = main
-[submodule "ext/aur/rr"]
-	path = ext/aur/rr
-	url = https://aur.archlinux.org/rr.git
-	ignore = dirty
 [submodule "ext/aur/i3lock-color"]
 	path = ext/aur/i3lock-color
 	url = https://aur.archlinux.org/i3lock-color.git
 	ignore = dirty
+[submodule "ext/aur/rr"]
+	path = ext/aur/rr
+	url = https://aur.archlinux.org/rr.git
+	ignore = dirty
+[submodule "ext/dotfiles-secret"]
+	path = ext/dotfiles-secret
+	url = git@github.com:kbieganski/dotfiles-secret
+	branch = main
 [submodule "ext/fzf-tab"]
 	path = ext/fzf-tab
-	url = https://github.com/Aloxaf/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab.git
+[submodule "ext/gdb-dashboard"]
+	path = ext/gdb-dashboard
+	url = https://github.com/cyrus-and/gdb-dashboard.git
+[submodule "ext/i3blocks"]
+	path = ext/i3blocks
+	url = https://github.com/vivien/i3blocks-contrib.git
+[submodule "ext/spaceship"]
+	path = ext/spaceship
+	url = https://github.com/spaceship-prompt/spaceship-prompt.git
+[submodule "ext/zsh-syntax-highlighting"]
+	path = ext/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

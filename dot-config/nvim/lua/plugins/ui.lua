@@ -89,23 +89,6 @@ return {
         }
     },
     {
-        "karb94/neoscroll.nvim",
-        opts = {
-            mappings = {},
-        },
-        keys = {
-            { "<C-u>", function() require 'neoscroll'.ctrl_u({ duration = 20 }) end,                            mode = { 'n', 'v' } },
-            { "<C-d>", function() require 'neoscroll'.ctrl_d({ duration = 20 }) end,                            mode = { 'n', 'v' } },
-            { "<C-b>", function() require 'neoscroll'.ctrl_b({ duration = 50 }) end,                            mode = { 'n', 'v' } },
-            { "<C-f>", function() require 'neoscroll'.ctrl_f({ duration = 50 }) end,                            mode = { 'n', 'v' } },
-            { "<C-y>", function() require 'neoscroll'.scroll(-0.1, { move_cursor = false, duration = 10 }) end, mode = { 'n', 'v' } },
-            { "<C-e>", function() require 'neoscroll'.scroll(0.1, { move_cursor = false, duration = 10 }) end,  mode = { 'n', 'v' } },
-            { "zt",    function() require 'neoscroll'.zt({ half_win_duration = 10 }) end,                       mode = { 'n', 'v' } },
-            { "zz",    function() require 'neoscroll'.zz({ half_win_duration = 10 }) end,                       mode = { 'n', 'v' } },
-            { "zb",    function() require 'neoscroll'.zb({ half_win_duration = 10 }) end,                       mode = { 'n', 'v' } },
-        },
-    },
-    {
         'yorickpeterse/nvim-pqf',
         opts = {
             signs = {
