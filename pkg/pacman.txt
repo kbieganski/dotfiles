@@ -145,6 +145,7 @@ xorg-xinput
 xss-lock
 xsv
 yosys
+zenity
 zig
 zip
 zls
