@@ -47,8 +47,4 @@ return {
             { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right', mode = { 'n', 'v', 'i', 't' } },
         },
     },
-    {
-        'numToStr/Comment.nvim',
-        opts = {},
-    },
 }

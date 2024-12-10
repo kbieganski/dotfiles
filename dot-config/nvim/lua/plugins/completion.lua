@@ -4,6 +4,7 @@ return {
     {
         'hrsh7th/nvim-cmp',
         event = 'InsertEnter',
+        enabled = function() return not vim.lsp.completion end,
         dependencies = {
             'onsails/lspkind-nvim',
             'hrsh7th/cmp-nvim-lsp',
@@ -17,8 +18,8 @@ return {
                 dependencies = {
                     {
                         'zbirenbaum/copilot.lua',
-                        cmd = "Copilot",
-                        build = ":Copilot auth",
+                        cmd = 'Copilot',
+                        build = ':Copilot auth',
                         config = function()
                             require 'copilot'.setup {
                                 -- as recommended by copilot_cmp readme, disable these:
@@ -37,14 +38,14 @@ return {
             local has_words_before = function()
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
                 return col ~= 0 and
-                    vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+                    vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
             end
             cmp.setup {
                 preselect = cmp.PreselectMode.None, -- Otherwise doesn't work well with Copilot
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp_signature_help' },
                     {
-                        name = "nvim_lsp",
+                        name = 'nvim_lsp',
                         entry_filter = function(entry, _)
                             return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind()
                         end,

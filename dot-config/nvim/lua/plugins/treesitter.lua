@@ -1,6 +1,6 @@
 -- Tree-sitter
 
-local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'haskell', 'html', 'javascript', 'json', 'lua', 'markdown',
+local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua', 'markdown',
     'markdown_inline', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
 
 local textobjects = {
@@ -121,9 +121,4 @@ return {
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
         ft = langs,
     },
-    {
-        'JoosepAlviste/nvim-ts-context-commentstring',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
-        ft = langs,
-    }
 }

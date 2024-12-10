@@ -1,30 +1,32 @@
 -- Options
-vim.o.autochdir = true                    -- change working dir to buffer dir
-vim.o.autowriteall = true                 -- auto save files
-vim.o.clipboard = 'unnamedplus'           -- use system clipboard
-vim.o.cursorline = true                   -- highlight line with cursor
-vim.o.expandtab = true                    -- insert spaces with tab
-vim.o.foldenable = false                  -- no code folding
-vim.o.ignorecase = true                   -- when searching
-vim.o.laststatus = 3                      -- single, global statusline
-vim.o.linebreak = true                    -- break on whitespace
-vim.o.number = true                       -- show line numbers
-vim.o.relativenumber = true               -- show relative line numbers
-vim.o.shada = "!,'1000,<50,s10,h"         -- default except 1000 oldfiles
-vim.o.shiftwidth = 4                      -- width of indent
-vim.o.shortmess = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.showmode = false                    -- don't show mode in command line
-vim.o.smartcase = true                    -- don't ignore case if search string contains uppercase letters
-vim.o.smartindent = true                  -- indent based on syntax
-vim.o.spelllang = 'en_us,pl'              -- check English and Polish spelling
-vim.o.spell = true                        -- enable spell checking
-vim.o.tabstop = 4                         -- width of tab
-vim.o.termguicolors = true                -- 24-bit color support
-vim.o.undofile = true                     -- persistent undo
-vim.o.updatetime = 1000                   -- time for various update events
-vim.o.virtualedit = 'all'                 -- allow virtual editing
-vim.o.visualbell = true                   -- disable beeping
-vim.o.writebackup = false                 -- disable backup when overwriting
+vim.o.autochdir      = true                    -- change working dir to buffer dir
+vim.o.autowriteall   = true                    -- auto save files
+vim.o.clipboard      = 'unnamedplus'           -- use system clipboard
+vim.o.completeopt    = 'menuone,noinsert'      -- always display completion menu, do not auto insert
+vim.o.cursorline     = true                    -- highlight line with cursor
+vim.o.expandtab      = true                    -- insert spaces with tab
+vim.o.foldenable     = false                   -- no code folding
+vim.o.ignorecase     = true                    -- when searching
+vim.o.laststatus     = 3                       -- single, global statusline
+vim.o.linebreak      = true                    -- break on whitespace
+vim.o.number         = true                    -- show line numbers
+vim.o.relativenumber = true                    -- show relative line numbers
+vim.o.shada          = "!,'1000,<50,s10,h"     -- default except 1000 oldfiles
+vim.o.shiftwidth     = 4                       -- width of indent
+vim.o.shortmess      = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
+vim.o.showmode       = false                   -- don't show mode in command line
+vim.o.smartcase      = true                    -- don't ignore case if search string contains uppercase letters
+vim.o.smartindent    = true                    -- indent based on syntax
+vim.o.spelllang      = 'en_us,pl'              -- check English and Polish spelling
+vim.o.spell          = true                    -- enable spell checking
+vim.o.tabstop        = 4                       -- width of tab
+vim.o.termguicolors  = true                    -- 24-bit color support
+vim.o.undofile       = true                    -- persistent undo
+vim.o.updatetime     = 1000                    -- time for various update events
+vim.o.virtualedit    = 'all'                   -- allow virtual editing
+vim.o.visualbell     = true                    -- disable beeping
+vim.o.writebackup    = false                   -- disable backup when overwriting
+if vim.version().major > 0 or vim.version().minor >= 11 then vim.o.messagesopt = 'wait:10000,history:500' end
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -65,7 +67,7 @@ for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f', 'i', 'm', 'M', 'o
     vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
 end
 
--- Next, previous error
+-- Next, previous error. TODO deprecated, switch to vim.diagnostic.jump
 vim.keymap.set('n', ']e',
     function() vim.diagnostic.goto_next { severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Next error' })
@@ -304,12 +306,11 @@ vim.keymap.set('n', '<leader>N', function() termrun('note --grep', grep_edit_or_
 local function undotree()
     local tree = vim.fn.undotree()
     local entries = tree.entries
-    if not entries then
-        return
-    end
+    if not entries then return end
     local i = 1
     while i <= #entries do
         local entry = entries[i]
+        ---@diagnostic disable-next-line: inject-field
         entry.level = entry.level or 1
         for j, child_entry in ipairs(entry.alt or {}) do
             child_entry.level = entry.level + 1
@@ -319,6 +320,7 @@ local function undotree()
         i = entry.alt and i or i + 1
         entry.alt = nil
     end
+    ---@diagnostic disable-next-line: inject-field
     entries[#entries].last = true
     entries = vim.iter(entries):rev():totable()
     vim.ui.select(entries, {
@@ -462,7 +464,7 @@ for mode, ms in pairs {
 end
 
 function Statusline()
-    ok, statusline = pcall(function()
+    local ok, statusline = pcall(function()
         -- Mode
         local mode = modes[vim.api.nvim_get_mode().mode] or ''
         -- Diagnostics
