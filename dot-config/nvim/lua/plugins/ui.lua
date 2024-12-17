@@ -59,6 +59,7 @@ return {
             preset = 'simple',
             options = {
                 use_icons_from_diagnostic = true,
+                enable_on_insert = true,
             },
         },
     },
@@ -92,10 +93,10 @@ return {
         'yorickpeterse/nvim-pqf',
         opts = {
             signs = {
-                error = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.ERROR], hl = 'DiagnosticSignError' },
-                warning = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.WARN], hl = 'DiagnosticSignWarn' },
-                info = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.INFO], hl = 'DiagnosticSignInfo' },
-                hint = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.HINT], hl = 'DiagnosticSignHint' },
+                error = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.ERROR] },
+                warning = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.WARN] },
+                info = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.INFO] },
+                hint = { text = vim.diagnostic.config().signs.text[vim.diagnostic.severity.HINT] },
             },
         }
     }

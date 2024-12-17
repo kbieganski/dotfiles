@@ -1,8 +1,16 @@
 -- Language Server Protocol
 
-local decl_syms = { 'File', 'Module', 'Namespace', 'Package', 'Class', 'Method',
-    'Field', 'Constructor', 'Enum', 'Interface', 'Function', 'EnumMember', 'Struct',
-}
+local decl_syms = vim.iter {
+    'File', 'Module', 'Namespace', 'Package', 'Class', 'Method', 'Field', 'Constructor', 'Enum', 'Interface', 'Function', 'EnumMember', 'Struct',
+}:map(function(sym) return vim.lsp.protocol.SymbolKind[sym] end):totable()
+
+local function filter_decls(syms)
+    local decls = vim.tbl_filter(function(item) return vim.tbl_contains(decl_syms, item.kind) end, syms)
+    for _, decl in ipairs(decls) do
+        decl.children = decl.children and filter_decls(decl.children)
+    end
+    return decls
+end
 
 local function document_symbols()
     local win = vim.api.nvim_get_current_win()
@@ -10,11 +18,11 @@ local function document_symbols()
     for _, client in ipairs(vim.lsp.get_clients { bufnr = bufnr }) do
         local method = vim.lsp.protocol.Methods.textDocument_documentSymbol
         local position_params = vim.lsp.util.make_position_params(win, client.offset_encoding)
-        local handler = function(_, result)
-            if not result then return end
-            local items = vim.lsp.util.symbols_to_items(result, bufnr)
-            local decls = vim.tbl_filter(function(item) return vim.tbl_contains(decl_syms, item.kind) end, items)
-            vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = decls })
+        local handler = function(_, syms)
+            if not syms then return end
+            local decls = filter_decls(syms)
+            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
+            vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = items })
             if vim.api.nvim_get_current_win() == win then
                 vim.cmd.lopen()
             end
@@ -32,10 +40,10 @@ end
 local function workspace_symbols()
     local bufnr = vim.api.nvim_get_current_buf()
     vim.lsp.buf_request(bufnr, vim.lsp.protocol.Methods.workspace_symbol, { query = '' },
-        function(_, result)
-            local items = vim.lsp.util.symbols_to_items(result, bufnr)
-            local decls = vim.tbl_filter(function(item) return vim.tbl_contains(decl_syms, item.kind) end, items)
-            vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = decls })
+        function(_, syms)
+            local decls = filter_decls(syms)
+            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
+            vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = items })
             vim.cmd.copen()
         end)
 end
@@ -150,6 +158,12 @@ local function on_attach(client, bufnr, opts)
             buffer = bufnr,
         })
     end
+    if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint.enable(true)
+        vim.keymap.set('n', '<leader>i',
+            function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
+            { buffer = bufnr, desc = 'Inlay hints' })
+    end
     if client.server_capabilities.workspaceSymbolProvider then
         vim.keymap.set('n', '<leader>J', workspace_symbols, { buffer = bufnr, desc = 'Workspace symbols' })
     end
@@ -183,12 +197,18 @@ local function on_attach(client, bufnr, opts)
     if client.server_capabilities.documentFormattingProvider then
         vim.keymap.set({ 'n', 'v' }, 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         vim.keymap.set({ 'n', 'v' }, '=', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
-        if opts.autoformat then
-            vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-                buffer = bufnr,
-                callback = function() vim.lsp.buf.format { buffer = bufnr } end,
-            })
-        end
+        vim.keymap.set('n', '<leader>F',
+            function() vim.api.nvim_buf_set_var(bufnr, 'autoformat', not vim.api.nvim_buf_get_var(bufnr, 'autoformat')) end,
+            { buffer = bufnr, desc = 'Toggle auto-formatting' })
+        vim.api.nvim_buf_set_var(bufnr, 'autoformat', opts.autoformat)
+        vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+            buffer = bufnr,
+            callback = function()
+                if vim.api.nvim_buf_get_var(bufnr, 'autoformat') then
+                    vim.lsp.buf.format { buffer = bufnr }
+                end
+            end,
+        })
     end
     if client.server_capabilities.referencesProvider then
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = bufnr, desc = 'Reference' })
@@ -283,7 +303,22 @@ return {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            'onsails/lspkind-nvim',
+            {
+                'onsails/lspkind-nvim',
+                config = function()
+                    local lspkind = require 'lspkind'
+                    lspkind.setup {
+                        mode = 'symbol',
+                        symbol_map = {
+                            Package = '󰆦 ',
+                            Namespace = '󰅩 ',
+                        },
+                    }
+                    for i, kind in ipairs(vim.lsp.protocol.SymbolKind) do
+                        vim.lsp.protocol.SymbolKind[i] = lspkind.symbolic(kind) .. ' ' .. kind
+                    end
+                end
+            },
             'mrcjkb/rustaceanvim',
             'kosayoda/nvim-lightbulb',
             {

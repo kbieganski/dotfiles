@@ -1,32 +1,31 @@
 -- Options
-vim.o.autochdir      = true                    -- change working dir to buffer dir
-vim.o.autowriteall   = true                    -- auto save files
-vim.o.clipboard      = 'unnamedplus'           -- use system clipboard
-vim.o.completeopt    = 'menuone,noinsert'      -- always display completion menu, do not auto insert
-vim.o.cursorline     = true                    -- highlight line with cursor
-vim.o.expandtab      = true                    -- insert spaces with tab
-vim.o.foldenable     = false                   -- no code folding
-vim.o.ignorecase     = true                    -- when searching
-vim.o.laststatus     = 3                       -- single, global statusline
-vim.o.linebreak      = true                    -- break on whitespace
-vim.o.number         = true                    -- show line numbers
-vim.o.relativenumber = true                    -- show relative line numbers
-vim.o.shada          = "!,'1000,<50,s10,h"     -- default except 1000 oldfiles
-vim.o.shiftwidth     = 4                       -- width of indent
-vim.o.shortmess      = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.showmode       = false                   -- don't show mode in command line
-vim.o.smartcase      = true                    -- don't ignore case if search string contains uppercase letters
-vim.o.smartindent    = true                    -- indent based on syntax
-vim.o.spelllang      = 'en_us,pl'              -- check English and Polish spelling
-vim.o.spell          = true                    -- enable spell checking
-vim.o.tabstop        = 4                       -- width of tab
-vim.o.termguicolors  = true                    -- 24-bit color support
-vim.o.undofile       = true                    -- persistent undo
-vim.o.updatetime     = 1000                    -- time for various update events
-vim.o.virtualedit    = 'all'                   -- allow virtual editing
-vim.o.visualbell     = true                    -- disable beeping
-vim.o.writebackup    = false                   -- disable backup when overwriting
-if vim.version().major > 0 or vim.version().minor >= 11 then vim.o.messagesopt = 'wait:10000,history:500' end
+vim.o.autochdir        = true                    -- change working dir to buffer dir
+vim.o.autowriteall     = true                    -- auto save files
+vim.o.clipboard        = 'unnamedplus'           -- use system clipboard
+vim.o.completeopt      = 'menuone,noinsert'      -- always display completion menu, do not auto insert
+vim.o.cursorline       = true                    -- highlight line with cursor
+vim.o.expandtab        = true                    -- insert spaces with tab
+vim.o.foldenable       = false                   -- no code folding
+vim.o.ignorecase       = true                    -- when searching
+vim.o.laststatus       = 3                       -- single, global statusline
+vim.o.linebreak        = true                    -- break on whitespace
+vim.o.number           = true                    -- show line numbers
+vim.o.relativenumber   = true                    -- show relative line numbers
+vim.o.shada            = "!,'1000,<50,s10,h"     -- default except 1000 oldfiles
+vim.o.shiftwidth       = 4                       -- width of indent
+vim.o.shortmess        = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
+vim.o.showmode         = false                   -- don't show mode in command line
+vim.o.smartcase        = true                    -- don't ignore case if search string contains uppercase letters
+vim.o.smartindent      = true                    -- indent based on syntax
+vim.o.spelllang        = 'en_us,pl'              -- check English and Polish spelling
+vim.o.spell            = true                    -- enable spell checking
+vim.o.tabstop          = 4                       -- width of tab
+vim.o.termguicolors    = true                    -- 24-bit color support
+vim.o.undofile         = true                    -- persistent undo
+vim.o.updatetime       = 1000                    -- time for various update events
+vim.o.virtualedit      = 'all'                   -- allow virtual editing
+vim.o.visualbell       = true                    -- disable beeping
+vim.o.writebackup      = false                   -- disable backup when overwriting
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -118,6 +117,9 @@ vim.keymap.set('n', '<M-,>', vim.cmd.tabprev)
 vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
+-- Toggle line wrapping
+vim.keymap.set('n', '<leader>1', function() vim.o.wrap = not vim.o.wrap end, { desc = 'Toggle line wrapping' })
+
 -- Diagnostics
 vim.keymap.set('n', '<leader>d', function()
     local win = vim.api.nvim_get_current_win()
@@ -129,7 +131,7 @@ vim.keymap.set('n', '<leader>d', function()
     end
 end, { desc = 'Document diagnostics' })
 vim.keymap.set('n', '<leader>D',
-    function() vim.diagnostic.setqflist { title = 'All diangostics' } end,
+    function() vim.diagnostic.setqflist { title = 'All diagnostics' } end,
     { desc = 'All diagnostics' })
 
 -- Rename current file
@@ -379,13 +381,11 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 -- Replace netrw with lf
 vim.api.nvim_create_autocmd('BufEnter', {
     pattern = '*',
-    callback = function(ev)
-        if vim.bo.buftype == 'term' then
-            return
-        end
-        local path = vim.api.nvim_buf_get_name(ev.buf)
+    callback = function(e)
+        if vim.bo.buftype == 'term' then return end
+        local path = vim.api.nvim_buf_get_name(e.buf)
         if vim.fn.isdirectory(path) == 1 then
-            vim.api.nvim_buf_delete(ev.buf, { force = true })
+            vim.api.nvim_buf_delete(e.buf, { force = true })
             termrun('lf -print-selection ' .. path, edit_or_qfl)
         end
     end,
@@ -430,6 +430,15 @@ vim.api.nvim_create_autocmd('FileType', {
             end,
             { buffer = e.buf, desc = 'Turn into link' })
     end
+})
+
+
+-- No spellcheck in quickfix
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+    pattern = 'qf',
+    callback = function()
+        vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
+    end,
 })
 
 -- Auto-highlight search
@@ -487,11 +496,14 @@ function Statusline()
             local removed = git_dict.removed and git_dict.removed > 0 and ('%#Removed#-' .. git_dict.removed) or ''
             git_info = '  ' .. git_dict.head .. ' ' .. added .. ' ' .. changed .. ' ' .. removed .. '%* '
         end
-        -- Search, file position, file type
+        -- Search, file position, auto-formatting
         local searchcount = vim.fn.searchcount()
         searchcount = searchcount.current .. '/' .. searchcount.total
         local filepos = ' %P %l:%c'
-        return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. searchcount .. filepos
+        local flags = (vim.o.wrap and 'W' or '') ..
+            (vim.b.autoformat and 'F' or '') ..
+            (vim.lsp.inlay_hint.is_enabled() and 'I' or '') .. ' '
+        return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. flags .. searchcount .. filepos
     end)
     return ok and statusline or ''
 end
