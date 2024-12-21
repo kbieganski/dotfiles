@@ -6,9 +6,7 @@ return {
         config = function()
             require 'which-key'.setup {
                 preset = 'modern',
-                icons = {
-                    separator = "➤ ",
-                },
+                icons = { separator = '->', mappings = false },
                 delay = 400,
             }
         end,

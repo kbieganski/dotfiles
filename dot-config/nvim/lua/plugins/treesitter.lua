@@ -4,13 +4,6 @@ local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', '
     'markdown_inline', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
 
 local textobjects = {
-    lsp_interop = {
-        enable = true,
-        border = 'none',
-        peek_definition_code = {
-            ['<M-K>'] = '@*.outer',
-        },
-    },
     move = {
         enable = true,
         set_jumps = true,
@@ -58,38 +51,34 @@ local textobjects = {
     swap = {
         enable = true,
         swap_next = {
-            gsa = '@assignment.outer',
-            gsb = '@block.outer',
-            gsc = '@class.outer',
-            gsf = '@function.outer',
-            gsi = '@conditional.inner',
-            gsp = '@parameter.inner',
-            gss = '@statement.outer',
+            gsb = { query = '@block.outer', desc = 'a block' },
+            gsf = { query = '@function.outer', desc = 'a function' },
+            gsi = { query = '@conditional.inner', desc = 'a conditional' },
+            gsp = { query = '@parameter.inner', desc = 'a parameter' },
+            gss = { query = '@statement.outer', desc = 'a statement' },
+            gst = { query = '@class.outer', desc = 'a class' },
         },
         swap_previous = {
-            gSa = '@assignment.outer',
-            gSb = '@block.outer',
-            gSc = '@class.outer',
-            gSf = '@function.outer',
-            gSi = '@conditional.inner',
-            gSp = '@parameter.inner',
-            gSs = '@statement.outer',
+            gSb = { query = '@block.outer', desc = 'a block' },
+            gSf = { query = '@function.outer', desc = 'a function' },
+            gSi = { query = '@conditional.inner', desc = 'a conditional' },
+            gSp = { query = '@parameter.inner', desc = 'a parameter' },
+            gSs = { query = '@statement.outer', desc = 'a statement' },
+            gSt = { query = '@class.outer', desc = 'a class' },
         },
     },
     select = {
         enable = true,
         lookahead = true,
         keymaps = {
-            af = '@function.outer',
-            ab = '@block.outer',
-            ac = '@class.outer',
-            am = { query = { '@function.outer', '@class.outer' }, desc = 'a class or function' },
-            ['if'] = '@function.inner',
+            ab = { query = '@block.outer', desc = 'a block' },
+            ac = { query = '@call.outer', desc = 'a call' },
+            af = { query = '@function.outer', desc = 'a function' },
+            at = { query = '@class.outer', desc = 'a class' },
             ib = { query = '@block.inner', desc = 'a block' },
-            ic = { query = '@class.inner', desc = 'a class' },
-            im = { query = { '@function.inner', '@class.inner' }, desc = 'a class or function' },
-            as = '@statement.inner',
-            aS = { query = '@scope', query_group = 'locals', desc = 'Select language scope' },
+            ic = { query = '@call.inner', desc = 'a call' },
+            ['if'] = { query = '@function.inner', desc = 'a function' },
+            it = { query = '@class.inner', desc = 'a class' },
         },
         selection_modes = {
             ['@function.outer'] = 'V',

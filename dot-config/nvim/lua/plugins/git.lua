@@ -25,11 +25,12 @@ return {
                     { buffer = bufnr, desc = 'Open in browser' })
                 vim.keymap.set('n', '<leader>Y', function() require 'gitportal'.open_file_in_neovim() end,
                     { buffer = bufnr, desc = 'Open repo link in Neovim' })
-                vim.keymap.set('n', '<leader>X', ':GitConflictListQf<CR>', { buffer = bufnr, desc = 'Git conflicts' })
+                vim.keymap.set('n', '<leader>X', ':GitConflictListQf<CR>',
+                    { silent = true, buffer = bufnr, desc = 'Git conflicts' })
                 require 'which-key'.add { { '<leader>h', desc = 'Git hunk' }, { '<leader>x', desc = 'Git conflict' } }
                 -- Load and refresh git-conflict
                 require 'git-conflict'
-                vim.cmd 'GitConflictRefresh'
+                vim.cmd 'silent! GitConflictRefresh'
             end
         },
     },

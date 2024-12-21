@@ -1,6 +1,5 @@
 -- Options
 vim.o.autochdir        = true                    -- change working dir to buffer dir
-vim.o.autowriteall     = true                    -- auto save files
 vim.o.clipboard        = 'unnamedplus'           -- use system clipboard
 vim.o.completeopt      = 'menuone,noinsert'      -- always display completion menu, do not auto insert
 vim.o.cursorline       = true                    -- highlight line with cursor
@@ -57,16 +56,12 @@ vim.g.mapleader = ' '
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
 vim.keymap.set('n', '<C-c>', '<esc>')
 
--- Faster save
-vim.keymap.set('n', '<leader>w', vim.cmd.w, { desc = 'Write file' })
-vim.keymap.set('n', '<leader>W', vim.cmd.wa, { desc = 'Write all files' })
-
 -- Unmap folds
 for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f', 'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
     vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
 end
 
--- Next, previous error. TODO deprecated, switch to vim.diagnostic.jump
+-- Next, previous error
 vim.keymap.set('n', ']e',
     function() vim.diagnostic.goto_next { severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Next error' })
@@ -84,10 +79,9 @@ vim.keymap.set('n', 'S', '0"-D')
 vim.keymap.set('v', 'p', '"_dP')
 
 -- New keymaps for deleting/replacing without yanking
-vim.keymap.set('n', 'zx', '"_dd', { desc = 'Delete line' })
-vim.keymap.set('v', 'zx', '"_d', { desc = 'Delete selection' })
-vim.keymap.set('n', 'zj', 'o<esc>kj', { desc = 'Insert line below' })
-vim.keymap.set('n', 'zk', 'O<esc>jk', { desc = 'Insert line above' })
+vim.keymap.set('n', '<M-x>', '"_dd', { desc = 'Delete line' })
+vim.keymap.set('v', 'x', '"_d', { desc = 'Delete selection' })
+vim.keymap.set('v', 'X', '"_D', { desc = 'Delete selected lines' })
 
 -- Move up/down on visual lines
 vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { expr = true })
@@ -245,20 +239,19 @@ vim.keymap.set('n', '<leader>o',
         local buf_map = {}
         local buffers = vim.iter(vim.fn.getjumplist()[1]):rev()
             :map(function(jump) return jump.bufnr end)
-            :filter(function(b)
-                if buf_map[b] then return false end
-                if not vim.api.nvim_buf_is_loaded(b) then return false end
-                local name = vim.api.nvim_buf_get_name(b)
+            :filter(function(bufnr)
+                if buf_map[bufnr] then return false end
+                if not vim.api.nvim_buf_is_loaded(bufnr) then return false end
+                local name = vim.api.nvim_buf_get_name(bufnr)
                 if name == '' then return false end
-                buf_map[b] = name
-                return b ~= current_buf and vim.api.nvim_get_option_value('buftype', { buf = b }) == ''
+                buf_map[bufnr] = name
+                return bufnr ~= current_buf and vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
             end)
             :map(function(b) return buf_map[b] end):totable()
-        buf_map = vim.iter(pairs(buf_map))
-            :fold({}, function(tbl, b, f)
-                tbl[f] = b
-                return tbl
-            end)
+        buf_map = vim.iter(pairs(buf_map)):fold({}, function(tbl, bufnr, filename)
+            tbl[filename] = bufnr
+            return tbl
+        end)
         local oldfiles = vim.iter(vim.v.oldfiles)
             :filter(function(f) return vim.uv.fs_stat(f) and not buf_map[f] end)
             :totable()
@@ -352,6 +345,33 @@ end
 vim.keymap.set('n', '<leader>u', undotree, { desc = 'Undo tree' })
 
 -- Autocmds
+-- Autosave
+local autosave_timer = vim.loop.new_timer()
+local function write_buf_if_exists(bufnr)
+    if vim.uv.fs_stat(vim.api.nvim_buf_get_name(bufnr)) then
+        vim.api.nvim_buf_call(bufnr, function() vim.cmd 'silent! write' end)
+    end
+end
+
+vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'CursorMovedI' }, {
+    nested = true,
+    callback = function(e)
+        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+            autosave_timer:start(2000, 0, vim.schedule_wrap(function() write_buf_if_exists(e.buf) end))
+        end
+    end,
+})
+
+vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave', 'FocusLost' }, {
+    nested = true,
+    callback = function(e)
+        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+            autosave_timer:stop()
+            write_buf_if_exists(e.buf)
+        end
+    end,
+})
+
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained' }, {
     callback = function() vim.cmd.checktime() end,
@@ -409,7 +429,7 @@ end
 vim.api.nvim_create_autocmd('FileType', {
     pattern = 'markdown',
     callback = function(e)
-        vim.opt_local.conceallevel = 2 -- conceal links
+        vim.opt_local.conceallevel = 1
         vim.keymap.set('n', '<leader>l',
             function()
                 local clipboard = vim.fn.getreg '+'
