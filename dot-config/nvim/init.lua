@@ -112,7 +112,7 @@ vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
 -- Toggle line wrapping
-vim.keymap.set('n', '<leader>1', function() vim.o.wrap = not vim.o.wrap end, { desc = 'Toggle line wrapping' })
+vim.keymap.set('n', '<leader>w', function() vim.o.wrap = not vim.o.wrap end, { desc = 'Toggle line wrapping' })
 
 -- Diagnostics
 vim.keymap.set('n', '<leader>d', function()
@@ -362,7 +362,7 @@ vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'Cur
     end,
 })
 
-vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave', 'FocusLost' }, {
+vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave', 'VimSuspend', 'VimLeave', 'FocusLost' }, {
     nested = true,
     callback = function(e)
         if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
@@ -535,6 +535,7 @@ vim.o.statusline = [[%!v:lua.Statusline()]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
     vim.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
+        :wait()
 end
 vim.opt.rtp:prepend(lazypath)
 require 'lazy'.setup {
