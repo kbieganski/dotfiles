@@ -8,7 +8,6 @@ bat
 bc
 bear
 brightnessctl
-cabal-install
 ccache
 clang
 cmake
@@ -30,7 +29,6 @@ flameshot
 fq
 fzf
 gdb
-ghc
 git
 git-absorb
 git-delta
@@ -81,7 +79,6 @@ noto-fonts-emoji
 npm
 obs-studio
 openssh
-p7zip
 pacman-contrib
 parallel
 perf
@@ -107,7 +104,6 @@ sd
 shellcheck
 shfmt
 sshfs
-stack
 stow
 strace
 stylua
