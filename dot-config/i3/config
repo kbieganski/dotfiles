@@ -127,11 +127,8 @@ font pango:Noto Sans 10
 default_border normal 1
 for_window [title="."] title_format "%title"
 for_window [class="firefox"] border pixel 1
-for_window [class="Chromium"] border pixel 1
-for_window [class="Spotify"] border pixel 1
-for_window [class="Steam"] border pixel 1
-for_window [class="Steam" title="Steam - News.*"] floating enable
-for_window [class="Steam" title="Friends"] floating enable
-no_focus [title="^deno$|^Peek preview$"]
+for_window [class="steam"] border pixel 1
+for_window [class="steam" title="Steam - News.*"] floating enable
+for_window [class="steam" title="Friends List"] floating enable
 title_align center
 hide_edge_borders smart
