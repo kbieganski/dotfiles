@@ -129,6 +129,10 @@ alias vim=nvim
 
 alias icat='kitty +kitten icat'
 
+lfcd () {
+    cd "$(lf -print-last-dir "$@")"
+}
+
 source <(cat $(dirname ${(%):-%N})/.config/zsh/*.zsh)
 
 source "$HOME/dotfiles/ext/spaceship/spaceship.zsh"

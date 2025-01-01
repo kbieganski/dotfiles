@@ -21,9 +21,7 @@ return {
                             end,
                         },
                     },
-                    completion = {
-                        enabled_providers = { 'lsp', 'path', 'buffer', 'copilot' },
-                    },
+                    default = { 'lsp', 'path', 'buffer', 'copilot' },
                 },
                 appearance = {
                     kind_icons = vim.tbl_extend('force', require 'lspkind'.symbol_map, {

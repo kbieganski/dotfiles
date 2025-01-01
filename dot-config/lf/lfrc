@@ -108,9 +108,6 @@ cmd open-with-cli $$@ $fx # opens synchronously, intended for CLI/TUI applicatio
 map O push :open-with-gui<space>
 map o push :open-with-cli<space>
 
-# Upload file to share
-cmd share $curl -F"file=@$fx" -Fexpires=24 https://0x0.st | xclip -selection c
-
 # set pane_path when changing directory
 cmd on-cd &printf '\033]7;%s\033\' "$PWD" > /dev/tty
 

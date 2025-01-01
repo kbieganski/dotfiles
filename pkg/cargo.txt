@@ -10,4 +10,3 @@ cargo-vendor
 cargo-watch
 flamegraph
 kani-verifier
-watchexec-cli
