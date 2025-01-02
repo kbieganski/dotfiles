@@ -23,20 +23,16 @@ SAVEHIST=10000
 
 # Reload environment variables from tmux
 function precmd {
-    local ssh_connection=$(tmux show-env | grep "^SSH_CONNECTION")
-    if [ -n "$ssh_connection" ]; then
-        export $ssh_connection
-    else
-        unset SSH_CONNECTION
-    fi
-    local ssh_auth_sock=$(tmux show-env | grep "^SSH_AUTH_SOCK")
-    if [ -n "$ssh_auth_sock" ]; then
-        export $ssh_auth_sock
-    fi
-    local display=$(tmux show-env | grep "^DISPLAY")
-    if [ -n "$display" ]; then
-        export $display
-    fi
+    unset SSH_CONNECTION
+    while read var; do
+        if [[ "$var" =~ "^SSH_CONNECTION.*" ]]; then
+            export $var
+        elif [[ "$var" =~ "^SSH_AUTH_SOCK.*" ]]; then
+            export $var
+        elif [[ "$var" =~ "^DISPLAY.*" ]]; then
+            export $var
+        fi
+    done < <(tmux show-env)
 }
 
 # Bindings
@@ -141,6 +137,7 @@ source <(fzf --zsh)
 
 source $HOME/dotfiles/ext/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
 ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=white,bold
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]=none
 ZSH_HIGHLIGHT_STYLES[bracket-level-2]=none

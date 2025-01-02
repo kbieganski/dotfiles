@@ -362,7 +362,7 @@ vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'Cur
     end,
 })
 
-vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave', 'VimSuspend', 'VimLeave', 'FocusLost' }, {
+vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave', 'VimSuspend', 'VimLeave', 'FocusLost' }, {
     nested = true,
     callback = function(e)
         if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then

@@ -9,3 +9,4 @@ export LS_COLORS='rs=0:di=01;37:ln=00;34:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;
 export EZA_COLORS="*=fg:$LS_COLORS"
 export FZF_DEFAULT_OPTS="$(< $HOME/.config/fzf-theme) --preview-window=border-sharp --prompt= --marker=⏵ --pointer=⏵ --separator=─ --scrollbar=│"
 export RIPGREP_CONFIG_PATH=$HOME/.config/rg
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock

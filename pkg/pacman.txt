@@ -25,6 +25,7 @@ feh
 firefox
 flameshot
 fq
+fuse-overlayfs
 fzf
 gdb
 git
@@ -84,6 +85,7 @@ pipewire-pulse
 playerctl
 podman
 podman-compose
+podman-docker
 python-pip
 python-pipx
 qemu-full
