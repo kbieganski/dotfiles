@@ -124,9 +124,10 @@ silent i3-msg restart
 
 section "(Re)starting systemd services"
 silent systemctl --user daemon-reload
-for service in ~/.config/systemd/user/*.service; do
-    silent systemctl --user reenable --now "$(basename "$service")"
+for service in ~/.config/systemd/user/*.service podman.socket; do
+    service="$(basename "$service")"
+    silent systemctl --user reenable "$service"
+    silent systemctl --user restart "$service"
 done
-silent systemctl --user reenable --now podman.socket
 
 printf "\e[32mDone.\e[0m\n"

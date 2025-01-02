@@ -26,6 +26,9 @@ vim.o.virtualedit      = 'all'                   -- allow virtual editing
 vim.o.visualbell       = true                    -- disable beeping
 vim.o.writebackup      = false                   -- disable backup when overwriting
 
+-- Spellfile
+vim.o.spellfile        = os.getenv 'HOME' .. '/secrets/spellfile.utf-8.add'
+
 -- Diagnostics
 local diagnostic_signs = {
     [vim.diagnostic.severity.ERROR] = ' ',

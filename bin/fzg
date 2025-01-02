@@ -14,6 +14,6 @@ fzf --disabled --ansi --multi \
     --bind 'alt-a:select-all,alt-d:deselect-all' \
     --bind "enter:$enter" \
     --delimiter : \
-    --preview 'bat {1} --color=always --line-range {2}:' \
-    --preview-window '<80(up)' \
+    --preview 'bat {1} --color=always --highlight-line={2}' \
+    --preview-window '<80(up),+{2}/2' \
     "$@"
