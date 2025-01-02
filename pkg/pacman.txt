@@ -1,3 +1,4 @@
+7zip
 acpi
 act
 arc-gtk-theme
@@ -7,6 +8,7 @@ base-devel
 bash-language-server
 bat
 bear
+blender
 brightnessctl
 clang
 cmake
