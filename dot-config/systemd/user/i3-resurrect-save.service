@@ -1,6 +1,0 @@
-[Unit]
-Description=Saves i3 environment
-
-[Service]
-ExecStart=sh -c "i3-msg -t get_workspaces | jq -r '.[].name' | xargs -n1 i3-resurrect save -w"
-Type=oneshot

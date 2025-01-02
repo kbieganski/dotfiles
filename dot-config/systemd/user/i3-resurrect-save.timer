@@ -1,9 +1,0 @@
-[Unit]
-Description=Saves i3 environment  (timer)
-
-[Timer]
-OnUnitActiveSec=60s
-OnBootSec=60s
-
-[Install]
-WantedBy=timers.target
