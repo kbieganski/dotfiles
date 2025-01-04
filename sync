@@ -126,8 +126,7 @@ section "(Re)starting systemd services"
 silent systemctl --user daemon-reload
 for service in ~/.config/systemd/user/*.service podman.socket; do
     service="$(basename "$service")"
-    silent systemctl --user reenable "$service"
-    silent systemctl --user restart "$service"
+    silent systemctl --user enable --now "$service"
 done
 
 printf "\e[32mDone.\e[0m\n"

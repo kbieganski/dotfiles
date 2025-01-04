@@ -60,9 +60,13 @@ map | fzf
 
 # \ to ripgrep current dir
 cmd rg ${{
-    file=$(fzf | cut -d: -f1)
-    if [ -n "$file" ]; then
-        lf -remote "send $id :select $file"
+    if [ -n "$NVIM" ]; then
+        file=$(fzg | cut -d: -f1)
+        if [ -n "$file" ]; then
+            lf -remote "send $id :select $file; open"
+        fi
+    else
+        fzg
     fi
 }}
 map \\ rg
@@ -102,11 +106,11 @@ map P :link
 # Copy path to clipboard
 cmd yank-path $printf '%s' "$f" | xclip -i -selection clipboard
 
-# Open file with GUI or CLI
-cmd open-with-gui &$@ $fx # opens asynchronously, intended for GUI applications
-cmd open-with-cli $$@ $fx # opens synchronously, intended for CLI/TUI applications
-map O push :open-with-gui<space>
-map o push :open-with-cli<space>
+# Open file synchronously/asynchronously
+cmd open-sync $$@ $fx
+cmd open-async &$@ $fx
+map o push :open-sync<space>
+map O push :open-async<space>
 
 # set pane_path when changing directory
 cmd on-cd &printf '\033]7;%s\033\' "$PWD" > /dev/tty
