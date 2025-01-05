@@ -27,7 +27,7 @@ vim.o.visualbell       = true                    -- disable beeping
 vim.o.writebackup      = false                   -- disable backup when overwriting
 
 -- Spellfile
-vim.o.spellfile        = os.getenv 'HOME' .. '/secrets/spellfile.utf-8.add'
+vim.o.spellfile        = os.getenv 'HOME' .. '/sync/spellfile.utf-8.add'
 
 -- Diagnostics
 local diagnostic_signs = {

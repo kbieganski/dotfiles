@@ -6,10 +6,6 @@
 	path = ext/aur/rr
 	url = https://aur.archlinux.org/rr.git
 	ignore = dirty
-[submodule "ext/dotfiles-secret"]
-	path = ext/dotfiles-secret
-	url = git@github.com:kbieganski/dotfiles-secret
-	branch = main
 [submodule "ext/fzf-tab"]
 	path = ext/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab.git
