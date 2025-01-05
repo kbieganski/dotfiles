@@ -1,0 +1,11 @@
+Host *
+  ServerAliveInterval 30
+  ControlMaster auto
+  ControlPath ~/.ssh/master-%r@%h:%p
+  ControlPersist 4h
+
+Include hosts.conf
+
+Host localhost
+  UserKnownHostsFile /dev/null
+

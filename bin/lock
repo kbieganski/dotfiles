@@ -1,0 +1,18 @@
+#!/bin/sh
+# shellcheck disable=SC2086
+
+dunstctl set-paused true
+theme=$(cat "$HOME/.config/i3/lock-theme")
+i3lock --blur=4 --clock --indicator \
+    --date-font="Noto Sans" \
+    --time-font="Noto Sans" \
+    --verif-font="Noto Sans" \
+    --wrong-font="Noto Sans" \
+    $theme \
+    --time-str="%H:%M" \
+    --date-str="%a, %b %d" \
+    --verif-text="Unlocking" \
+    --wrong-text="Incorrect" \
+    --noinput-text="No input" \
+    --nofork
+dunstctl set-paused false

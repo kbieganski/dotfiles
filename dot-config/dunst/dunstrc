@@ -1,0 +1,34 @@
+[global]
+    sort = yes
+    indicate_hidden = yes
+    show_age_threshold = -1
+    idle_threshold = 120
+    follow = mouse
+    browser = /usr/bin/firefox
+
+    font = Noto Sans 10
+    allow_markup = yes
+    format = "<i>%a</i>\n<b>%s</b>\n%b"
+    alignment = center
+    word_wrap = no
+    bounce_freq = 0
+    ignore_newline = no
+
+    geometry = "200x5-50+50"
+    shrink = no
+
+    sticky_history = no
+    history_length = 5
+    startup_notification = false
+
+    line_height = 0
+    padding = 16
+    horizontal_padding = 8
+    separator_height = 0
+    separator_color = auto
+    icon_position = off
+
+    frame_width = 0
+
+[frame]
+    width = 0

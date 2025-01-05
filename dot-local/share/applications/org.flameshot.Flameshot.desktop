@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Flameshot
+Type=Application
+Icon=org.flameshot.Flameshot
+StartupNotify=false
+Exec=flameshot gui
+Categories=Graphics;
+StartupWMClass=flameshot

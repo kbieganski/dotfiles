@@ -1,0 +1,119 @@
+set cursoractivefmt "\033[7m"
+set cursorparentfmt "\033[7m"
+set cursorpreviewfmt "\033[4m"
+set cutfmt "\033[7;31m"
+set copyfmt "\033[7;32m"
+set icons true
+set incfilter true
+set incsearch true
+set mouse true
+set previewer bat
+set selectfmt "\033[7;34m"
+set tagfmt "\033[37m"
+
+map <esc> quit
+
+# Batch rename
+cmd rename &{{
+    old="$(mktemp)"
+    new="$(mktemp)"
+    echo "${fs[@]}" > ~/test.txt
+    if [ -n "$fs" ]; then
+        while IFS= read -r f; do
+            echo "$(basename "$f")" >> "$old"
+        done <<< "$fs"
+    else
+        echo "$(basename "$f")" > "$old"
+    fi
+    cat "$old" > "$new"
+    tmux display-popup -E $EDITOR "$new"
+    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+    paste "$old" "$new" | while IFS= read -r names; do
+        src="$(printf '%s' "$names" | cut -f1)"
+        dst="$(printf '%s' "$names" | cut -f2)"
+        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+            continue
+        fi
+        mv -- "$src" "$dst"
+    done
+    rm -- "$old" "$new"
+    lf -remote "send $id unselect"
+}}
+
+# Change parent dir
+cmd move-parent &{{
+    dironly="setlocal \"$(dirname -- "$PWD" | sed 's/\\/\\\\/g;s/"/\\"/g')\" dironly"
+    lf -remote "send $id :updir; $dironly true; $1; $dironly false; open"
+}}
+
+map J move-parent down
+map K move-parent up
+
+# | to fzf current dir
+cmd fzf ${{
+    file=$(fzf --preview 'bat {} --color=always' --preview-window='<80(up)')
+    if [ -n "$file" ]; then
+        lf -remote "send $id :select $file"
+    fi
+}}
+map | fzf
+
+# \ to ripgrep current dir
+cmd rg ${{
+    if [ -n "$NVIM" ]; then
+        file=$(fzg | cut -d: -f1)
+        if [ -n "$file" ]; then
+            lf -remote "send $id :select $file; open"
+        fi
+    else
+        fzg
+    fi
+}}
+map \\ rg
+
+# Inside Neovim, open with e, ignore w
+&{{
+    if [ -n "$NVIM" ]; then
+        lf -remote "send $id :map e open; map w"
+    fi
+}}
+
+# y (select for copy) and P to paste soft-link
+# d (select for cut) and P to paste hard-link
+cmd link %{{
+    set -- $(cat $HOME/local/share/lf/files)
+    mode="$1"
+    shift
+    if [ "$#" -lt 1 ]; then
+        lf -remote "send $id echo no files to link"
+        exit
+    fi
+    case "$mode" in
+        # symbolically copy mode is indicating a soft link
+        copy) ln -sr -t . -- "$@";;
+        # while a move mode is indicating a hard link
+        move) ln -t . -- "$@";;
+    esac
+    rm $HOME/.local/share/lf/files
+    lf -remote "send clear"
+}}
+map P :link
+
+# Copy path to clipboard
+cmd yank-path $printf '%s' "$f" | xclip -i -selection clipboard
+
+# Open file synchronously/asynchronously
+cmd open-sync $$@ $fx
+cmd open-async &$@ $fx
+map o push :open-sync<space>
+map O push :open-async<space>
+
+# set pane_path when changing directory
+cmd on-cd &printf '\033]7;%s\033\' "$PWD" > /dev/tty
+
+# unset pane_path when quitting
+cmd on-quit &printf '\033]7;\033\' > /dev/tty
+
+# trigger on-cd upon startup
+on-cd
+

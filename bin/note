@@ -1,0 +1,44 @@
+#!/bin/env bash
+
+print=false
+if [ -n "$NVIM" ]; then
+    print=true
+fi
+grep=false
+if [ "$1" == "--grep" ]; then
+    grep=true
+    shift
+elif [ $# -gt 0 ]; then
+    echo "Invalid arguments"
+    exit 1
+fi
+
+notes_dir="$HOME/notes"
+mkdir -p "$notes_dir"
+cd "$notes_dir" || exit 1
+
+if $grep; then
+    action="become(nvim +{2} {1})"
+    $print && action="become(echo -n $notes_dir/{1}:{2}:{3})"
+
+    reload='reload:rg --column --color=always --smart-case {q} || :'
+    fzf --disabled --ansi --multi \
+        --bind "start:$reload" --bind "change:$reload" \
+        --bind "enter:$action" \
+        --delimiter : \
+        --preview 'bat {1} --color=always --highlight-line={2}' \
+        --preview-window '<80(up),+{2}/2' \
+        --query "$*"
+else
+    action="become(nvim {}.md)"
+    alt_action="become(nvim {q}.md)"
+    if $print; then
+        action="become(echo -n $notes_dir/{}.md)"
+        alt_action="become(echo -n $notes_dir/{q}.md)"
+    fi
+
+    fzf --bind "start:reload:fd '.*\\.md' | sed 's/.md$//'" \
+        --bind "enter:$action" \
+        --bind "alt-enter:$alt_action" \
+        --preview 'bat {}.md --color=always'
+fi
