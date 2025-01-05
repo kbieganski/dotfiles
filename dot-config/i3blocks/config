@@ -1,0 +1,65 @@
+command=~/.config/i3blocks/blocks/$BLOCK_NAME/$BLOCK_NAME
+separator_block_width=10
+markup=pango
+
+[arch-update]
+interval=3600
+QUIET=true
+LABEL=<big> </big>
+UPDATE_COLOR=#E9E9E9
+
+[mediaplayer]
+label=<small>▶ </small>
+interval=5
+signal=10
+
+[volume-pipewire]
+label=<big>♪ </big>
+LONG_FORMAT=${VOL}%
+min_width=<big>♪ </big>100%
+interval=1
+
+[wifi]
+label=<small><b>SIG </b></small>
+min_width=<small><b>SIG </b></small>100%
+interval=10
+COLOR_GE80=#E9E9E9
+
+[ssid]
+label=<small><b>NET </b></small>
+interval=60
+
+[memory]
+label=<small><b>RAM </b></small>
+min_width=<small><b>RAM </b></small>000.0G/000.0G (100%)
+interval=10
+
+[memory]
+label=<small><b>SWP </b></small>
+min_width=<small><b>SWP </b></small>000.0G/000.0G (100%)
+instance=swap
+interval=10
+
+[cpu_usage]
+label=<small><b>CPU </b></small>
+min_width=<small><b>CPU </b></small>0000.00%
+interval=5
+align=center
+COLOR_NORMAL=#E9E9E9
+
+[disk]
+label=<small><b>DRV </b></small>
+min_width=<small><b>DRV </b></small>0000.0G
+interval=30
+
+[battery]
+label=<big><b>⚡︎ </b></big>
+min_width=<big><b>⚡︎ </b></big> 100% HR (00:00)
+interval=30
+
+[time]
+STRFTIME_FORMAT=%Y-%m-%d %H:%M:%S
+TZONES=$DEFAULT_TZ,-
+TZ_LABELS=,-
+min_width=0000-00-00 00:00:00
+interval=1

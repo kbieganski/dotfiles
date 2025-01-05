@@ -1,0 +1,8 @@
+--dotfiles
+--no-folding
+--ignore='\.git'
+--ignore='\.gitignore'
+--ignore='\.gitmodule'
+--ignore='ext'
+--ignore='pkg'
+--ignore='sync-setup'

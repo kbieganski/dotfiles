@@ -1,0 +1,12 @@
+cargo-deny
+cargo-expand
+cargo-geiger
+cargo-llvm-cov
+cargo-nextest
+cargo-outdated
+cargo-readme
+cargo-tarpaulin
+cargo-vendor
+cargo-watch
+flamegraph
+kani-verifier

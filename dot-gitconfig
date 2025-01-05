@@ -1,0 +1,118 @@
+[user]
+    email = krzysztof@biegan.ski
+    name = Krzysztof Biegański
+
+[includeIf "gitdir/i:work/"]
+    path = .gitconfig-work
+
+[core]
+    autocrlf = input
+    excludesFile = ~/.gitignore
+    hooksPath = ~/.githooks
+    pager = delta --syntax-theme=austere-theme
+
+[diff]
+    algorithm = patience
+    colorMoved = blocks
+    colorMovedWS = ignore-all-space
+    mnemonicPrefix = true
+    submodule = log
+    tool = difftastic
+
+[include]
+    path = ~/dotfiles/ext/austere-theme/delta.gitconfig
+
+[difftool]
+    prompt = false
+
+[delta]
+    navigate = true
+    hunk-header-style = omit
+    side-by-side = true
+    line-numbers-left-format = " {np:>4} "
+    line-numbers-right-format = ""
+
+[difftool "difftastic"]
+    cmd = difft --background light --ignore-comments --display inline "$LOCAL" "$REMOTE"
+
+[fetch]
+    recurseSubmodules = on-demand
+
+[init]
+    defaultBranch = main
+
+[interactive]
+    diffFilter = delta --color-only
+
+[pager]
+    difftool = true
+
+[pull]
+    rebase = merges
+
+[push]
+    default = upstream
+    recurseSubmodules = on-demand
+
+[rebase]
+    autostash = true
+    autosquash = true
+
+[rerere]
+    autoupdate = true
+    enabled = true
+
+[status]
+    submoduleSummary = true
+
+[tag]
+    sort = version:refname
+
+[alias]
+    a = add
+    apa = add --patch
+
+    b = branch
+    bc = switch -c
+    bd = branch -D
+
+    c = commit
+    ca = commit --amend --no-edit
+    cl = clone --recursive -j`nproc`
+    co = checkout
+
+    d = diff
+    difft = difftool
+    dt = difftool
+
+    fixup = commit --fixup
+    fx = !git fixup
+    ffx = ffixup
+
+    p = push
+    pf = !git pushf
+    pl = pull
+    pushf = push --force-with-lease
+
+    r = remote
+    ra = remote add
+    rb = rebase
+    rbi = rebase -i
+    frb = frebase
+    frbi = frebase -i
+    reword = commit --amend
+    rw = !git reword
+
+    s = show
+    save = commit --allow-empty-message --message ""
+    st = status
+    sw = switch
+    swc = switch -c
+    swd = switch -d
+
+    uncommit = reset --soft HEAD~
+    uc = !git uncommit
+    unstage = restore --staged
+    us = !git unstage
+    untrack = rm --cache --
+    ut = !git untrack

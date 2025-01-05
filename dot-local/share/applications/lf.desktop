@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=lf
+Type=Application
+Icon=utilities-terminal
+Exec=kitty --single-instance lf %f
+Categories=ConsoleOnly;System;FileTools;FileManager
+MimeType=inode/directory;

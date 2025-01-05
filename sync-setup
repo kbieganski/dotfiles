@@ -1,0 +1,125 @@
+#!/bin/env bash
+
+dotfiles_dir=$(dirname "${BASH_SOURCE[0]}")
+pkg_dir=pkg
+pacman_req_pkgs=$pkg_dir/pacman.txt
+pacman_cur_pkgs=$pkg_dir/.pacman.txt
+
+function section {
+    printf "=> \e[34m%s\e[0m\n" "$@"
+}
+
+function silent {
+    local temp=$(mktemp)
+    if ! "$@" &>"$temp"; then
+        cat "$temp"
+        printf "\e[31mFailed: '\e[0m%s\e[31m'\e[0m\n" "$*"
+        exit 1
+    fi
+}
+
+cd "$dotfiles_dir" || exit 1
+
+if ! grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
+    section "Setting zsh as default shell"
+    sudo chsh -s "$(which zsh)"
+fi
+
+section "Pulling changes"
+old_commit=$(git rev-parse HEAD)
+silent git pull
+silent git submodule update --init --recursive
+silent stow .
+if ! [ -d /var/screenshots/ ]; then
+    silent sudo ln -s "$HOME/screenshots/ /var"
+fi
+if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
+    section "Re-running self"
+    exec $0
+fi
+
+section "Deleting Arch packages"
+touch $pacman_cur_pkgs
+pacman_del_pkgs=$(comm -23 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
+if [ -n "$pacman_del_pkgs" ]; then
+    silent sudo pacman -Rs --noconfirm $pacman_del_pkgs
+fi
+
+section "Installing Arch packages"
+pacman_new_pkgs=$(comm -13 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
+if [ -n "$pacman_new_pkgs" ]; then
+    silent sudo pacman -Sy --noconfirm --needed $pacman_new_pkgs
+fi
+
+section "Saving Arch package list"
+pacman -Qqne | rg -v "(amd|ati|intel|nvidia|cuda|mesa|wacom)" | sort >$pacman_cur_pkgs
+cp $pacman_cur_pkgs $pacman_req_pkgs
+git add $pacman_req_pkgs
+
+section "Installing AUR packages"
+function PKGBUILD_get {
+    grep "$1"= <PKGBUILD | cut -d= -f2
+}
+for pkg_path in ext/aur/*; do
+    silent pushd "$pkg_path"
+    pkgname=$(PKGBUILD_get pkgname)
+    pkgver=$(PKGBUILD_get pkgver)
+    pkgrel=$(PKGBUILD_get pkgrel)
+    if [ "$(pacman -Q | grep "$pkgname " | cut -d' ' -f2)" != "$pkgver-$pkgrel" ]; then
+        silent makepkg -si --needed --noconfirm
+    fi
+    silent popd
+done
+
+section "Installing Python packages"
+while read -r pkg; do
+    silent pipx install --force "$pkg"
+done <$pkg_dir/pipx.txt
+
+section "Installing Rust packages"
+silent rustup self upgrade-data
+for toolchain in stable nightly; do
+    silent rustup toolchain install --profile default $toolchain
+    while read -r pkg; do
+        silent rustup +$toolchain component add "$pkg"
+    done <$pkg_dir/rustup-$toolchain.txt
+    while read -r pkg; do
+        silent cargo +$toolchain install --locked "$pkg"
+    done <$pkg_dir/cargo.txt
+done
+
+section "Installing Go packages"
+while read -r pkg; do
+    silent go install "$pkg"
+done <$pkg_dir/go.txt
+
+if [ -n "$(git diff --staged --name-only)" ]; then
+    section "Committing and pushing changes"
+    remote=$(git remote get-url origin)
+    if [[ "$remote" =~ "https://" ]]; then
+        silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
+    fi
+    silent git save
+    silent git push
+fi
+
+section "Restoring Neovim plugins"
+silent nvim '+Lazy! restore' +qa
+
+section "Updating bat cache"
+silent bat cache --build
+
+section "Updating .desktop database"
+update-desktop-database ~/.local/share/applications
+
+section "Restarting i3"
+silent i3-msg restart
+
+section "(Re)starting systemd services"
+silent systemctl --user daemon-reload
+for service in ~/.config/systemd/user/*.service podman.socket; do
+    service="$(basename "$service")"
+    silent systemctl --user enable --now "$service"
+done
+
+printf "\e[32mDone.\e[0m\n"

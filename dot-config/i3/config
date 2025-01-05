@@ -1,0 +1,133 @@
+set $mod Mod4
+
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $menu
+
+exec --no-startup-id feh --bg-fill --no-xinerama ~/background.png
+
+bindsym $mod+Return exec kitty --single-instance
+
+bindsym $mod+BackSpace exec lock
+
+bindsym $mod+Shift+q kill
+
+bindsym $mod+space exec rofi -show drun -modi drun -show-icons
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'"
+bindsym $mod+Shift+r restart
+
+bindsym --release button2 kill
+
+bindsym $mod+o exec rofimoji --prompt "emoji" --skin-tone neutral --max-recent 0
+bindsym $mod+equal exec rofi -show calc -modi calc -no-show-match -no-sort
+bindsym $mod+backslash exec rofi -show ssh -modi ssh -terminal i3-sensible-terminal
+bindsym $mod+p exec keepmenu --autotype "{PASSWORD}"
+bindsym $mod+Shift+p exec keepmenu
+
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+a focus parent
+
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+bindsym $mod+v split h
+bindsym $mod+b split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+Tab floating toggle
+floating_modifier $mod
+
+bindsym $mod+grave exec "dunstctl close"
+bindsym $mod+Shift+grave exec "dunstctl close-all"
+
+bindsym XF86MonBrightnessDown exec "brightnessctl set 5%-"
+bindsym XF86MonBrightnessUp exec "brightnessctl set 5%+"
+
+bindsym XF86AudioRaiseVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%+ --limit 1"
+bindsym XF86AudioLowerVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%- --limit 1"
+bindsym XF86AudioMute exec "wpctl set-mute @DEFAULT_SINK@ toggle"
+
+bindsym XF86AudioNext exec "playerctl next"
+bindsym XF86AudioPrev exec "playerctl previous"
+bindsym XF86AudioPlay exec "playerctl play-pause"
+
+mode "resize" {
+    bindsym $left  resize shrink width 10 px or 10 ppt
+    bindsym $down  resize grow height 10 px or 10 ppt
+    bindsym $up    resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    bindsym Left   resize shrink width 10 px or 10 ppt
+    bindsym Down   resize grow height 10 px or 10 ppt
+    bindsym Up     resize shrink height 10 px or 10 ppt
+    bindsym Right  resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+tiling_drag titlebar
+focus_wrapping no
+
+#--- Bar ------------------------------------------------------------------
+set $status_command i3blocks
+set $i3bar_command i3bar
+set $tray_output primary
+include bar.conf
+
+#--- Theme ----------------------------------------------------------------
+include theme.conf
+font pango:Noto Sans 10
+default_border normal 1
+for_window [title="."] title_format "%title"
+for_window [class="firefox"] border pixel 1
+for_window [class="steam"] border pixel 1
+for_window [class="steam" title="Steam - News.*"] floating enable
+for_window [class="steam" title="Friends List"] floating enable
+title_align center

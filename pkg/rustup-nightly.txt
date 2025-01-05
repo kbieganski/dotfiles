@@ -1,0 +1,3 @@
+miri
+rust-analyzer
+rustc-codegen-cranelift
