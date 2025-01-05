@@ -115,6 +115,7 @@ tealdeer
 time
 tmux
 tokei
+tree
 ttc-iosevka
 ttf-nerd-fonts-symbols-mono
 typescript-language-server

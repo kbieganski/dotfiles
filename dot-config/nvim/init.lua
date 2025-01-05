@@ -31,10 +31,10 @@ vim.o.spellfile        = os.getenv 'HOME' .. '/secrets/spellfile.utf-8.add'
 
 -- Diagnostics
 local diagnostic_signs = {
-    [vim.diagnostic.severity.ERROR] = ' ',
-    [vim.diagnostic.severity.WARN] = ' ',
+    [vim.diagnostic.severity.ERROR] = ' ',
+    [vim.diagnostic.severity.WARN] = ' ',
     [vim.diagnostic.severity.INFO] = ' ',
-    [vim.diagnostic.severity.HINT] = ' ',
+    [vim.diagnostic.severity.HINT] = ' ',
 }
 vim.diagnostic.config {
     virtual_text = false,
