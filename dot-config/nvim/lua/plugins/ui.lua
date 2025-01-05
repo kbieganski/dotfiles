@@ -2,6 +2,12 @@
 
 return {
     {
+        'kbieganski/austere-theme.nvim',
+        config = function()
+            vim.cmd.colorscheme 'austere-theme'
+        end
+    },
+    {
         'folke/which-key.nvim',
         config = function()
             require 'which-key'.setup {

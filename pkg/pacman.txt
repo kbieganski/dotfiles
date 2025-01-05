@@ -53,6 +53,7 @@ jc
 jq
 keepassxc
 kitty
+krita
 lcov
 lf
 libvirt

@@ -542,7 +542,7 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 require 'lazy'.setup {
-    spec = { { import = 'plugins' }, { import = 'dev' } },
+    spec = { { import = 'plugins' } },
     dev = {
         path = '~/proj',
         fallback = true,
