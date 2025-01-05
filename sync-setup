@@ -4,7 +4,6 @@ dotfiles_dir=$(dirname "${BASH_SOURCE[0]}")
 pkg_dir=pkg
 pacman_req_pkgs=$pkg_dir/pacman.txt
 pacman_cur_pkgs=$pkg_dir/.pacman.txt
-secret_dir=ext/dotfiles-secret
 
 function section {
     printf "=> \e[34m%s\e[0m\n" "$@"
@@ -93,22 +92,6 @@ section "Installing Go packages"
 while read -r pkg; do
     silent go install "$pkg"
 done <$pkg_dir/go.txt
-
-if [ -n "$(git -C $secret_dir diff --staged --name-only)" ] ||
-    [ -n "$(git diff --staged --name-only)" ]; then
-    section "Committing and pushing changes"
-    remote=$(git remote get-url origin)
-    if [[ "$remote" =~ "https://" ]]; then
-        silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
-    fi
-    if [ -n "$(git -C $secret_dir diff --staged --name-only)" ]; then
-        silent git -C $secret_dir save
-        silent git -C $secret_dir push
-    fi
-    silent git add $secret_dir
-    silent git save
-    silent git push
-fi
 
 section "Restoring Neovim plugins"
 silent nvim '+Lazy! restore' +qa
