@@ -93,6 +93,16 @@ while read -r pkg; do
     silent go install "$pkg"
 done <$pkg_dir/go.txt
 
+if [ -n "$(git diff --staged --name-only)" ]; then
+    section "Committing and pushing changes"
+    remote=$(git remote get-url origin)
+    if [[ "$remote" =~ "https://" ]]; then
+        silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
+    fi
+    silent git save
+    silent git push
+fi
+
 section "Restoring Neovim plugins"
 silent nvim '+Lazy! restore' +qa
 
