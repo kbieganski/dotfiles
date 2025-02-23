@@ -94,13 +94,13 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set({ 'n', 'v' }, 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         vim.keymap.set({ 'n', 'v' }, '=', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         vim.keymap.set('n', '<leader>F',
-            function() vim.api.nvim_buf_set_var(bufnr, 'autoformat', not vim.api.nvim_buf_get_var(bufnr, 'autoformat')) end,
+            function() vim.b.autoformat = not vim.b.autoformat end,
             { buffer = bufnr, desc = 'Toggle auto-formatting' })
-        vim.api.nvim_buf_set_var(bufnr, 'autoformat', opts.autoformat)
+        vim.b.autoformat = opts.autoformat
         vim.api.nvim_create_autocmd('BufWritePre', {
             buffer = bufnr,
             callback = function()
-                if vim.api.nvim_get_mode().mode ~= 'i' and vim.api.nvim_buf_get_var(bufnr, 'autoformat') then
+                if vim.api.nvim_get_mode().mode ~= 'i' and vim.b.autoformat then
                     vim.lsp.buf.format { buffer = bufnr }
                 end
             end,
@@ -108,7 +108,7 @@ local function on_attach(client, bufnr, opts)
         vim.api.nvim_create_autocmd('InsertLeave', {
             buffer = bufnr,
             callback = function(e)
-                if not vim.api.nvim_get_option_value('modified', { buf = e.buf }) and vim.api.nvim_buf_get_var(bufnr, 'autoformat') then
+                if not vim.bo[e.buf].modified and vim.b.autoformat then
                     vim.lsp.buf.format { buffer = bufnr }
                 end
             end,
@@ -125,7 +125,7 @@ end
 local function setup_lsp()
     local lspconfig = require 'lspconfig'
 
-    for _, server in ipairs { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'yamlls', 'zls' } do
+    for _, server in ipairs { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'zls' } do
         lspconfig[server].setup { on_attach = on_attach }
     end
 

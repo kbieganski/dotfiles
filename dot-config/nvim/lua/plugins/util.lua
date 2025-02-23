@@ -47,4 +47,64 @@ return {
             { '<M-l>', function() require 'Navigator'.right() end, desc = 'Window right', mode = { 'n', 'v', 'i', 't' } },
         },
     },
+    {
+        'folke/snacks.nvim',
+        priority = 1000,
+        lazy = false,
+        config = function()
+            Snacks.setup {
+                bigfile = { enabled = true },
+                image = { enabled = true, doc = { inline = false } },
+                input = { enabled = true },
+                notifier = {
+                    enabled = true, style = 'minimal', top_down = false,
+                    margin = { top = 1, bottom = 1 },
+                },
+                picker = { enabled = true,
+                    layout = { layout = { box = 'horizontal', min_width = 80,
+                        width = 0.75, height = 0.5, border = 'single',
+                        { box = 'vertical',
+                            { win = 'list', }, { win = 'input', height = 1, border = 'top' }, },
+                        { win = 'preview', title = '{preview}', border = 'left', width = 0.5 },
+                    } },
+                    previewers = {
+                        diff = { builtin = false, cmd = { 'delta', '--file-style=omit' }, },
+                    }
+                },
+                quickfile = { enabled = true },
+                scope = { enabled = true },
+                scroll = {
+                    enabled = true,
+                    animate = { duration = { step = 10, total = 200 }, },
+                    animate_repeat = { delay = 100, duration = { step = 2, total = 40 }, },
+                },
+                statuscolumn = { enabled = true },
+                styles = {
+                    blame_line = { border = 'single' },
+                    input = { border = 'single' },
+                    scratch = { border = 'single' },
+                    snacks_image = { border = 'single' },
+                },
+            }
+            vim.api.nvim_create_autocmd('LspProgress', {
+                callback = function(ev)
+                    local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+                    vim.notify(vim.lsp.status(), 'info', {
+                        id = 'lsp_progress',
+                        title = 'LSP Progress',
+                        opts = function(notif)
+                            notif.icon = ev.data.params.value.kind == 'end' and '✓'
+                                or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+                        end,
+                    })
+                end,
+            })
+            -- FIXME: scratch does not play well with rustaceanvim
+        end,
+        keys = {
+            { '<leader>u', function() Snacks.picker.undo() end,    desc = 'Undo tree' },
+            { "<leader>'", function() Snacks.scratch() end,        desc = 'Toggle scratch' },
+            { '<leader>"', function() Snacks.scratch.select() end, desc = 'Select scratch' },
+        }
+    },
 }

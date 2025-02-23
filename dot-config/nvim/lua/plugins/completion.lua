@@ -25,7 +25,7 @@ return {
                 },
                 appearance = {
                     kind_icons = vim.tbl_extend('force', require 'lspkind'.symbol_map, {
-                        Copilot = ' ',
+                        Copilot = ' ',
                     }),
                 },
                 completion = {

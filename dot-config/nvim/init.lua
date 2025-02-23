@@ -59,11 +59,6 @@ vim.g.mapleader = ' '
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
 vim.keymap.set('n', '<C-c>', '<esc>')
 
--- Unmap folds
-for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f', 'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
-    vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
-end
-
 -- Next, previous error
 vim.keymap.set('n', ']e',
     function() vim.diagnostic.goto_next { severity = vim.diagnostic.severity.ERROR, float = false } end,
@@ -211,6 +206,7 @@ end
 
 local function fzf_cmd(opts)
     opts = opts or {}
+    -- FIXME: history breaks sometimes (on second invocation?)
     opts.history = opts.history or true
     return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
         .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
@@ -243,20 +239,25 @@ vim.keymap.set('n', '<leader>o',
         local buffers = vim.iter(vim.fn.getjumplist()[1]):rev()
             :map(function(jump) return jump.bufnr end)
             :filter(function(bufnr)
+                -- FIXME: this skips some buffers
                 if buf_map[bufnr] then return false end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then return false end
                 local name = vim.api.nvim_buf_get_name(bufnr)
                 if name == '' then return false end
                 buf_map[bufnr] = name
-                return bufnr ~= current_buf and vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
+                return bufnr ~= current_buf and vim.bo[bufnr].buflisted
             end)
             :map(function(b) return buf_map[b] end):totable()
         buf_map = vim.iter(pairs(buf_map)):fold({}, function(tbl, bufnr, filename)
             tbl[filename] = bufnr
             return tbl
         end)
+        local scratch_dir = os.getenv 'HOME' .. '/.local/share/nvim/scratch/'
         local oldfiles = vim.iter(vim.v.oldfiles)
-            :filter(function(f) return vim.uv.fs_stat(f) and not buf_map[f] end)
+            :filter(function(f)
+                return vim.uv.fs_stat(f) and not buf_map[f]
+                    and f:sub(1, #scratch_dir) ~= scratch_dir
+            end)
             :totable()
         local files = vim.iter { buffers, oldfiles }:flatten()
             :filter(function(f) return f:sub(#f - 18, #f) ~= '.git/COMMIT_EDITMSG' end)
@@ -300,57 +301,11 @@ vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
 vim.keymap.set('n', '<leader>n', function() termrun('note', edit_or_qfl) end, { desc = 'Note find' })
 vim.keymap.set('n', '<leader>N', function() termrun('note --grep', grep_edit_or_qfl) end, { desc = 'Note grep' })
 
--- Undotree
-local function undotree()
-    local tree = vim.fn.undotree()
-    local entries = tree.entries
-    if not entries then return end
-    local i = 1
-    while i <= #entries do
-        local entry = entries[i]
-        ---@diagnostic disable-next-line: inject-field
-        entry.level = entry.level or 1
-        for j, child_entry in ipairs(entry.alt or {}) do
-            child_entry.level = entry.level + 1
-            child_entry.last = j == #entry.alt
-            table.insert(entries, i + j - 1, child_entry)
-        end
-        i = entry.alt and i or i + 1
-        entry.alt = nil
-    end
-    ---@diagnostic disable-next-line: inject-field
-    entries[#entries].last = true
-    entries = vim.iter(entries):rev():totable()
-    vim.ui.select(entries, {
-        prompt = 'Undo',
-        format_item = function(entry)
-            local dt = os.time() - entry.time
-            local ago
-            if dt < 60 then
-                ago = math.floor(dt) .. 's ago'
-            elseif dt < 3600 then
-                ago = math.floor(dt / 60) .. 'm ago'
-            elseif dt < 24 * 3600 then
-                ago = math.floor(dt / 3600) .. 'h ago'
-            else
-                ago = math.floor(dt / (24 * 3600)) .. 'd ago'
-            end
-            local prefix = (' │ '):rep(entry.level - 1) .. (entry.last and ' ┌─' or ' ├─')
-            local caret = entry.seq == tree.seq_cur and '⮜' or ''
-            return string.format('%s#%d (%s) %s', prefix, entry.seq, ago, caret)
-        end,
-    }, function(choice)
-        if choice then
-            vim.cmd('undo ' .. choice.seq)
-        end
-    end)
-end
-vim.keymap.set('n', '<leader>u', undotree, { desc = 'Undo tree' })
-
 -- Autocmds
 -- Autosave
 local autosave_timer = vim.loop.new_timer()
 local function write_buf_if_exists(bufnr)
+    -- FIXME: occasional invalid wrong buffer id (transient buffers, like scratch or DAP)
     if vim.uv.fs_stat(vim.api.nvim_buf_get_name(bufnr)) then
         vim.api.nvim_buf_call(bufnr, function() vim.cmd 'silent! write' end)
     end
@@ -359,7 +314,7 @@ end
 vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'CursorMovedI' }, {
     nested = true,
     callback = function(e)
-        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+        if vim.bo[e.buf].modified then
             ---@diagnostic disable-next-line: need-check-nil
             autosave_timer:start(2000, 0, vim.schedule_wrap(function() write_buf_if_exists(e.buf) end))
         end
@@ -369,7 +324,7 @@ vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'Cur
 vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave', 'VimSuspend', 'VimLeave', 'FocusLost' }, {
     nested = true,
     callback = function(e)
-        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+        if vim.bo[e.buf].modified then
             ---@diagnostic disable-next-line: need-check-nil
             autosave_timer:stop()
             write_buf_if_exists(e.buf)

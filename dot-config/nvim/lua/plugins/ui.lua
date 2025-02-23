@@ -28,36 +28,6 @@ return {
         },
     },
     {
-        'stevearc/dressing.nvim',
-        config = function()
-            require 'dressing'.setup {
-                input = { border = 'single', },
-                select = {
-                    backend = { 'builtin' },
-                    builtin = {
-                        show_numbers = false,
-                        border = 'single',
-                        relative = 'win',
-                        win_options = {
-                            winhighlight = 'CursorLine:PmenuSel',
-                        },
-                    },
-                },
-            }
-        end,
-    },
-    {
-        'j-hui/fidget.nvim',
-        opts = {
-            notification = {
-                override_vim_notify = true,
-                window = {
-                    winblend = 0,
-                },
-            },
-        },
-    },
-    {
         'rachartier/tiny-inline-diagnostic.nvim',
         opts = {
             preset = 'simple',
@@ -76,7 +46,8 @@ return {
                         return false
                     end
                     local bufname = vim.api.nvim_buf_get_name(buf)
-                    return bufname:sub(1, 5) ~= '/tmp/' and vim.uv.fs_stat(bufname) and vim.bo[buf].ft ~= 'help'
+                    return bufname:sub(1, 5) ~= '/tmp/' and vim.uv.fs_stat(bufname)
+                        and vim.bo[buf].ft ~= 'help' and vim.bo[buf].buflisted
                 end
             },
             sources = {
