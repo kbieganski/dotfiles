@@ -25,7 +25,7 @@ if ! grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
     sudo chsh -s "$(which zsh)"
 fi
 
-if git rev-parse --abbrev-ref HEAD@{upstream} &>/dev/null; then
+if git rev-parse --abbrev-ref 'HEAD@{upstream}' &>/dev/null; then
     section "Pulling changes"
     old_commit=$(git rev-parse HEAD)
     silent git pull
@@ -44,13 +44,13 @@ section "Deleting Arch packages"
 touch $pacman_cur_pkgs
 pacman_del_pkgs=$(comm -23 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
 if [ -n "$pacman_del_pkgs" ]; then
-    silent sudo pacman -Rs --noconfirm $pacman_del_pkgs
+    silent sudo pacman -Rs --noconfirm "$pacman_del_pkgs"
 fi
 
 section "Installing Arch packages"
 pacman_new_pkgs=$(comm -13 <(sort <$pacman_cur_pkgs) <(sort <$pacman_req_pkgs))
 if [ -n "$pacman_new_pkgs" ]; then
-    silent sudo pacman -Sy --noconfirm --needed $pacman_new_pkgs
+    silent sudo pacman -Sy --noconfirm --needed "$pacman_new_pkgs"
 fi
 
 section "Saving Arch package list"
@@ -102,7 +102,7 @@ if [ -n "$(git diff --staged --name-only)" ]; then
         silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
     fi
     silent git save
-    silent git push -u origin $(git rev-parse --abbrev-ref HEAD)
+    silent git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
 fi
 
 section "Restoring Neovim plugins"

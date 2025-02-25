@@ -12,7 +12,7 @@
     pager = delta --syntax-theme=austere-theme
 
 [diff]
-    algorithm = patience
+    algorithm = histogram
     colorMoved = blocks
     colorMovedWS = ignore-all-space
     mnemonicPrefix = true
@@ -38,6 +38,9 @@
     cmd = difft --background light --ignore-comments --display inline "$LOCAL" "$REMOTE"
 
 [fetch]
+    prune = true
+    pruneTags = true
+    all = true
     recurseSubmodules = on-demand
 
 [init]
@@ -50,15 +53,21 @@
     difftool = true
 
 [pull]
-    rebase = merges
+    rebase = true
 
 [push]
     default = upstream
     recurseSubmodules = on-demand
 
+[commit]
+    verbose = true
+
+[merge]
+    conflictStyle = zdiff3
+
 [rebase]
-    autostash = true
-    autosquash = true
+    autoStash = true
+    autoSquash = true
 
 [rerere]
     autoupdate = true
