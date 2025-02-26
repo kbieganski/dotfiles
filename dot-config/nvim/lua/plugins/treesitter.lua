@@ -1,7 +1,8 @@
 -- Tree-sitter
 
-local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua', 'markdown',
-    'markdown_inline', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
+local ft = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua',
+    'markdown', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
+local langs = vim.fn.extend(ft, { 'comment', 'markdown_inline' })
 
 local textobjects = {
     move = {
@@ -108,6 +109,6 @@ return {
         'kylechui/nvim-surround',
         opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
-        ft = langs,
+        ft = ft,
     },
 }
