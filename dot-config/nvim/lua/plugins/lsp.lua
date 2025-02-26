@@ -43,6 +43,11 @@ local function workspace_symbols()
 end
 
 local function on_attach(client, bufnr, opts)
+    if vim.fn.has 'nvim-0.11' == 1 and client:supports_method('textDocument/foldingRange') then
+        local win = vim.api.nvim_get_current_win()
+        vim.wo[win][0].foldmethod = 'expr'
+        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+    end
     opts = opts or {}
     opts.autoformat = opts.autoformat ~= false
     client.server_capabilities.semanticTokensProvider = nil
