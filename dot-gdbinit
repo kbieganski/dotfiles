@@ -19,7 +19,7 @@ end
 
 source ~/dotfiles/ext/gdb-dashboard/.gdbinit
 
-dashboard -layout assembly breakpoints expressions history memory registers stack threads variables
+dashboard -layout assembly breakpoints expressions memory registers stack threads variables
 dashboard -style prompt_running '\\[\\e[1;31m\\]>>>\\[\\e[0m\\]'
 dashboard -style prompt_not_running '\\[\\e[1;34m\\]>>>\\[\\e[0m\\]'
 dashboard -style style_selected_1 '34'

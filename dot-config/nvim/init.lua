@@ -509,3 +509,47 @@ require 'lazy'.setup {
     },
     ui = { border = 'single' }
 }
+
+local function termrun2(cmd)
+    local buf = vim.api.nvim_create_buf(false, true)
+    local prev_win = vim.api.nvim_get_current_win()
+    vim.cmd.vsplit()
+    local win = vim.api.nvim_get_current_win()
+    vim.api.nvim_set_current_buf(buf)
+
+    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
+    vim.fn.termopen(cmd, {
+        on_exit = function()
+            vim.api.nvim_buf_delete(buf, { force = true })
+        end
+    })
+    vim.api.nvim_create_autocmd('TextChanged', { buffer = buf, command = 'normal! G$' })
+    vim.api.nvim_create_autocmd('InsertEnter', { buffer = buf, command = 'stopinsert' })
+    vim.api.nvim_create_autocmd('TermEnter', { buffer = buf, command = 'stopinsert' })
+    vim.api.nvim_set_current_win(prev_win)
+    return win
+end
+
+
+vim.cmd('packadd termdebug')
+RR = function()
+    local path = vim.api.nvim_buf_get_name(0)
+    local pos = vim.api.nvim_win_get_cursor(0)
+    vim.api.nvim_command(':tabnew')
+    local tempfile = vim.fn.tempname()
+    local win = termrun2('touch ' .. tempfile .. '; tail -F ' .. tempfile)
+    vim.g.termdebugger = { 'rr', 'replay', '--' }
+    vim.cmd('Termdebug')
+    vim.cmd("call TermDebugSendCommand('dashboard -output " .. tempfile .. "')")
+    vim.cmd('Program')
+    vim.cmd('hide')
+    vim.cmd('stopinsert')
+    if path ~= '' then
+        vim.api.nvim_command('edit ' .. path)
+        vim.api.nvim_win_set_cursor(0, pos)
+    end
+end
+
+vim.cmd 'autocmd BufWinEnter,WinEnter term://* startinsert'
