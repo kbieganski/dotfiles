@@ -525,9 +525,10 @@ local function termrun2(cmd)
             vim.api.nvim_buf_delete(buf, { force = true })
         end
     })
-    vim.api.nvim_create_autocmd('TextChanged', { buffer = buf, command = 'normal! G$' })
-    vim.api.nvim_create_autocmd('InsertEnter', { buffer = buf, command = 'stopinsert' })
-    vim.api.nvim_create_autocmd('TermEnter', { buffer = buf, command = 'stopinsert' })
+    -- vim.api.nvim_create_autocmd('TextChanged', { buffer = buf, command = 'normal! G$' })
+    -- vim.api.nvim_create_autocmd('InsertEnter', { buffer = buf, command = 'stopinsert' })
+    -- vim.api.nvim_create_autocmd('TermEnter', { buffer = buf, command = 'stopinsert' })
+    -- vim.keymap.set({ 't', 'i' }, '<C-c>', function() end, { buffer = buf })
     vim.api.nvim_set_current_win(prev_win)
     return win
 end
@@ -539,10 +540,12 @@ RR = function()
     local pos = vim.api.nvim_win_get_cursor(0)
     vim.api.nvim_command(':tabnew')
     local tempfile = vim.fn.tempname()
-    local win = termrun2('touch ' .. tempfile .. '; tail -F ' .. tempfile)
-    vim.g.termdebugger = { 'rr', 'replay', '--' }
+    local win = termrun2("trap -- '' SIGINT SIGTERM; touch " .. tempfile .. '; tail -F ' .. tempfile)
+    vim.g.termdebugger = { 'rr', 'replay', '-d', 'rust-gdb', '--' }
     vim.cmd('Termdebug')
     vim.cmd("call TermDebugSendCommand('dashboard -output " .. tempfile .. "')")
+    vim.cmd("call TermDebugSendCommand('dashboard -style discard_scrollback True')")
+    vim.cmd("call TermDebugSendCommand('shell clear')")
     vim.cmd('Program')
     vim.cmd('hide')
     vim.cmd('stopinsert')
@@ -553,3 +556,59 @@ RR = function()
 end
 
 vim.cmd 'autocmd BufWinEnter,WinEnter term://* startinsert'
+vim.keymap.set('n', '<leader><space>', RR)
+
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'TermdebugStartPre',
+    callback = function()
+        vim.keymap.del('n', '<leader><space>')
+        vim.keymap.set('n', '<leader><space>b', ':Break<CR>')
+        vim.keymap.set('n', '<leader><space>B', ':Tbreak<CR>')
+        vim.keymap.set('n', '<leader><space>C', ":call TermDebugSendCommand('rc')<CR>")
+        vim.keymap.set('n', '<leader><space>c', ':Continue<CR>')
+        vim.keymap.set('n', '<leader><space>u', ':Until<CR>')
+        vim.keymap.set('n', '<leader><space>x', ':Stop<CR>')
+        vim.keymap.set({ 'n', 'v' }, '<leader><space>v', ':Evaluate<CR>')
+        vim.keymap.set('n', '<C-k>', ":call TermDebugSendCommand('reverse-next')<CR>")
+        vim.keymap.set('n', '<C-j>', ':Over<CR>')
+        vim.keymap.set('n', '<leader><space>F', ":call TermDebugSendCommand('reverse-finish')<CR>")
+        vim.keymap.set('n', '<leader><space>f', ':Finish<CR>')
+        vim.keymap.set('n', '<C-h>', ":call TermDebugSendCommand('reverse-step')<CR>")
+        vim.keymap.set('n', '<C-l>', ':Step<CR>')
+        vim.keymap.set('n', '<leader><space>I', ":call TermDebugSendCommand('reverse-stepi')<CR>")
+        vim.keymap.set('n', '<leader><space>i', ":call TermDebugSendCommand('stepi')<CR>")
+    end
+})
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'TermdebugStopPost',
+    callback = function()
+        vim.keymap.set('n', '<leader><space>', RR)
+        vim.keymap.del('n', '<leader><space>b')
+        vim.keymap.del('n', '<leader><space>B')
+        vim.keymap.del('n', '<leader><space>C')
+        vim.keymap.del('n', '<leader><space>c')
+        vim.keymap.del('n', '<leader><space>u')
+        vim.keymap.del('n', '<leader><space>x')
+        vim.keymap.del({ 'n', 'v' }, '<leader><space>v')
+        vim.keymap.del('n', '<C-k>')
+        vim.keymap.del('n', '<C-j>')
+        vim.keymap.del('n', '<C-h>')
+        vim.keymap.del('n', '<C-l>')
+        vim.keymap.del('n', '<leader><space>f')
+        vim.keymap.del('n', '<leader><space>F')
+        vim.keymap.del('n', '<leader><space>i')
+        vim.keymap.del('n', '<leader><space>I')
+    end
+})
+
+-- - debugPC		the current position
+-- - debugBreakpoint	a breakpoint
+--
+-- The defaults are, when 'background' is "light":
+--   hi debugPC term=reverse ctermbg=lightblue guibg=lightblue
+--   hi debugBreakpoint term=reverse ctermbg=red guibg=red
+--
+-- When 'background' is "dark":
+--   hi debugPC term=reverse ctermbg=darkblue guibg=darkblue
+--   hi debugBreakpoint term=reverse ctermbg=red guibg=red
+--
