@@ -152,5 +152,6 @@ compinit
 source $HOME/dotfiles/ext/fzf-tab/fzf-tab.plugin.zsh
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu no
+zstyle ':completion:*:git-*:*' sort false
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:*' fzf-flags "${=FZF_DEFAULT_OPTS}"

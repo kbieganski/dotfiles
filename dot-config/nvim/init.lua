@@ -1,33 +1,35 @@
 -- Options
-vim.o.autochdir        = true                    -- change working dir to buffer dir
-vim.o.clipboard        = 'unnamedplus'           -- use system clipboard
-vim.o.completeopt      = 'menuone,noinsert'      -- always display completion menu, do not auto insert
-vim.o.cursorline       = true                    -- highlight line with cursor
-vim.o.expandtab        = true                    -- insert spaces with tab
-vim.o.foldenable       = false                   -- no code folding
-vim.o.ignorecase       = true                    -- when searching
-vim.o.laststatus       = 3                       -- single, global statusline
-vim.o.linebreak        = true                    -- break on whitespace
-vim.o.number           = true                    -- show line numbers
-vim.o.relativenumber   = true                    -- show relative line numbers
-vim.o.shada            = "!,'1000,<50,s10,h"     -- default except 1000 oldfiles
-vim.o.shiftwidth       = 4                       -- width of indent
+vim.o.autochdir        = true -- change working dir to buffer dir
+vim.o.autowriteall     = true -- auto save files on many commands
+vim.o.clipboard        = 'unnamedplus' -- use system clipboard
+vim.o.completeopt      = 'menuone,noinsert' -- always display completion menu, do not auto insert
+vim.o.cursorline       = true -- highlight line with cursor
+vim.o.expandtab        = true -- insert spaces with tab
+vim.o.fillchars        = 'stl:─' -- fill statusline with horizontal line
+vim.o.foldlevelstart   = 99 -- expand folds initially
+vim.o.ignorecase       = true -- when searching
+vim.o.laststatus       = 3 -- single, global statusline
+vim.o.linebreak        = true -- break on whitespace
+vim.o.mousemoveevent   = true -- trigger CursorMoved on mouse move
+vim.o.number           = true -- show line numbers
+vim.o.relativenumber   = true -- show relative line numbers
+vim.o.shada            = "!,'1000,<50,s10,h" -- default except 1000 oldfiles
+vim.o.shiftwidth       = 4 -- width of indent
 vim.o.shortmess        = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.showmode         = false                   -- don't show mode in command line
-vim.o.smartcase        = true                    -- don't ignore case if search string contains uppercase letters
-vim.o.smartindent      = true                    -- indent based on syntax
-vim.o.spelllang        = 'en_us,pl'              -- check English and Polish spelling
-vim.o.spell            = true                    -- enable spell checking
-vim.o.tabstop          = 4                       -- width of tab
-vim.o.termguicolors    = true                    -- 24-bit color support
-vim.o.undofile         = true                    -- persistent undo
-vim.o.updatetime       = 1000                    -- time for various update events
-vim.o.virtualedit      = 'all'                   -- allow virtual editing
-vim.o.visualbell       = true                    -- disable beeping
-vim.o.writebackup      = false                   -- disable backup when overwriting
-
--- Spellfile
+vim.o.showmode         = false -- don't show mode in command line
+vim.o.smartcase        = true -- don't ignore case if search string contains uppercase letters
+vim.o.smartindent      = true -- indent based on syntax
+vim.o.spell            = true -- enable spell checking
 vim.o.spellfile        = os.getenv 'HOME' .. '/sync/spellfile.utf-8.add'
+vim.o.spelllang        = 'en_us,pl' -- check English and Polish spelling
+vim.o.tabstop          = 4 -- width of tab
+vim.o.termguicolors    = true -- 24-bit color support
+vim.o.undofile         = true -- persistent undo
+vim.o.updatetime       = 1000 -- time for various update events
+vim.o.virtualedit      = 'all' -- allow virtual editing
+vim.o.visualbell       = true -- disable beeping
+vim.o.winborder        = 'single' -- single border on all windows by default
+vim.o.writebackup      = false -- disable backup when overwriting
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -37,9 +39,9 @@ local diagnostic_signs = {
     [vim.diagnostic.severity.HINT] = ' ',
 }
 vim.diagnostic.config {
-    virtual_text = false,
     update_in_insert = true,
-    signs = { text = diagnostic_signs }
+    signs = { text = diagnostic_signs },
+    severity_sort = true,
 }
 
 -- Custom filetypes
@@ -59,17 +61,12 @@ vim.g.mapleader = ' '
 -- Remap Ctrl-C to Esc, so that InsertLeave gets triggered
 vim.keymap.set('n', '<C-c>', '<esc>')
 
--- Unmap folds
-for _, key in ipairs { 'a', 'A', 'c', 'C', 'd', 'D', 'E', 'f', 'i', 'm', 'M', 'o', 'O', 'r', 'R', 'v', 'x' } do
-    vim.keymap.set({ 'n', 'v' }, 'z' .. key, function() end, { desc = '' })
-end
-
 -- Next, previous error
 vim.keymap.set('n', ']e',
-    function() vim.diagnostic.goto_next { severity = vim.diagnostic.severity.ERROR, float = false } end,
+    function() vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Next error' })
 vim.keymap.set('n', '[e',
-    function() vim.diagnostic.goto_prev { severity = vim.diagnostic.severity.ERROR, float = false } end,
+    function() vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR, float = false } end,
     { desc = 'Previous error' })
 
 -- Delete without yanking with s/S/x/X
@@ -134,13 +131,13 @@ vim.keymap.set('n', '<leader>D',
 -- Rename current file
 vim.keymap.set('n', '<leader>r', function()
     local filename = vim.api.nvim_buf_get_name(0)
-    vim.ui.input({ prompt = 'New filename: ', default = filename, completion = 'file' }, function(new_filename)
+    vim.ui.input({ prompt = 'New Filename: ', default = filename, completion = 'file' }, function(new_filename)
         if not new_filename or new_filename == '' then return end
         if vim.uv.fs_stat(filename) then
-            vim.cmd.write(new_filename)
-            vim.cmd.bdelete(1)
-            vim.cmd.edit(new_filename)
-            vim.fn.delete(filename)
+            vim.cmd.bdelete()
+            vim.uv.fs_rename(filename, new_filename, vim.schedule_wrap(function()
+                vim.cmd.edit(new_filename)
+            end))
         else
             vim.api.nvim_buf_set_name(0, new_filename)
         end
@@ -161,7 +158,7 @@ local function get_visual_selection()
     end
 end
 
-local function termrun(cmd, fn)
+local function term_result(cmd, fn)
     if vim.fn.reg_recording() ~= '' then
         vim.notify('Cannot do that while recording macro', vim.log.levels.ERROR)
         return
@@ -173,7 +170,8 @@ local function termrun(cmd, fn)
     vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
     vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
     local tempfile = vim.fn.tempname()
-    vim.fn.termopen(cmd .. ' > ' .. tempfile, {
+    vim.fn.jobstart(cmd .. ' > ' .. tempfile, {
+        term = true,
         on_exit = function()
             vim.api.nvim_set_current_buf(prev_buf)
             vim.api.nvim_buf_delete(buf, { force = true })
@@ -212,9 +210,11 @@ end
 local function fzf_cmd(opts)
     opts = opts or {}
     opts.history = opts.history or true
+    opts.start_history = opts.start_history or false
     return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
         .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
         .. (opts.history and '--history=' .. vim.fn.stdpath 'data' .. '/fzf-history' or '')
+        .. (opts.start_history and ' --bind start:prev-history' or '')
 end
 
 local function edit_or_qfl(selected, root)
@@ -227,13 +227,21 @@ local function edit_or_qfl(selected, root)
     end
 end
 
+-- Global function that opens lf
+function Lf(path)
+    term_result('lf -print-selection ' .. vim.fn.shellescape(path), edit_or_qfl)
+end
+
 local function git_root()
     return vim.system { 'git', 'get-root' }:wait().stdout
 end
 
-local function fzg_cmd()
+local function fzg_cmd(opts)
+    opts = opts or {}
+    opts.start_history = opts.start_history or false
     return 'fzg --multi --query ' .. vim.fn.shellescape(get_visual_selection())
         .. ' --history=' .. vim.fn.stdpath 'data' .. '/fzg-history'
+        .. (opts.start_history and ' --bind start:prev-history' or '')
 end
 
 vim.keymap.set('n', '<leader>o',
@@ -248,7 +256,7 @@ vim.keymap.set('n', '<leader>o',
                 local name = vim.api.nvim_buf_get_name(bufnr)
                 if name == '' then return false end
                 buf_map[bufnr] = name
-                return bufnr ~= current_buf and vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
+                return bufnr ~= current_buf and vim.bo[bufnr].buflisted
             end)
             :map(function(b) return buf_map[b] end):totable()
         buf_map = vim.iter(pairs(buf_map)):fold({}, function(tbl, bufnr, filename)
@@ -256,102 +264,62 @@ vim.keymap.set('n', '<leader>o',
             return tbl
         end)
         local oldfiles = vim.iter(vim.v.oldfiles)
-            :filter(function(f) return vim.uv.fs_stat(f) and not buf_map[f] end)
+            ---@diagnostic disable-next-line: return-type-mismatch
+            :filter(function(f) return not buf_map[f] and vim.uv.fs_stat(f) end)
             :totable()
+        local cache_dir = os.getenv 'HOME' .. '/.cache/nvim/'
+        local scratch_dir = os.getenv 'HOME' .. '/.local/share/nvim/scratch/'
         local files = vim.iter { buffers, oldfiles }:flatten()
-            :filter(function(f) return f:sub(#f - 18, #f) ~= '.git/COMMIT_EDITMSG' end)
-            :filter(function(f) return f:sub(1, 9) ~= '/tmp/tmp.' end)
+            :filter(function(f)
+                return
+                    f:sub(#f - 18, #f) ~= '.git/COMMIT_EDITMSG'
+                    and f:sub(1, #cache_dir) ~= cache_dir
+                    and f:sub(1, #scratch_dir) ~= scratch_dir
+                    and f:sub(1, 9) ~= '/tmp/tmp.'
+            end)
             :join '\n'
-        termrun('echo ' .. vim.fn.shellescape(files) .. ' | ' .. fzf_cmd { history = false }, edit_or_qfl)
+        term_result('echo ' .. vim.fn.shellescape(files) .. ' | ' .. fzf_cmd { history = false }, edit_or_qfl)
     end,
     { desc = 'Old files' })
 
-vim.keymap.set('n', '<leader>f',
-    function() termrun('lf -print-selection ' .. vim.fn.shellescape(vim.api.nvim_buf_get_name(0)), edit_or_qfl) end,
-    { desc = 'File browser' })
+vim.keymap.set('n', '<leader>f', function() Lf(vim.api.nvim_buf_get_name(0)) end, { desc = 'File browser' })
 
-vim.keymap.set({ 'n', 'v' }, '|', function() termrun(fzf_cmd(), edit_or_qfl) end, { desc = 'Find file' })
+vim.keymap.set({ 'n', 'v' }, '|', function() term_result(fzf_cmd(), edit_or_qfl) end, { desc = 'Find file' })
 vim.keymap.set({ 'n', 'v' }, '<M-|>',
-    function() termrun(fzf_cmd() .. ' --bind load:prev-history', edit_or_qfl) end,
+    function() term_result(fzf_cmd { start_history = true }, edit_or_qfl) end,
     { desc = 'Find file' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>|',
-    function() termrun('git ' .. fzf_cmd(), function(selected) edit_or_qfl(selected, git_root()) end) end,
+    function() term_result('git ' .. fzf_cmd(), function(selected) edit_or_qfl(selected, git_root()) end) end,
     { desc = 'Find file in repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-|>',
     function()
-        termrun('git ' .. fzf_cmd() .. ' --bind load:prev-history',
+        term_result('git ' .. fzf_cmd { start_history = true },
             function(selected) edit_or_qfl(selected, git_root()) end)
     end,
     { desc = 'Find file in repository' })
 
-vim.keymap.set({ 'n', 'v' }, '\\', function() termrun(fzg_cmd(), grep_edit_or_qfl) end, { desc = 'Grep files' })
+vim.keymap.set({ 'n', 'v' }, '\\', function() term_result(fzg_cmd(), grep_edit_or_qfl) end, { desc = 'Grep files' })
 vim.keymap.set({ 'n', 'v' }, '<M-\\>',
-    function() termrun(fzg_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
+    function() term_result(fzg_cmd { start_history = true }, grep_edit_or_qfl) end,
     { desc = 'Grep files' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>\\',
-    function() termrun('git ' .. fzg_cmd(), grep_edit_or_qfl) end,
+    function() term_result('git ' .. fzg_cmd(), grep_edit_or_qfl) end,
     { desc = 'Grep repository' })
 vim.keymap.set({ 'n', 'v' }, '<leader><M-\\>',
-    function() termrun('git ' .. fzg_cmd() .. ' --bind load:prev-history', grep_edit_or_qfl) end,
+    function() term_result('git ' .. fzg_cmd { start_history = true }, grep_edit_or_qfl) end,
     { desc = 'Grep repository' })
 
-vim.keymap.set('n', '<leader>n', function() termrun('note', edit_or_qfl) end, { desc = 'Note find' })
-vim.keymap.set('n', '<leader>N', function() termrun('note --grep', grep_edit_or_qfl) end, { desc = 'Note grep' })
-
--- Undotree
-local function undotree()
-    local tree = vim.fn.undotree()
-    local entries = tree.entries
-    if not entries then return end
-    local i = 1
-    while i <= #entries do
-        local entry = entries[i]
-        ---@diagnostic disable-next-line: inject-field
-        entry.level = entry.level or 1
-        for j, child_entry in ipairs(entry.alt or {}) do
-            child_entry.level = entry.level + 1
-            child_entry.last = j == #entry.alt
-            table.insert(entries, i + j - 1, child_entry)
-        end
-        i = entry.alt and i or i + 1
-        entry.alt = nil
-    end
-    ---@diagnostic disable-next-line: inject-field
-    entries[#entries].last = true
-    entries = vim.iter(entries):rev():totable()
-    vim.ui.select(entries, {
-        prompt = 'Undo',
-        format_item = function(entry)
-            local dt = os.time() - entry.time
-            local ago
-            if dt < 60 then
-                ago = math.floor(dt) .. 's ago'
-            elseif dt < 3600 then
-                ago = math.floor(dt / 60) .. 'm ago'
-            elseif dt < 24 * 3600 then
-                ago = math.floor(dt / 3600) .. 'h ago'
-            else
-                ago = math.floor(dt / (24 * 3600)) .. 'd ago'
-            end
-            local prefix = (' │ '):rep(entry.level - 1) .. (entry.last and ' ┌─' or ' ├─')
-            local caret = entry.seq == tree.seq_cur and '⮜' or ''
-            return string.format('%s#%d (%s) %s', prefix, entry.seq, ago, caret)
-        end,
-    }, function(choice)
-        if choice then
-            vim.cmd('undo ' .. choice.seq)
-        end
-    end)
-end
-vim.keymap.set('n', '<leader>u', undotree, { desc = 'Undo tree' })
+vim.keymap.set('n', '<leader>n', function() term_result('note', edit_or_qfl) end, { desc = 'Note find' })
+vim.keymap.set('n', '<leader>N', function() term_result('note --grep', grep_edit_or_qfl) end, { desc = 'Note grep' })
 
 -- Autocmds
 -- Autosave
 local autosave_timer = vim.loop.new_timer()
 local function write_buf_if_exists(bufnr)
-    if vim.uv.fs_stat(vim.api.nvim_buf_get_name(bufnr)) then
+    if vim.fn.mode() == 'i' then return end
+    if vim.api.nvim_buf_is_loaded(bufnr) and vim.uv.fs_stat(vim.api.nvim_buf_get_name(bufnr)) then
         vim.api.nvim_buf_call(bufnr, function() vim.cmd 'silent! write' end)
     end
 end
@@ -359,7 +327,7 @@ end
 vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'CursorMovedI' }, {
     nested = true,
     callback = function(e)
-        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+        if vim.bo[e.buf].buflisted and vim.bo[e.buf].modified then
             ---@diagnostic disable-next-line: need-check-nil
             autosave_timer:start(2000, 0, vim.schedule_wrap(function() write_buf_if_exists(e.buf) end))
         end
@@ -369,7 +337,7 @@ vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI', 'CursorMoved', 'Cur
 vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave', 'VimSuspend', 'VimLeave', 'FocusLost' }, {
     nested = true,
     callback = function(e)
-        if vim.api.nvim_get_option_value('modified', { buf = e.buf }) then
+        if vim.bo[e.buf].buflisted and vim.bo[e.buf].modified then
             ---@diagnostic disable-next-line: need-check-nil
             autosave_timer:stop()
             write_buf_if_exists(e.buf)
@@ -411,7 +379,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
         local path = vim.api.nvim_buf_get_name(e.buf)
         if vim.fn.isdirectory(path) == 1 then
             vim.api.nvim_buf_delete(e.buf, { force = true })
-            termrun('lf -print-selection ' .. path, edit_or_qfl)
+            Lf(path)
         end
     end,
 })
@@ -525,7 +493,7 @@ function Statusline()
         local searchcount = vim.fn.searchcount()
         searchcount = searchcount.current .. '/' .. searchcount.total
         local filepos = ' %P %l:%c'
-        local flags = (vim.o.wrap and 'W' or '') ..
+        local flags = ' ' .. (vim.o.wrap and 'W' or '') ..
             (vim.b.autoformat and 'F' or '') ..
             (vim.lsp.inlay_hint.is_enabled() and 'I' or '') .. ' '
         return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. flags .. searchcount .. filepos
@@ -534,6 +502,107 @@ function Statusline()
 end
 
 vim.o.statusline = [[%!v:lua.Statusline()]]
+
+-- Replay debugging
+local function term_show(file, split)
+    local buf = vim.api.nvim_create_buf(false, true)
+    local prev_win = vim.api.nvim_get_current_win()
+    if split then vim.cmd.vsplit() end
+    local win = vim.api.nvim_get_current_win()
+    vim.api.nvim_set_current_buf(buf)
+    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
+    vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
+    vim.fn.jobstart("trap -- '' SIGINT; touch " .. file .. '; tail -F ' .. file, {
+        term = true,
+        on_exit = function()
+            vim.api.nvim_buf_delete(buf, { force = true })
+        end
+    })
+    if split then vim.api.nvim_set_current_win(prev_win) end
+    return win
+end
+
+vim.cmd.packadd 'termdebug'
+
+local function replay_debug()
+    local tempfile = vim.fn.tempname()
+    local win = term_show(tempfile, true)
+    vim.g.termdebugger = { 'rr', 'replay', '-d', 'rust-gdb', '--' }
+    vim.g.termdebugdw = win
+    vim.cmd.Termdebug()
+    vim.fn.TermDebugSendCommand('dashboard -output ' .. tempfile)
+    vim.fn.TermDebugSendCommand('dashboard -style discard_scrollback True')
+    vim.fn.TermDebugSendCommand('shell clear')
+    vim.cmd.Program()
+    vim.cmd.hide()
+    vim.cmd.stopinsert()
+end
+
+vim.keymap.set('n', '<leader><CR>', replay_debug, { desc = 'Replay debugging' })
+
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'TermdebugStartPost',
+    callback = function()
+        vim.keymap.del('n', '<leader><CR>')
+        vim.keymap.set('n', '<CR>b', vim.cmd.Break, { desc = 'Toggle breakpoint' })
+        vim.keymap.set('n', '<CR>B', vim.cmd.Tbreak, { desc = 'Temporary breakpoint' })
+        vim.keymap.set('n', '<CR>C', function() vim.fn.TermDebugSendCommand('reverse-continue') end,
+            { desc = 'Reverse continue' })
+        vim.keymap.set('n', '<CR>c', vim.cmd.Continue, { desc = 'Continue' })
+        vim.keymap.set('n', '<CR>u', vim.cmd.Until, { desc = 'Continue until' })
+        vim.keymap.set('n', '<CR>x', vim.cmd.Stop, { desc = 'Stop execution' })
+        vim.keymap.set({ 'n', 'v' }, '<CR>v', vim.cmd.Evaluate, { desc = 'Evaluate expression' })
+        vim.keymap.set('n', '<C-k>', function() vim.fn.TermDebugSendCommand('reverse-next') end,
+            { desc = 'Reverse next statement' })
+        vim.keymap.set('n', '<C-j>', vim.cmd.Over, { desc = 'Next statement' })
+        vim.keymap.set('n', '<CR>F', function() vim.fn.TermDebugSendCommand('reverse-finish') end,
+            { desc = 'Reverse finish frame' })
+        vim.keymap.set('n', '<CR>f', vim.cmd.Finish, { desc = 'Finish frame' })
+        vim.keymap.set('n', '<C-h>', function() vim.fn.TermDebugSendCommand('reverse-step') end,
+            { desc = 'Step backwards' })
+        vim.keymap.set('n', '<C-l>', vim.cmd.Step, { desc = 'Step forwards' })
+        vim.keymap.set('n', '<CR>I', function() vim.fn.TermDebugSendCommand('reverse-stepi') end,
+            { desc = 'Step backwards by instruction' })
+        vim.keymap.set('n', '<CR>i', function() vim.fn.TermDebugSendCommand('stepi') end,
+            { desc = 'Step forwards by instruction' })
+    end
+})
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'TermdebugStopPost',
+    callback = function()
+        if vim.api.nvim_win_is_valid(vim.g.termdebugdw) then
+            vim.api.nvim_win_close(vim.g.termdebugdw, true)
+        end
+        vim.keymap.set('n', '<leader><CR>', replay_debug, { desc = 'Replay debugging' })
+        vim.keymap.del('n', '<CR>b')
+        vim.keymap.del('n', '<CR>B')
+        vim.keymap.del('n', '<CR>C')
+        vim.keymap.del('n', '<CR>c')
+        vim.keymap.del('n', '<CR>u')
+        vim.keymap.del('n', '<CR>x')
+        vim.keymap.del({ 'n', 'v' }, '<CR>v')
+        vim.keymap.del('n', '<C-k>')
+        vim.keymap.del('n', '<C-j>')
+        vim.keymap.del('n', '<C-h>')
+        vim.keymap.del('n', '<C-l>')
+        vim.keymap.del('n', '<CR>f')
+        vim.keymap.del('n', '<CR>F')
+        vim.keymap.del('n', '<CR>i')
+        vim.keymap.del('n', '<CR>I')
+    end
+})
+
+-- Auto insert mode in termdebug
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+    pattern = 'termdebug',
+    callback = function(e)
+        vim.api.nvim_create_autocmd({ 'BufWinEnter', 'WinEnter' }, {
+            buffer = e.buf,
+            callback = function() vim.cmd.startinsert() end,
+        })
+    end,
+})
 
 -- Plugins
 -- Bootstrap lazy.nvim and setup plugins

@@ -25,17 +25,19 @@ if ! grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
     sudo chsh -s "$(which zsh)"
 fi
 
-section "Pulling changes"
-old_commit=$(git rev-parse HEAD)
-silent git pull
-silent git submodule update --init --recursive
+if git rev-parse --abbrev-ref 'HEAD@{upstream}' &>/dev/null; then
+    section "Pulling changes"
+    old_commit=$(git rev-parse HEAD)
+    silent git pull
+    silent git submodule update --init --recursive
+    if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
+        section "Re-running self"
+        exec $0
+    fi
+fi
 silent stow .
 if ! [ -d /var/screenshots/ ]; then
     silent sudo ln -s "$HOME/screenshots/ /var"
-fi
-if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
-    section "Re-running self"
-    exec $0
 fi
 
 section "Deleting Arch packages"
@@ -100,7 +102,7 @@ if [ -n "$(git diff --staged --name-only)" ]; then
         silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
     fi
     silent git save
-    silent git push
+    silent git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
 fi
 
 section "Restoring Neovim plugins"
@@ -120,6 +122,10 @@ silent systemctl --user daemon-reload
 for service in ~/.config/systemd/user/*.service podman.socket; do
     service="$(basename "$service")"
     silent systemctl --user enable --now "$service"
+done
+silent sudo systemctl daemon-reload
+for service in earlyoom; do
+    silent sudo systemctl enable --now "$service"
 done
 
 printf "\e[32mDone.\e[0m\n"

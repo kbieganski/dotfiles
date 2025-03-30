@@ -2,7 +2,7 @@ return {
     {
         'saghen/blink.cmp',
         lazy = false, -- lazy loading handled internally
-        version = 'v0.*',
+        version = 'v1.*',
         config = function()
             local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
             local copilot_kind = #CompletionItemKind + 1
@@ -25,11 +25,15 @@ return {
                 },
                 appearance = {
                     kind_icons = vim.tbl_extend('force', require 'lspkind'.symbol_map, {
-                        Copilot = ' ',
+                        Copilot = ' ',
                     }),
                 },
                 completion = {
-                    documentation = { auto_show = true, window = { border = 'single' } },
+                    menu = { border = 'none' },
+                    documentation = { auto_show = true },
+                },
+                cmdline = {
+                    completion = { menu = { auto_show = true } },
                 },
             }
         end,

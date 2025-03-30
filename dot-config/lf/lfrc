@@ -72,9 +72,25 @@ cmd rg ${{
 map \\ rg
 
 # Inside Neovim, open with e, ignore w
+# Outside, edit with e, open shell with w
+cmd edit $$EDITOR $f
+cmd sh $$SHELL
+map e
+map w
 &{{
+    function send_retry {
+        # repeat until a server picks up the request
+        for i in {1..10}; do
+            if lf -remote "send $id $@" | grep -v "no such client id"; then
+                break
+            fi
+            sleep 0.05;
+        done
+    }
     if [ -n "$NVIM" ]; then
-        lf -remote "send $id :map e open; map w"
+        send_retry ":map e open"
+    else
+        send_retry ":map e edit; map w sh"
     fi
 }}
 

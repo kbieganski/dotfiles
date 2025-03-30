@@ -2,6 +2,24 @@
 
 return {
     {
+        'folke/snacks.nvim',
+        priority = 1000,
+        lazy = false,
+        opts = {
+            image = { enabled = true, doc = { inline = false } },
+            scratch = { ft = 'markdown' },
+            styles = {
+                scratch = { border = 'single' },
+                snacks_image = { border = 'single' },
+            },
+        },
+        keys = {
+            { '<leader>u', function() require 'snacks'.picker.undo() end,    desc = 'Undo tree' },
+            { "<leader>'", function() require 'snacks'.scratch() end,        desc = 'Toggle scratch' },
+            { '<leader>"', function() require 'snacks'.scratch.select() end, desc = 'Select scratch' },
+        }
+    },
+    {
         'Saecki/crates.nvim',
         event = 'BufRead Cargo.toml',
         opts = {}

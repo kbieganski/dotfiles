@@ -12,7 +12,7 @@
     pager = delta --syntax-theme=austere-theme
 
 [diff]
-    algorithm = patience
+    algorithm = histogram
     colorMoved = blocks
     colorMovedWS = ignore-all-space
     mnemonicPrefix = true
@@ -27,15 +27,20 @@
 
 [delta]
     navigate = true
+    file-style = white bold ul
+    file-decoration-style = overline
     hunk-header-style = omit
-    side-by-side = true
-    line-numbers-left-format = " {np:>4} "
-    line-numbers-right-format = ""
+    line-numbers = true
+    line-numbers-left-format = " {nm} "
+    line-numbers-right-format = " {np} "
 
 [difftool "difftastic"]
     cmd = difft --background light --ignore-comments --display inline "$LOCAL" "$REMOTE"
 
 [fetch]
+    prune = true
+    pruneTags = true
+    all = true
     recurseSubmodules = on-demand
 
 [init]
@@ -48,15 +53,21 @@
     difftool = true
 
 [pull]
-    rebase = merges
+    rebase = true
 
 [push]
     default = upstream
     recurseSubmodules = on-demand
 
+[commit]
+    verbose = true
+
+[merge]
+    conflictStyle = zdiff3
+
 [rebase]
-    autostash = true
-    autosquash = true
+    autoStash = true
+    autoSquash = true
 
 [rerere]
     autoupdate = true
@@ -116,3 +127,10 @@
     us = !git unstage
     untrack = rm --cache --
     ut = !git untrack
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+

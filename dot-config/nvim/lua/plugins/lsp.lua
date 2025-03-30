@@ -94,13 +94,13 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set({ 'n', 'v' }, 'gq', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         vim.keymap.set({ 'n', 'v' }, '=', vim.lsp.buf.format, { buffer = bufnr, desc = 'Format' })
         vim.keymap.set('n', '<leader>F',
-            function() vim.api.nvim_buf_set_var(bufnr, 'autoformat', not vim.api.nvim_buf_get_var(bufnr, 'autoformat')) end,
+            function() vim.b.autoformat = not vim.b.autoformat end,
             { buffer = bufnr, desc = 'Toggle auto-formatting' })
-        vim.api.nvim_buf_set_var(bufnr, 'autoformat', opts.autoformat)
+        vim.b.autoformat = opts.autoformat
         vim.api.nvim_create_autocmd('BufWritePre', {
             buffer = bufnr,
             callback = function()
-                if vim.api.nvim_get_mode().mode ~= 'i' and vim.api.nvim_buf_get_var(bufnr, 'autoformat') then
+                if vim.api.nvim_get_mode().mode ~= 'i' and vim.b.autoformat then
                     vim.lsp.buf.format { buffer = bufnr }
                 end
             end,
@@ -108,7 +108,7 @@ local function on_attach(client, bufnr, opts)
         vim.api.nvim_create_autocmd('InsertLeave', {
             buffer = bufnr,
             callback = function(e)
-                if not vim.api.nvim_get_option_value('modified', { buf = e.buf }) and vim.api.nvim_buf_get_var(bufnr, 'autoformat') then
+                if not vim.bo[e.buf].modified and vim.b.autoformat then
                     vim.lsp.buf.format { buffer = bufnr }
                 end
             end,
@@ -120,12 +120,17 @@ local function on_attach(client, bufnr, opts)
     if client.server_capabilities.implementationProvider then
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, desc = 'Implementation' })
     end
+    if client:supports_method('textDocument/foldingRange') then
+        local win = vim.api.nvim_get_current_win()
+        vim.wo[win][0].foldmethod = 'expr'
+        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+    end
 end
 
 local function setup_lsp()
     local lspconfig = require 'lspconfig'
 
-    for _, server in ipairs { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'yamlls', 'zls' } do
+    for _, server in ipairs { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'zls' } do
         lspconfig[server].setup { on_attach = on_attach }
     end
 
@@ -168,10 +173,11 @@ local function setup_lsp()
             settings = {
                 ['rust-analyzer'] = {
                     cargo = { features = 'all', },
-                },
-                procMacro = {
-                    enable = true,
-                    attributes = { enable = true, },
+                    procMacro = {
+                        enable = true,
+                        attributes = { enable = true, },
+                    },
+                    completion = { callable = { snippets = 'add_parentheses' } },
                 },
             },
             on_attach = on_attach,
@@ -183,6 +189,20 @@ local function setup_lsp()
         virtual_text = { enabled = true, text = '󰘦 ', hl = 'NonText' },
         autocmd = { enabled = true },
     }
+
+    vim.api.nvim_create_autocmd('LspProgress', {
+        callback = function(e)
+            local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+            vim.notify(vim.lsp.status(), vim.log.levels.INFO, {
+                id = 'lsp_progress',
+                title = 'LSP Progress',
+                opts = function(notif)
+                    notif.icon = e.data.params.value.kind == 'end' and '✓'
+                        or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+                end,
+            })
+        end,
+    })
 end
 
 return {

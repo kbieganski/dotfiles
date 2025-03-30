@@ -1,7 +1,8 @@
 -- Tree-sitter
 
-local langs = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua', 'markdown',
-    'markdown_inline', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
+local filetypes = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua',
+    'markdown', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
+local langs = vim.fn.extend(filetypes, { 'comment', 'markdown_inline' })
 
 local textobjects = {
     move = {
@@ -97,6 +98,16 @@ return {
                 highlight        = { enable = true },
                 textobjects      = textobjects,
             }
+            for _, ft in ipairs(filetypes) do
+                vim.api.nvim_create_autocmd('FileType', {
+                    pattern = ft,
+                    callback = function()
+                        local win = vim.api.nvim_get_current_win()
+                        vim.wo[win][0].foldmethod = 'expr'
+                        vim.wo[win][0].foldexpr = 'nvim_treesitter#foldexpr()'
+                    end
+                })
+            end
         end,
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
@@ -108,6 +119,6 @@ return {
         'kylechui/nvim-surround',
         opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-treesitter/nvim-treesitter-textobjects' },
-        ft = langs,
+        ft = filetypes,
     },
 }

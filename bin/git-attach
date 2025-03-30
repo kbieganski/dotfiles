@@ -1,0 +1,10 @@
+#!/bin/env bash
+
+commit=$(git rev-parse HEAD)
+branch=$(git branch --format "%(objectname),%(refname:short)" | grep -v 'HEAD detached' | grep "$commit" | head -n1 | cut -d, -f2)
+if [ -z "$branch" ]; then
+    echo "Could not find corresponding ref"
+    exit 1
+else
+    git checkout "$branch"
+fi

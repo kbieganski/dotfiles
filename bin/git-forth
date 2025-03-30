@@ -1,0 +1,7 @@
+#!/bin/env bash
+
+commit=$(git rev-parse HEAD)
+branch=$(git branch --contains "$commit" | grep -v 'HEAD detached' | head -n1 | xargs)
+if [ -n "$branch" ]; then
+    git log --pretty=%H "$branch" | grep -B 1 "$commit" | head -n1 | xargs git checkout
+fi
