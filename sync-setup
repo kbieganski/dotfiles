@@ -106,7 +106,7 @@ if [ -n "$(git diff --staged --name-only)" ]; then
 fi
 
 section "Restoring Neovim plugins"
-silent nvim '+Lazy! restore' +qa
+silent nvim --headless '+Lazy! restore' +qa
 
 section "Updating bat cache"
 silent bat cache --build
