@@ -1,8 +1,8 @@
 if [ -z "$TMUX" ]; then
     if [ -z "$SSH_CONNECTION" ] || [ -z "$(tmux ls)" ]; then
-        exec tmux new\; set-option destroy-unattached
+        exec tmux -u new\; set-option destroy-unattached
     else
-        exec tmux attach
+        exec tmux -u attach
     fi
 fi
 

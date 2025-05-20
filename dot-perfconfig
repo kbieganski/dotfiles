@@ -6,3 +6,7 @@
     jump_arrows = blue, default
     addr = green, default
     root = default, gray
+
+[annotate]
+    disassembler_style = intel
+    hide_src_code = false

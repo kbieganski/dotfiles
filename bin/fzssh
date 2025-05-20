@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if host=$(cat .ssh/* | grep Host | cut -d' ' -f 2 | grep -v "\*" | grep -v "^$" | fzf); then
+    ssh "$host"
+fi
