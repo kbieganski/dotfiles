@@ -490,13 +490,14 @@ function Statusline()
             git_info = '  ' .. git_dict.head .. ' ' .. added .. ' ' .. changed .. ' ' .. removed .. '%* '
         end
         -- Search, file position, auto-formatting
-        local searchcount = vim.fn.searchcount()
-        searchcount = searchcount.current .. '/' .. searchcount.total
         local filepos = ' %P %l:%c'
+        local searchcount = vim.fn.searchcount()
+        searchcount = ' ' .. searchcount.current .. '/' .. searchcount.total
+        local eol = vim.bo[0].eol and '' or ' [no EOL]'
         local flags = ' ' .. (vim.o.wrap and 'W' or '') ..
             (vim.b.autoformat and 'F' or '') ..
-            (vim.lsp.inlay_hint.is_enabled() and 'I' or '') .. ' '
-        return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. flags .. searchcount .. filepos
+            (vim.lsp.inlay_hint.is_enabled() and 'I' or '')
+        return '%#Statusline#' .. mode .. diagnostics .. git_info .. '%=%*' .. flags .. eol .. searchcount .. filepos
     end)
     return ok and statusline or ''
 end

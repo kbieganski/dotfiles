@@ -143,6 +143,7 @@ local function setup_lsp()
         cmd = {
             "clangd",
             "--offset-encoding=utf-16",
+            "--function-arg-placeholders=0",
         },
     }
 
