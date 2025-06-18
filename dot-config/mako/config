@@ -1,4 +1,5 @@
 anchor=bottom-right
+default-timeout=15000
 font=Noto Sans 10
 format=<i>%a</i>\n<b>%s</b>\n%b
 text-alignment=center

@@ -8,5 +8,7 @@
     root = default, gray
 
 [annotate]
+    objdump=llvm-objdump
+    addr2line=llvm-addr2line
     disassembler_style = intel
     hide_src_code = false

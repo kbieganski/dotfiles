@@ -1,6 +1,7 @@
 {
     "position": "bottom",
     "modules-left": [
+        "sway/workspaces",
         "niri/workspaces",
         "custom/media"
     ],

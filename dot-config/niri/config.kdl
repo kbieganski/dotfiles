@@ -37,6 +37,12 @@ layout {
 spawn-at-startup "waybar"
 spawn-at-startup "swaybg" "-i" "background.jpg"
 spawn-at-startup "mako"
+spawn-at-startup "udiskie"
+
+spawn-at-startup "xwayland-satellite"
+environment {
+    DISPLAY ":0"
+}
 
 screenshot-path "~/screenshots/%Y-%m-%d %H-%M-%S.png"
 
