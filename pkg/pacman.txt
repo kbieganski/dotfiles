@@ -2,6 +2,7 @@
 acpi
 act
 ardour
+auth-tarball-from-git
 bacon
 base
 base-devel
@@ -26,6 +27,7 @@ duf
 dunst
 dust
 earlyoom
+efibootmgr
 expect
 eza
 fd
@@ -39,7 +41,6 @@ fzf
 gdb
 ghostty
 gimp
-git
 git-absorb
 git-delta
 github-cli
@@ -47,6 +48,7 @@ gitleaks
 git-lfs
 go
 graphviz
+gst-plugin-pipewire
 gtkwave
 helvum
 htop
@@ -69,6 +71,7 @@ kitty
 krita
 lcov
 lf
+libpulse
 libvirt
 linux
 linux-firmware
@@ -100,7 +103,9 @@ otf-font-awesome
 pacman-contrib
 parallel
 perf
+pipewire
 pipewire-alsa
+pipewire-jack
 pipewire-pulse
 playerctl
 podman
@@ -124,8 +129,8 @@ sd
 shellcheck
 shfmt
 shotcut
+sof-firmware
 sshfs
-steam
 stow
 strace
 stylua
@@ -176,4 +181,5 @@ zig
 zip
 zls
 zoxide
+zram-generator
 zsh
