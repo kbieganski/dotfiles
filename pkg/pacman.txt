@@ -34,6 +34,7 @@ fd
 feh
 firefox
 flameshot
+fprintd
 fq
 fuse-overlayfs
 fuzzel
@@ -140,7 +141,9 @@ syncthing
 sysstat
 tealdeer
 time
+tlp
 tmux
+touchegg
 tree
 ttc-iosevka
 ttf-nerd-fonts-symbols-mono
