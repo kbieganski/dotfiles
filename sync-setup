@@ -36,8 +36,8 @@ if git rev-parse --abbrev-ref 'HEAD@{upstream}' &>/dev/null; then
     fi
 fi
 silent stow .
-if ! [ -d /var/screenshots/ ]; then
-    silent sudo ln -s "$HOME/screenshots/ /var"
+if ! [ -L /var/screenshots/ ]; then
+    silent sudo ln -s "$HOME/screenshots/" /var
 fi
 
 section "Deleting Arch packages"
@@ -95,16 +95,6 @@ while read -r pkg; do
     silent go install "$pkg"
 done <$pkg_dir/go.txt
 
-if [ -n "$(git diff --staged --name-only)" ]; then
-    section "Committing and pushing changes"
-    remote=$(git remote get-url origin)
-    if [[ "$remote" =~ "https://" ]]; then
-        silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
-    fi
-    silent git save
-    silent git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
-fi
-
 section "Restoring Neovim plugins"
 silent nvim --headless '+Lazy! restore' +qa
 
@@ -127,5 +117,15 @@ silent sudo systemctl daemon-reload
 for service in earlyoom; do
     silent sudo systemctl enable --now "$service"
 done
+
+if [ -n "$(git diff --staged --name-only)" ]; then
+    section "Committing and pushing changes"
+    remote=$(git remote get-url origin)
+    if [[ "$remote" =~ "https://" ]]; then
+        silent git remote set-url origin "$(echo "$remote" | sed -E "s/https:\/\/([^/]*)\//git@\1:/")"
+    fi
+    silent git save
+    silent git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
+fi
 
 printf "\e[32mDone.\e[0m\n"
