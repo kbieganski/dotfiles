@@ -4,7 +4,7 @@ return {
     {
         'lewis6991/gitsigns.nvim',
         opts = {
-            word_diff = true,
+            sign_priority = 50,
             on_attach = function(bufnr)
                 local gitsigns = require 'gitsigns'
                 vim.keymap.set('n', ']h', gitsigns.next_hunk, { buffer = bufnr, desc = 'Next hunk' })

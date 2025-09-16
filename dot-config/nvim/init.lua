@@ -30,6 +30,7 @@ vim.o.virtualedit      = 'all' -- allow virtual editing
 vim.o.visualbell       = true -- disable beeping
 vim.o.winborder        = 'single' -- single border on all windows by default
 vim.o.writebackup      = false -- disable backup when overwriting
+vim.o.signcolumn       = 'yes:3'
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -220,6 +221,7 @@ end
 local function edit_or_qfl(selected, root)
     root = root and root .. '/' or ''
     if #selected == 1 then
+        if selected[1] == '' then return end
         vim.cmd.edit(root .. selected[1])
     elseif #selected > 1 then
         vim.fn.setqflist(vim.tbl_map(function(item) return { filename = root .. item } end, selected))

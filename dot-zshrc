@@ -108,7 +108,6 @@ alias q=exit
 alias cp='cp -vr'
 alias mv='mv -v'
 alias rm='rm -vr'
-alias r=rip
 
 alias fzf='fzf --bind "enter:become:nvim {}"'
 alias noteg='note --grep'
