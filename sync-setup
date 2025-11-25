@@ -36,7 +36,7 @@ if git rev-parse --abbrev-ref 'HEAD@{upstream}' &>/dev/null; then
     fi
 fi
 silent stow .
-if ! [ -L /var/screenshots/ ]; then
+if ! [ -L /var/screenshots ]; then
     silent sudo ln -s "$HOME/screenshots/" /var
 fi
 

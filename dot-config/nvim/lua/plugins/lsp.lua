@@ -45,7 +45,6 @@ end
 local function on_attach(client, bufnr, opts)
     opts = opts or {}
     opts.autoformat = opts.autoformat ~= false
-    client.server_capabilities.semanticTokensProvider = nil
     if client.server_capabilities.documentHighlightProvider then
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             callback = function()

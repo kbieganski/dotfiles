@@ -1,8 +1,8 @@
 function fakedep {
     local temp=$(mktemp -d)
     local name=$1
-    if [ $2 != "--" ]; then
-        echo "Usage: fakedep <name> -- [deps...]"
+    if [[ $# -lt 3 ]] || [ $2 != "--" ]; then
+        echo "Usage: fakedep <name> -- dep [deps...]"
         return 1
     fi
     shift 2

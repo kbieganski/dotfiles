@@ -11,7 +11,7 @@ exec --no-startup-id feh --bg-fill --no-xinerama ~/background.png
 
 bindsym $mod+Return exec kitty --single-instance
 
-bindsym $mod+BackSpace exec lock
+bindsym $mod+Escape exec lock
 
 bindsym $mod+Shift+q kill
 
@@ -78,7 +78,7 @@ bindsym $mod+f fullscreen toggle
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
-bindsym $mod+Tab floating toggle
+bindsym $mod+g floating toggle
 floating_modifier $mod
 
 bindsym $mod+grave exec "dunstctl close"

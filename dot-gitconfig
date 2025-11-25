@@ -8,7 +8,6 @@
 [core]
     autocrlf = input
     excludesFile = ~/.gitignore
-    hooksPath = ~/.githooks
     pager = delta --syntax-theme=austere-theme
 
 [diff]
