@@ -24,3 +24,6 @@
 [submodule "ext/zsh-syntax-highlighting"]
 	path = ext/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "ext/aur/jost-font"]
+	path = ext/aur/jost-font
+	url = https://aur.archlinux.org/jost-font.git
