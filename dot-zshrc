@@ -37,7 +37,7 @@ function precmd {
 
 # Bindings
 bindkey -M viins "^[[1~" beginning-of-line
-bindkey -M viins  "^[[4~" end-of-line
+bindkey -M viins "^[[4~" end-of-line
 bindkey -M viins "^[[3~"  delete-char
 
 autoload -U up-line-or-beginning-search

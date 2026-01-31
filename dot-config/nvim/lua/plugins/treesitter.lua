@@ -1,6 +1,7 @@
 -- Tree-sitter
 
-local filetypes = { 'bash', 'c', 'cpp', 'css', 'glsl', 'go', 'html', 'javascript', 'json', 'lua',
+local filetypes = { 'bash', 'c', 'cpp', 'css', 'gdscript', 'gdshader', 'glsl', 'go', 'godot_resource', 'html',
+    'javascript', 'json', 'lua',
     'markdown', 'python', 'query', 'regex', 'rust', 'typescript', 'verilog', 'yaml', 'zig' }
 local langs = vim.fn.extend(filetypes, { 'comment', 'markdown_inline' })
 
