@@ -3,13 +3,7 @@
         modifiers: [
             Super,
         ],
-        key: "f",
-    ): Fullscreen,
-    (
-        modifiers: [
-            Super,
-        ],
-        key: "a",
+        key: "t",
     ): Disable,
     (
         modifiers: [
@@ -21,8 +15,20 @@
         modifiers: [
             Super,
         ],
+        key: "f",
+    ): Fullscreen,
+    (
+        modifiers: [
+            Super,
+        ],
         key: "Return",
     ): System(Terminal),
+    (
+        modifiers: [
+            Super,
+        ],
+        key: "a",
+    ): Disable,
     (
         modifiers: [
             Super,
@@ -30,10 +36,4 @@
         key: "backslash",
         description: Some("SSH"),
     ): Spawn("rofi -show ssh"),
-    (
-        modifiers: [
-            Super,
-        ],
-        key: "t",
-    ): Disable,
 }

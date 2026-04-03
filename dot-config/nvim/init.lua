@@ -1,36 +1,43 @@
 -- Options
-vim.o.autochdir        = true -- change working dir to buffer dir
-vim.o.autowriteall     = true -- auto save files on many commands
-vim.o.clipboard        = 'unnamedplus' -- use system clipboard
-vim.o.completeopt      = 'menuone,noinsert' -- always display completion menu, do not auto insert
-vim.o.cursorline       = true -- highlight line with cursor
-vim.o.expandtab        = true -- insert spaces with tab
-vim.o.fillchars        = 'stl:─' -- fill statusline with horizontal line
-vim.o.foldlevelstart   = 99 -- expand folds initially
-vim.o.ignorecase       = true -- when searching
-vim.o.laststatus       = 3 -- single, global statusline
-vim.o.linebreak        = true -- break on whitespace
-vim.o.mousemoveevent   = true -- trigger CursorMoved on mouse move
-vim.o.number           = true -- show line numbers
-vim.o.relativenumber   = true -- show relative line numbers
-vim.o.shada            = "!,'1000,<50,s10,h" -- default except 1000 oldfiles
-vim.o.shiftwidth       = 4 -- width of indent
-vim.o.shortmess        = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
-vim.o.showmode         = false -- don't show mode in command line
-vim.o.smartcase        = true -- don't ignore case if search string contains uppercase letters
-vim.o.smartindent      = true -- indent based on syntax
-vim.o.spell            = true -- enable spell checking
-vim.o.spellfile        = os.getenv 'HOME' .. '/sync/spellfile.utf-8.add'
-vim.o.spelllang        = 'en_us,pl' -- check English and Polish spelling
-vim.o.tabstop          = 4 -- width of tab
-vim.o.termguicolors    = true -- 24-bit color support
-vim.o.undofile         = true -- persistent undo
-vim.o.updatetime       = 1000 -- time for various update events
-vim.o.virtualedit      = 'all' -- allow virtual editing
-vim.o.visualbell       = true -- disable beeping
-vim.o.winborder        = 'single' -- single border on all windows by default
-vim.o.writebackup      = false -- disable backup when overwriting
-vim.o.signcolumn       = 'yes:3'
+vim.o.autocomplete   = true
+vim.o.autochdir      = true -- change working dir to buffer dir
+vim.o.autowriteall   = true -- auto save files on many commands
+vim.o.clipboard      = 'unnamedplus' -- use system clipboard
+vim.o.complete       = ".,o" -- use buffer and omnifunc
+vim.o.completeopt    = 'fuzzy,menuone,noinsert,popup' -- always open, fuzzy, don't auto insert
+vim.o.cursorline     = true -- highlight line with cursor
+vim.o.expandtab      = true -- insert spaces with tab
+vim.o.fillchars      = 'stl:─' -- fill statusline with horizontal line
+vim.o.foldlevelstart = 99 -- expand folds initially
+vim.o.ignorecase     = true -- when searching
+vim.o.laststatus     = 3 -- single, global statusline
+vim.o.linebreak      = true -- break on whitespace
+vim.o.mousemoveevent = true -- trigger CursorMoved on mouse move
+vim.o.number         = true -- show line numbers
+vim.o.pumheight      = 8 -- limit completion menu
+vim.o.relativenumber = true -- show relative line numbers
+vim.o.shada          = "!,'1000,<50,s10,h" -- default except 1000 oldfiles
+vim.o.shiftwidth     = 4 -- width of indent
+vim.o.shortmess      = vim.o.shortmess .. 'IS' -- don't show welcome message or search count
+vim.o.showmode       = false -- don't show mode in command line
+vim.o.smartcase      = true -- don't ignore case if search string contains uppercase letters
+vim.o.smartindent    = true -- indent based on syntax
+vim.o.spell          = true -- enable spell checking
+vim.o.spellfile      = os.getenv 'HOME' .. '/sync/spellfile.utf-8.add'
+vim.o.spelllang      = 'en_us,pl' -- check English and Polish spelling
+vim.o.tabstop        = 4 -- width of tab
+vim.o.termguicolors  = true -- 24-bit color support
+vim.o.undofile       = true -- persistent undo
+vim.o.updatetime     = 1000 -- time for various update events
+vim.o.virtualedit    = 'all' -- allow virtual editing
+vim.o.visualbell     = true -- disable beeping
+vim.o.winborder      = 'single' -- single border on all windows by default
+vim.o.writebackup    = false -- disable backup when overwriting
+vim.o.signcolumn     = 'yes:3'
+vim.o.diffopt        = 'inline:word'
+
+-- Faster loading
+vim.loader.enable()
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -389,13 +396,15 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- Inserts given URL as Markdown link at cursor position
 local function insert_markdown_link(url)
     if not url or url == '' then return end
-    local html = vim.system({ 'curl', '-L', url, }, { stderr = false }):wait().stdout
-    assert(type(html) == 'string')
-    local title = html:match('<title>(.-)</title>') or 'Untitled'
-    local pos = vim.api.nvim_win_get_cursor(0)[2]
-    local line = vim.api.nvim_get_current_line()
-    local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
-    vim.api.nvim_set_current_line(new_line)
+    vim.net.request(url, {}, function(err, html)
+        if err then return end
+        assert(type(html) == 'string')
+        local title = html:match('<title>(.-)</title>') or 'Untitled'
+        local pos = vim.api.nvim_win_get_cursor(0)[2]
+        local line = vim.api.nvim_get_current_line()
+        local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))
+        vim.api.nvim_set_current_line(new_line)
+    end)
 end
 
 -- Markdown-specific settings:
@@ -506,123 +515,10 @@ end
 
 vim.o.statusline = [[%!v:lua.Statusline()]]
 
--- Replay debugging
-local function term_show(file, split)
-    local buf = vim.api.nvim_create_buf(false, true)
-    local prev_win = vim.api.nvim_get_current_win()
-    if split then vim.cmd.vsplit() end
-    local win = vim.api.nvim_get_current_win()
-    vim.api.nvim_set_current_buf(buf)
-    vim.api.nvim_set_option_value('number', false, { scope = 'local', win = 0 })
-    vim.api.nvim_set_option_value('relativenumber', false, { scope = 'local', win = 0 })
-    vim.api.nvim_set_option_value('spell', false, { scope = 'local', win = 0 })
-    vim.fn.jobstart("trap -- '' SIGINT; touch " .. file .. '; tail -F ' .. file, {
-        term = true,
-        on_exit = function()
-            vim.api.nvim_buf_delete(buf, { force = true })
-        end
-    })
-    if split then vim.api.nvim_set_current_win(prev_win) end
-    return win
-end
+vim.cmd.packadd 'nvim.difftool'
+vim.cmd.packadd 'nvim.undotree'
+vim.keymap.set('n', 'U', ':Undotree<CR>')
 
-vim.cmd.packadd 'termdebug'
-
-local function replay_debug()
-    local tempfile = vim.fn.tempname()
-    local win = term_show(tempfile, true)
-    vim.g.termdebugger = { 'rr', 'replay', '-d', 'rust-gdb', '--' }
-    vim.g.termdebugdw = win
-    vim.cmd.Termdebug()
-    vim.fn.TermDebugSendCommand('dashboard -output ' .. tempfile)
-    vim.fn.TermDebugSendCommand('dashboard -style discard_scrollback True')
-    vim.fn.TermDebugSendCommand('shell clear')
-    vim.cmd.Program()
-    vim.cmd.hide()
-    vim.cmd.stopinsert()
-end
-
-vim.keymap.set('n', '<leader><CR>', replay_debug, { desc = 'Replay debugging' })
-
-vim.api.nvim_create_autocmd('User', {
-    pattern = 'TermdebugStartPost',
-    callback = function()
-        vim.keymap.del('n', '<leader><CR>')
-        vim.keymap.set('n', '<CR>b', vim.cmd.Break, { desc = 'Toggle breakpoint' })
-        vim.keymap.set('n', '<CR>B', vim.cmd.Tbreak, { desc = 'Temporary breakpoint' })
-        vim.keymap.set('n', '<CR>C', function() vim.fn.TermDebugSendCommand('reverse-continue') end,
-            { desc = 'Reverse continue' })
-        vim.keymap.set('n', '<CR>c', vim.cmd.Continue, { desc = 'Continue' })
-        vim.keymap.set('n', '<CR>u', vim.cmd.Until, { desc = 'Continue until' })
-        vim.keymap.set('n', '<CR>x', vim.cmd.Stop, { desc = 'Stop execution' })
-        vim.keymap.set({ 'n', 'v' }, '<CR>v', vim.cmd.Evaluate, { desc = 'Evaluate expression' })
-        vim.keymap.set('n', '<C-k>', function() vim.fn.TermDebugSendCommand('reverse-next') end,
-            { desc = 'Reverse next statement' })
-        vim.keymap.set('n', '<C-j>', vim.cmd.Over, { desc = 'Next statement' })
-        vim.keymap.set('n', '<CR>F', function() vim.fn.TermDebugSendCommand('reverse-finish') end,
-            { desc = 'Reverse finish frame' })
-        vim.keymap.set('n', '<CR>f', vim.cmd.Finish, { desc = 'Finish frame' })
-        vim.keymap.set('n', '<C-h>', function() vim.fn.TermDebugSendCommand('reverse-step') end,
-            { desc = 'Step backwards' })
-        vim.keymap.set('n', '<C-l>', vim.cmd.Step, { desc = 'Step forwards' })
-        vim.keymap.set('n', '<CR>I', function() vim.fn.TermDebugSendCommand('reverse-stepi') end,
-            { desc = 'Step backwards by instruction' })
-        vim.keymap.set('n', '<CR>i', function() vim.fn.TermDebugSendCommand('stepi') end,
-            { desc = 'Step forwards by instruction' })
-    end
-})
-vim.api.nvim_create_autocmd('User', {
-    pattern = 'TermdebugStopPost',
-    callback = function()
-        if vim.api.nvim_win_is_valid(vim.g.termdebugdw) then
-            vim.api.nvim_win_close(vim.g.termdebugdw, true)
-        end
-        vim.keymap.set('n', '<leader><CR>', replay_debug, { desc = 'Replay debugging' })
-        vim.keymap.del('n', '<CR>b')
-        vim.keymap.del('n', '<CR>B')
-        vim.keymap.del('n', '<CR>C')
-        vim.keymap.del('n', '<CR>c')
-        vim.keymap.del('n', '<CR>u')
-        vim.keymap.del('n', '<CR>x')
-        vim.keymap.del({ 'n', 'v' }, '<CR>v')
-        vim.keymap.del('n', '<C-k>')
-        vim.keymap.del('n', '<C-j>')
-        vim.keymap.del('n', '<C-h>')
-        vim.keymap.del('n', '<C-l>')
-        vim.keymap.del('n', '<CR>f')
-        vim.keymap.del('n', '<CR>F')
-        vim.keymap.del('n', '<CR>i')
-        vim.keymap.del('n', '<CR>I')
-    end
-})
-
--- Auto insert mode in termdebug
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-    pattern = 'termdebug',
-    callback = function(e)
-        vim.api.nvim_create_autocmd({ 'BufWinEnter', 'WinEnter' }, {
-            buffer = e.buf,
-            callback = function() vim.cmd.startinsert() end,
-        })
-    end,
-})
-
--- Plugins
--- Bootstrap lazy.nvim and setup plugins
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.uv.fs_stat(lazypath) then
-    vim.system { 'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath }
-        :wait()
-end
-vim.opt.rtp:prepend(lazypath)
-require 'lazy'.setup {
-    spec = { { import = 'plugins' } },
-    dev = {
-        path = '~/proj',
-        fallback = true,
-    },
-    install = {
-        colorscheme = { 'austere-theme' },
-    },
-    ui = { border = 'single' }
+require 'vim._core.ui2'.enable {
+    enable = true,
 }

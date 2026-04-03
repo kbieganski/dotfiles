@@ -3,6 +3,5 @@ Name=kitty
 Type=Application
 Icon=kitty
 StartupNotify=true
-TryExec=kitty --single-instance
-Exec=kitty
+Exec=kitty --single-instance
 Categories=System;TerminalEmulator;

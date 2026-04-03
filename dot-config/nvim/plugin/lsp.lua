@@ -1,4 +1,10 @@
--- Language Server Protocol
+vim.pack.add {
+    'https://github.com/neovim/nvim-lspconfig',
+    'https://github.com/mrcjkb/rustaceanvim',
+    'https://github.com/kosayoda/nvim-lightbulb',
+    'https://github.com/folke/lazydev.nvim',
+    'https://github.com/onsails/lspkind-nvim',
+}
 
 local decl_syms = vim.iter {
     'File', 'Module', 'Namespace', 'Package', 'Class', 'Method', 'Field', 'Constructor', 'Enum', 'Interface', 'Function', 'EnumMember', 'Struct',
@@ -126,121 +132,105 @@ local function on_attach(client, bufnr, opts)
     end
 end
 
-local function setup_lsp()
-    local lspconfig = require 'lspconfig'
+local lspkind = require 'lspkind'
+lspkind.setup {
+    mode = 'symbol',
+    symbol_map = {
+        Package = '󰆦 ',
+        Namespace = '󰅩 ',
+    },
+}
+for i, kind in ipairs(vim.lsp.protocol.SymbolKind) do
+    vim.lsp.protocol.SymbolKind[i] = lspkind.symbolic(kind) .. ' ' .. kind
+end
 
-    for _, server in ipairs { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'zls' } do
-        lspconfig[server].setup { on_attach = on_attach }
-    end
+local lang_servers = { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'zls' }
+for _, server in ipairs(lang_servers) do
+    vim.lsp.config(server, { on_attach = on_attach })
+end
+lang_servers = vim.fn.extend(lang_servers, { 'clangd', 'pylsp', 'lua_ls' })
 
-    lspconfig.clangd.setup {
-        on_attach = function(client, bufnr)
-            on_attach(client, bufnr, { autoformat = false })
-            vim.keymap.set('n', 'go', vim.cmd.ClangdSwitchSourceHeader,
-                { buffer = bufnr, desc = 'Switch source/header' })
-        end,
-        cmd = {
-            "clangd",
-            "--offset-encoding=utf-16",
-            "--function-arg-placeholders=0",
-        },
-    }
+vim.lsp.config('clangd', {
+    on_attach = function(client, bufnr)
+        on_attach(client, bufnr, { autoformat = false })
+        vim.keymap.set('n', 'go', vim.cmd.ClangdSwitchSourceHeader,
+            { buffer = bufnr, desc = 'Switch source/header' })
+    end,
+    cmd = {
+        'clangd',
+        '--offset-encoding=utf-16',
+        '--function-arg-placeholders=0',
+    },
+})
 
-    lspconfig.pylsp.setup {
-        on_attach = on_attach,
-        settings = {
-            pylsp = {
-                plugins = {
-                    pylsp_mypy = { enabled = true, }
-                }
+vim.lsp.config('pylsp', {
+    on_attach = on_attach,
+    settings = {
+        pylsp = {
+            plugins = {
+                pylsp_mypy = { enabled = true, }
             }
         }
     }
+})
 
-    lspconfig.lua_ls.setup {
-        on_attach = on_attach,
-        settings = {
-            Lua = {
-                runtime = { version = 'LuaJIT', },
-                workspace = { library = vim.api.nvim_get_runtime_file('', true), },
-                telemetry = { enable = false, },
-            }
-        },
-    }
-
-    vim.g.rustaceanvim = {
-        server = {
-            settings = {
-                ['rust-analyzer'] = {
-                    cargo = { features = 'all', },
-                    procMacro = {
-                        enable = true,
-                        attributes = { enable = true, },
-                    },
-                    completion = { callable = { snippets = 'add_parentheses' } },
-                },
-            },
-            on_attach = on_attach,
-        },
-    }
-
-    require 'nvim-lightbulb'.setup {
-        sign = { enabled = false },
-        virtual_text = { enabled = true, text = '󰘦 ', hl = 'NonText' },
-        autocmd = { enabled = true },
-    }
-
-    vim.api.nvim_create_autocmd('LspProgress', {
-        callback = function(e)
-            local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
-            vim.notify(vim.lsp.status(), vim.log.levels.INFO, {
-                id = 'lsp_progress',
-                title = 'LSP Progress',
-                opts = function(notif)
-                    notif.icon = e.data.params.value.kind == 'end' and '✓'
-                        or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-                end,
-            })
-        end,
-    })
-end
-
-return {
-    {
-        'neovim/nvim-lspconfig',
-        event = { 'BufReadPre', 'BufNewFile' },
-        dependencies = {
-            {
-                'onsails/lspkind-nvim',
-                config = function()
-                    local lspkind = require 'lspkind'
-                    lspkind.setup {
-                        mode = 'symbol',
-                        symbol_map = {
-                            Package = '󰆦 ',
-                            Namespace = '󰅩 ',
-                        },
-                    }
-                    for i, kind in ipairs(vim.lsp.protocol.SymbolKind) do
-                        vim.lsp.protocol.SymbolKind[i] = lspkind.symbolic(kind) .. ' ' .. kind
-                    end
-                end
-            },
-            'mrcjkb/rustaceanvim',
-            'kosayoda/nvim-lightbulb',
-        },
-        config = setup_lsp,
-        ft = { 'bash', 'c', 'cpp', 'css', 'go', 'html', 'javascript', 'json', 'lua',
-            'markdown', 'typescript', 'yaml', 'python', 'rust', 'zig', 'zsh' },
+vim.lsp.config('lua_ls', {
+    on_attach = on_attach,
+    settings = {
+        Lua = {
+            runtime = { version = 'LuaJIT', },
+            workspace = { library = vim.api.nvim_get_runtime_file('', true), },
+            telemetry = { enable = false, },
+        }
     },
-    {
-        'folke/lazydev.nvim',
-        ft = 'lua',
-        opts = {
-            library = {
-                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+})
+
+vim.lsp.enable(lang_servers)
+
+vim.g.rustaceanvim = {
+    server = {
+        settings = {
+            ['rust-analyzer'] = {
+                cargo = { features = 'all', },
+                procMacro = {
+                    enable = true,
+                    attributes = { enable = true, },
+                },
+                completion = { callable = { snippets = 'add_parentheses' } },
             },
         },
-        dependencies = { 'neovim/nvim-lspconfig' }
+        on_attach = on_attach,
+    },
+}
+
+require 'nvim-lightbulb'.setup {
+    sign = { enabled = false },
+    virtual_text = { enabled = true, text = '󰘦 ', hl = 'NonText' },
+    autocmd = { enabled = true },
+}
+
+vim.api.nvim_create_autocmd('LspProgress', {
+    callback = function(e)
+        local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+        vim.notify(vim.lsp.status(), vim.log.levels.INFO, {
+            id = 'lsp_progress',
+            title = 'LSP Progress',
+            opts = function(notif)
+                notif.icon = e.data.params.value.kind == 'end' and '✓'
+                    or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+            end,
+        })
+    end,
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+        vim.lsp.completion.enable(true, ev.data.client_id, ev.buf)
+    end,
+})
+
+require 'lazydev'.setup {
+    library = {
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
     },
 }

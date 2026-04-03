@@ -3,7 +3,6 @@ Name=kitty URL Launcher
 Type=Application
 Icon=kitty
 StartupNotify=true
-TryExec=kitty --single-instance
 Exec=kitty --single-instance +open %U
 Categories=System;TerminalEmulator;
 NoDisplay=true
