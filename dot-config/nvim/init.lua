@@ -4,7 +4,7 @@ vim.o.autochdir      = true -- change working dir to buffer dir
 vim.o.autowriteall   = true -- auto save files on many commands
 vim.o.clipboard      = 'unnamedplus' -- use system clipboard
 vim.o.complete       = ".,o" -- use buffer and omnifunc
-vim.o.completeopt    = 'fuzzy,menuone,noinsert,popup' -- always open, fuzzy, don't auto insert
+vim.o.completeopt    = 'fuzzy,menuone,noselect,popup' -- always open, fuzzy, don't auto insert
 vim.o.cursorline     = true -- highlight line with cursor
 vim.o.expandtab      = true -- insert spaces with tab
 vim.o.fillchars      = 'stl:─' -- fill statusline with horizontal line
@@ -78,9 +78,9 @@ vim.keymap.set('n', '[e',
     { desc = 'Previous error' })
 
 -- Delete without yanking with s/S/x/X
-vim.keymap.set({ 'n', 'v' }, 'x', '"-x')
-vim.keymap.set({ 'n', 'v' }, 'X', '"-X')
-vim.keymap.set({ 'n', 'v' }, 's', '"-xi')
+vim.keymap.set('n', 'x', '"_x')
+vim.keymap.set('n', 'X', '"_X')
+vim.keymap.set('n', 's', '"_xi')
 vim.keymap.set('n', 'S', '0"-D')
 
 -- Replace without yanking the replaced text
@@ -217,7 +217,7 @@ end
 
 local function fzf_cmd(opts)
     opts = opts or {}
-    opts.history = opts.history or true
+    if opts.history == nil then opts.history = true end
     opts.start_history = opts.start_history or false
     return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
         .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
@@ -256,16 +256,16 @@ end
 vim.keymap.set('n', '<leader>o',
     function()
         local current_buf = vim.api.nvim_get_current_buf()
-        local buf_map = {}
+        local buf_map = { [current_buf] = vim.api.nvim_buf_get_name(current_buf) }
         local buffers = vim.iter(vim.fn.getjumplist()[1]):rev()
             :map(function(jump) return jump.bufnr end)
             :filter(function(bufnr)
                 if buf_map[bufnr] then return false end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then return false end
                 local name = vim.api.nvim_buf_get_name(bufnr)
-                if name == '' then return false end
+                if name == '' or bufnr == current_buf or not vim.bo[bufnr].buflisted then return false end
                 buf_map[bufnr] = name
-                return bufnr ~= current_buf and vim.bo[bufnr].buflisted
+                return true
             end)
             :map(function(b) return buf_map[b] end):totable()
         buf_map = vim.iter(pairs(buf_map)):fold({}, function(tbl, bufnr, filename)
@@ -325,7 +325,7 @@ vim.keymap.set('n', '<leader>N', function() term_result('note --grep', grep_edit
 
 -- Autocmds
 -- Autosave
-local autosave_timer = vim.loop.new_timer()
+local autosave_timer = vim.uv.new_timer()
 local function write_buf_if_exists(bufnr)
     if vim.fn.mode() == 'i' then return end
     if vim.api.nvim_buf_is_loaded(bufnr) and vim.uv.fs_stat(vim.api.nvim_buf_get_name(bufnr)) then
@@ -361,7 +361,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained' }, {
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
-    callback = function() vim.highlight.on_yank() end,
+    callback = function() vim.hl.on_yank() end,
 })
 
 -- Resize splits if window got resized

@@ -95,8 +95,8 @@ while read -r pkg; do
     silent go install "$pkg"
 done <$pkg_dir/go.txt
 
-section "Restoring Neovim plugins"
-silent nvim --headless '+Lazy! restore' +qa
+section "Installing Neovim plugins"
+silent nvim --headless +qa
 
 section "Updating bat cache"
 silent bat cache --build
