@@ -34,8 +34,8 @@ tmux_navigator.navigate = function(self, direction)
 end
 local navigator = require 'Navigator'
 navigator.setup { disable_on_zoom = true, mux = tmux_navigator:new() }
-vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-h>', function() navigator.left() end, { buffer = bufnr, desc = 'Window left' })
-vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-j>', function() navigator.down() end, { buffer = bufnr, desc = 'Window down' })
-vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-k>', function() navigator.up() end, { buffer = bufnr, desc = 'Window up' })
+vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-h>', function() navigator.left() end, { desc = 'Window left' })
+vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-j>', function() navigator.down() end, { desc = 'Window down' })
+vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-k>', function() navigator.up() end, { desc = 'Window up' })
 vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-l>', function() navigator.right() end,
-    { buffer = bufnr, desc = 'Window right' })
+    { desc = 'Window right' })

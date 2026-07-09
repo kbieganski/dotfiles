@@ -127,8 +127,6 @@ vim.keymap.set('n', 'gss',
     function() swap.swap_next('@statement.outer', 'textobjects') end, { desc = 'a statement' })
 vim.keymap.set('n', 'gst',
     function() swap.swap_next('@class.outer', 'textobjects') end, { desc = 'a type' })
-vim.keymap.set('n', 'gst',
-    function() swap.swap_next('@class.inner', 'textobjects') end, { desc = 'a type' })
 
 vim.keymap.set('n', 'gSb',
     function() swap.swap_previous('@block.outer', 'textobjects') end, { desc = 'a block' })
@@ -142,8 +140,6 @@ vim.keymap.set('n', 'gSs',
     function() swap.swap_previous('@statement.outer', 'textobjects') end, { desc = 'a statement' })
 vim.keymap.set('n', 'gSt',
     function() swap.swap_previous('@class.outer', 'textobjects') end, { desc = 'a type' })
-vim.keymap.set('n', 'gSt',
-    function() swap.swap_previous('@class.inner', 'textobjects') end, { desc = 'a type' })
 
 require 'nvim-surround'.setup {}
 

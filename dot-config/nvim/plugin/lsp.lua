@@ -126,9 +126,18 @@ local function on_attach(client, bufnr, opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, desc = 'Implementation' })
     end
     if client:supports_method('textDocument/foldingRange') then
-        local win = vim.api.nvim_get_current_win()
-        vim.wo[win][0].foldmethod = 'expr'
-        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+        for _, win in ipairs(vim.fn.win_findbuf(bufnr)) do
+            vim.wo[win][0].foldmethod = 'expr'
+            vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+        end
+        vim.api.nvim_create_autocmd('BufWinEnter', {
+            buffer = bufnr,
+            callback = function()
+                local win = vim.api.nvim_get_current_win()
+                vim.wo[win][0].foldmethod = 'expr'
+                vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+            end,
+        })
     end
 end
 

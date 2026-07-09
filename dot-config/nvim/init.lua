@@ -162,7 +162,7 @@ local function get_visual_selection()
         ls = ls - 1; le = le - 1; cs = cs - 1
         local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
             math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
-        return table.concat(lines, ' ')
+        return table.concat(lines, '\n')
     end
 end
 
@@ -242,7 +242,7 @@ function Lf(path)
 end
 
 local function git_root()
-    return vim.system { 'git', 'get-root' }:wait().stdout
+    return (vim.system { 'git', 'get-root' }:wait().stdout:gsub('%s+$', ''))
 end
 
 local function fzg_cmd(opts)
