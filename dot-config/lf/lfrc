@@ -73,7 +73,7 @@ map \\ rg
 
 # Inside Neovim, open with e, ignore w
 # Outside, edit with e, open shell with w
-cmd edit $$EDITOR $f
+cmd edit $$EDITOR "$f"
 cmd sh $$SHELL
 map e
 map w
