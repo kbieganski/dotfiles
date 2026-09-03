@@ -81,7 +81,7 @@ vim.keymap.set('n', '[e',
 vim.keymap.set('n', 'x', '"_x')
 vim.keymap.set('n', 'X', '"_X')
 vim.keymap.set('n', 's', '"_xi')
-vim.keymap.set('n', 'S', '0"-D')
+vim.keymap.set('n', 'S', '0"_D')
 
 -- Replace without yanking the replaced text
 vim.keymap.set('v', 'p', '"_dP')
@@ -144,7 +144,7 @@ vim.keymap.set('n', '<leader>r', function()
         if vim.uv.fs_stat(filename) then
             vim.cmd.bdelete()
             vim.uv.fs_rename(filename, new_filename, vim.schedule_wrap(function()
-                vim.cmd.edit(new_filename)
+                vim.cmd.edit(vim.fn.fnameescape(new_filename))
             end))
         else
             vim.api.nvim_buf_set_name(0, new_filename)
@@ -154,16 +154,12 @@ end, { desc = 'Rename current file' })
 
 -- Interactive shell commands
 local function get_visual_selection()
-    if vim.api.nvim_get_mode().mode ~= 'v' then
+    local mode = vim.api.nvim_get_mode().mode
+    if mode ~= 'v' and mode ~= 'V' and mode ~= '\22' then
         return ''
-    else
-        local _, ls, cs = unpack(vim.fn.getpos 'v')
-        local _, le, ce = unpack(vim.fn.getpos '.')
-        ls = ls - 1; le = le - 1; cs = cs - 1
-        local lines = vim.api.nvim_buf_get_text(0, math.min(ls, le),
-            math.min(cs, ce), math.max(ls, le), math.max(cs, ce), {})
-        return table.concat(lines, '\n')
     end
+    local lines = vim.fn.getregion(vim.fn.getpos 'v', vim.fn.getpos '.', { type = mode })
+    return table.concat(lines, '\n')
 end
 
 local function term_result(cmd, fn)
@@ -181,10 +177,13 @@ local function term_result(cmd, fn)
     vim.fn.jobstart(cmd .. ' > ' .. tempfile, {
         term = true,
         on_exit = function()
-            vim.api.nvim_set_current_buf(prev_buf)
+            if vim.api.nvim_buf_is_valid(prev_buf) then
+                vim.api.nvim_set_current_buf(prev_buf)
+            end
             vim.api.nvim_buf_delete(buf, { force = true })
             if vim.uv.fs_stat(tempfile) then
                 local selected = vim.fn.readfile(tempfile)
+                os.remove(tempfile)
                 fn(selected)
             end
         end
@@ -194,23 +193,26 @@ end
 
 local function grep_parse(selected, root)
     local filename, lnum, col, text = selected:match '^(.*):(%d+):(%d+):?(.*)'
-    lnum = tonumber(lnum)
-    col = tonumber(col) - 1
-    return root .. filename, lnum, col, text
+    if not filename then return nil end
+    return root .. filename, tonumber(lnum), tonumber(col) - 1, text
 end
 
 local function grep_edit_or_qfl(selected, root)
     root = root and root .. '/' or ''
     if #selected == 1 then
         local filename, lnum, col, _ = grep_parse(selected[1], root)
-        vim.cmd.edit(filename)
+        if not filename then return end
+        vim.cmd.edit(vim.fn.fnameescape(filename))
         vim.api.nvim_win_set_cursor(0, { lnum, col })
     elseif #selected > 1 then
-        vim.fn.setqflist(vim.tbl_map(
-            function(item)
-                local filename, lnum, col, text = grep_parse(item, root)
-                return { filename = filename, lnum = lnum, col = col, text = text }
-            end, selected))
+        local items = {}
+        for _, item in ipairs(selected) do
+            local filename, lnum, col, text = grep_parse(item, root)
+            if filename then
+                items[#items + 1] = { filename = filename, lnum = lnum, col = col, text = text }
+            end
+        end
+        vim.fn.setqflist(items)
         vim.cmd.copen()
     end
 end
@@ -229,7 +231,7 @@ local function edit_or_qfl(selected, root)
     root = root and root .. '/' or ''
     if #selected == 1 then
         if selected[1] == '' then return end
-        vim.cmd.edit(root .. selected[1])
+        vim.cmd.edit(vim.fn.fnameescape(root .. selected[1]))
     elseif #selected > 1 then
         vim.fn.setqflist(vim.tbl_map(function(item) return { filename = root .. item } end, selected))
         vim.cmd.copen()
@@ -399,7 +401,8 @@ local function insert_markdown_link(url)
     vim.net.request(url, {}, function(err, html)
         if err then return end
         assert(type(html) == 'string')
-        local title = html:match('<title>(.-)</title>') or 'Untitled'
+        local title = html:match('<title[^>]*>(.-)</title>') or 'Untitled'
+        title = vim.trim(title:gsub('%s+', ' '):gsub('[%[%]]', ''))
         local pos = vim.api.nvim_win_get_cursor(0)[2]
         local line = vim.api.nvim_get_current_line()
         local new_line = string.format('%s[%s](%s)%s', line:sub(0, pos), title, url, line:sub(pos + 1))

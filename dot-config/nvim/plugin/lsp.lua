@@ -6,6 +6,25 @@ vim.pack.add {
     'https://github.com/onsails/lspkind-nvim',
 }
 
+local lspkind = require 'lspkind'
+lspkind.setup {
+    mode = 'symbol',
+    symbol_map = {
+        Package = '󰆦 ',
+        Namespace = '󰅩 ',
+    },
+}
+
+-- Prefix '[Kind]' in quickfix item text with the lspkind icon
+local function add_icons(items)
+    for _, item in ipairs(items) do
+        item.text = item.text:gsub('^%[(%w+)%]', function(kind)
+            return '[' .. lspkind.symbolic(kind) .. ' ' .. kind .. ']'
+        end)
+    end
+    return items
+end
+
 local decl_syms = vim.iter {
     'File', 'Module', 'Namespace', 'Package', 'Class', 'Method', 'Field', 'Constructor', 'Enum', 'Interface', 'Function', 'EnumMember', 'Struct',
 }:map(function(sym) return vim.lsp.protocol.SymbolKind[sym] end):totable()
@@ -27,13 +46,13 @@ local function document_symbols()
         local handler = function(_, syms)
             if not syms then return end
             local decls = filter_decls(syms)
-            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
+            local items = add_icons(vim.lsp.util.symbols_to_items(decls, bufnr))
             vim.fn.setloclist(win, {}, ' ', { title = 'Document symbols', items = items })
             if vim.api.nvim_get_current_win() == win then
                 vim.cmd.lopen()
             end
         end
-        client.request(method, position_params, handler, bufnr)
+        client:request(method, position_params, handler, bufnr)
     end
 end
 
@@ -41,8 +60,9 @@ local function workspace_symbols()
     local bufnr = vim.api.nvim_get_current_buf()
     vim.lsp.buf_request(bufnr, vim.lsp.protocol.Methods.workspace_symbol, { query = '' },
         function(_, syms)
+            if not syms then return end
             local decls = filter_decls(syms)
-            local items = vim.lsp.util.symbols_to_items(decls, bufnr)
+            local items = add_icons(vim.lsp.util.symbols_to_items(decls, bufnr))
             vim.fn.setqflist({}, ' ', { title = 'Workspace symbols', items = items })
             vim.cmd.copen()
         end)
@@ -51,7 +71,8 @@ end
 local function on_attach(client, bufnr, opts)
     opts = opts or {}
     opts.autoformat = opts.autoformat ~= false
-    if client.server_capabilities.documentHighlightProvider then
+    if client.server_capabilities.documentHighlightProvider and not vim.b[bufnr].lsp_highlight_autocmd then
+        vim.b[bufnr].lsp_highlight_autocmd = true
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             callback = function()
                 vim.lsp.buf.clear_references()
@@ -102,22 +123,25 @@ local function on_attach(client, bufnr, opts)
             function() vim.b.autoformat = not vim.b.autoformat end,
             { buffer = bufnr, desc = 'Toggle auto-formatting' })
         vim.b.autoformat = opts.autoformat
-        vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = bufnr,
-            callback = function()
-                if vim.api.nvim_get_mode().mode ~= 'i' and vim.b.autoformat then
-                    vim.lsp.buf.format { buffer = bufnr }
-                end
-            end,
-        })
-        vim.api.nvim_create_autocmd('InsertLeave', {
-            buffer = bufnr,
-            callback = function(e)
-                if not vim.bo[e.buf].modified and vim.b.autoformat then
-                    vim.lsp.buf.format { buffer = bufnr }
-                end
-            end,
-        })
+        if not vim.b[bufnr].lsp_format_autocmd then
+            vim.b[bufnr].lsp_format_autocmd = true
+            vim.api.nvim_create_autocmd('BufWritePre', {
+                buffer = bufnr,
+                callback = function()
+                    if vim.api.nvim_get_mode().mode ~= 'i' and vim.b.autoformat then
+                        vim.lsp.buf.format { buffer = bufnr }
+                    end
+                end,
+            })
+            vim.api.nvim_create_autocmd('InsertLeave', {
+                buffer = bufnr,
+                callback = function(e)
+                    if not vim.bo[e.buf].modified and vim.b.autoformat then
+                        vim.lsp.buf.format { buffer = bufnr }
+                    end
+                end,
+            })
+        end
     end
     if client.server_capabilities.referencesProvider then
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = bufnr, desc = 'Reference' })
@@ -125,7 +149,8 @@ local function on_attach(client, bufnr, opts)
     if client.server_capabilities.implementationProvider then
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr, desc = 'Implementation' })
     end
-    if client:supports_method('textDocument/foldingRange') then
+    if client:supports_method('textDocument/foldingRange') and not vim.b[bufnr].lsp_fold_autocmd then
+        vim.b[bufnr].lsp_fold_autocmd = true
         for _, win in ipairs(vim.fn.win_findbuf(bufnr)) do
             vim.wo[win][0].foldmethod = 'expr'
             vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
@@ -139,18 +164,6 @@ local function on_attach(client, bufnr, opts)
             end,
         })
     end
-end
-
-local lspkind = require 'lspkind'
-lspkind.setup {
-    mode = 'symbol',
-    symbol_map = {
-        Package = '󰆦 ',
-        Namespace = '󰅩 ',
-    },
-}
-for i, kind in ipairs(vim.lsp.protocol.SymbolKind) do
-    vim.lsp.protocol.SymbolKind[i] = lspkind.symbolic(kind) .. ' ' .. kind
 end
 
 local lang_servers = { 'bashls', 'cssls', 'gopls', 'html', 'jsonls', 'marksman', 'ts_ls', 'zls' }

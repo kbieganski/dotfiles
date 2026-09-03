@@ -7,7 +7,7 @@ vim.pack.add {
 local filetypes = { 'bash', 'c', 'cpp', 'css', 'gdscript', 'gdshader', 'glsl', 'go', 'godot_resource',
     'html', 'javascript', 'json', 'lua', 'markdown', 'python', 'query', 'regex', 'rust', 'typescript',
     'systemverilog', 'yaml', 'zig' }
-local langs = vim.fn.extend(filetypes, { 'comment', 'markdown_inline' })
+local langs = vim.list_extend({ 'comment', 'markdown_inline' }, filetypes)
 
 require 'nvim-treesitter'.install(langs)
 
@@ -150,7 +150,7 @@ for _, ft in ipairs(filetypes) do
             vim.treesitter.start()
             local win = vim.api.nvim_get_current_win()
             vim.wo[win][0].foldmethod = 'expr'
-            vim.wo[win][0].foldexpr = 'nvim_treesitter#foldexpr()'
+            vim.wo[win][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
         end
     })
 end
