@@ -368,5 +368,5 @@ cmd on-quit :{{
 }}
 
 # trigger on-cd upon startup
-on-cd
+cmd on-init on-cd
 
