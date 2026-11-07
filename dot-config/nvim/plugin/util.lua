@@ -33,7 +33,8 @@ tmux_navigator.navigate = function(self, direction)
     return ori_navigate(self, direction)
 end
 local navigator = require 'Navigator'
-navigator.setup { disable_on_zoom = true, mux = tmux_navigator:new() }
+local ok, tmux = pcall(function() return tmux_navigator:new() end)
+navigator.setup { disable_on_zoom = true, mux = ok and tmux or 'auto' }
 vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-h>', function() navigator.left() end, { desc = 'Window left' })
 vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-j>', function() navigator.down() end, { desc = 'Window down' })
 vim.keymap.set({ 'n', 'v', 'i', 't' }, '<M-k>', function() navigator.up() end, { desc = 'Window up' })

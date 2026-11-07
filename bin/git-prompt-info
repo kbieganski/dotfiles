@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+git rev-parse --is-inside-work-tree &>/dev/null || exit 1
+
+status=$(git status --porcelain -b 2>/dev/null)
+has() { grep -qE "$1" <<< "$status"; }
+indicators=
+if has '^##.*\[ahead.*behind'; then indicators+='⇕'
+elif has '^##.*\[ahead'; then indicators+='⇡'
+elif has '^##.*behind'; then indicators+='⇣'
+fi
+has '^(U[UDA]|AA|DD|[DA]U) ' && indicators+='='
+git rev-parse --verify -q refs/stash >/dev/null && indicators+='$'
+has '^([MARCDU ]D|D[ UM]) ' && indicators+='✘'
+has '^R[ MD] ' && indicators+='»'
+has '^[ MARC]M ' && indicators+='!'
+has '^(A[ MDAU]|M[ MD]|UA) ' && indicators+='+'
+has '^\?\? ' && indicators+='?'
+
+branch=$(git branch --show-current)
+echo "${branch:-$(git rev-parse --short HEAD)}"
+echo "$indicators"
+git diff --numstat HEAD 2>/dev/null | awk '{ a += $1; d += $2 } END { print a + 0; print d + 0 }'

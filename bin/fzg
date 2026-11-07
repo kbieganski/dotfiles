@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 reload='reload:rg --column --color=always --smart-case {q} || :'
 enter='accept'

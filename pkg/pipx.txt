@@ -1,4 +1,6 @@
+debugpy
 i3-resurrect
 keepmenu
 python-lsp-server[all]
+ratarmount
 virtualenv

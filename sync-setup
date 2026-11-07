@@ -1,6 +1,7 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
-dotfiles_dir=$(dirname "${BASH_SOURCE[0]}")
+self=$(realpath "${BASH_SOURCE[0]}")
+dotfiles_dir=$(dirname "$self")
 pkg_dir=pkg
 pacman_req_pkgs=$pkg_dir/pacman.txt
 pacman_cur_pkgs=$pkg_dir/.pacman.txt
@@ -10,17 +11,20 @@ function section {
 }
 
 function silent {
-    local temp=$(mktemp)
+    local temp
+    temp=$(mktemp)
     if ! "$@" &>"$temp"; then
         cat "$temp"
+        rm -f "$temp"
         printf "\e[31mFailed: '\e[0m%s\e[31m'\e[0m\n" "$*"
         exit 1
     fi
+    rm -f "$temp"
 }
 
 cd "$dotfiles_dir" || exit 1
 
-if ! grep "$USER" /etc/passwd | grep -q "/bin/zsh"; then
+if [ "$(basename "$(getent passwd "$USER" | cut -d: -f7)")" != zsh ]; then
     section "Setting zsh as default shell"
     sudo chsh -s "$(which zsh)"
 fi
@@ -32,7 +36,7 @@ if git rev-parse --abbrev-ref 'HEAD@{upstream}' &>/dev/null; then
     silent git submodule update --init --recursive
     if [ "$old_commit" != "$(git rev-parse HEAD)" ]; then
         section "Re-running self"
-        exec $0
+        exec "$self"
     fi
 fi
 silent stow .
@@ -102,21 +106,19 @@ section "Updating bat cache"
 silent bat cache --build
 
 section "Updating .desktop database"
-update-desktop-database ~/.local/share/applications
+silent update-desktop-database ~/.local/share/applications
 
 section "Restarting i3"
 silent i3-msg restart
 
 section "(Re)starting systemd services"
 silent systemctl --user daemon-reload
-for service in ~/.config/systemd/user/*.service podman.socket; do
+for service in ~/.config/systemd/user/*.service podman.socket syncthing.service; do
     service="$(basename "$service")"
     silent systemctl --user enable --now "$service"
 done
 silent sudo systemctl daemon-reload
-for service in earlyoom; do
-    silent sudo systemctl enable --now "$service"
-done
+silent sudo systemctl enable --now earlyoom
 
 if [ -n "$(git diff --staged --name-only)" ]; then
     section "Committing and pushing changes"

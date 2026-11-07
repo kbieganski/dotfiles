@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+pid=${1:-$PPID}
+while [ "${pid:-0}" -gt 1 ] && [ -e "/proc/$pid" ]; do
+    case "$(cat "/proc/$pid/comm")" in
+    kitty) break ;;
+    'tmux: server') pid=$(tmux display -p '#{client_pid}') ;;
+    *) pid=$(ps -o ppid= -p "$pid" | tr -d ' ') ;;
+    esac
+done
+socket=$XDG_RUNTIME_DIR/kitty-$pid
+if [ ! -S "$socket" ]; then
+    echo "Error: no kitty remote control socket found" >&2
+    exit 1
+fi
+echo -n "unix:$socket"

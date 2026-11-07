@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if host=$(cat .ssh/* | grep Host | cut -d' ' -f 2 | grep -v "\*" | grep -v "^$" | fzf); then
+if host=$(cat ~/.ssh/config ~/.ssh/hosts.conf 2>/dev/null |
+    awk 'tolower($1) == "host" { for (i = 2; i <= NF; i++) if ($i !~ /[*?!]/ && !seen[$i]++) print $i }' |
+    fzf); then
     ssh "$host"
 fi

@@ -122,8 +122,7 @@
 
     uncommit = reset --soft HEAD~
     uc = !git uncommit
-    unstage = restore --staged
-    us = !git unstage
+    us = unstage
     untrack = rm --cache --
     ut = !git untrack
 

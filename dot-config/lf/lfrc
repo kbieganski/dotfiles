@@ -4,40 +4,92 @@ set cursorpreviewfmt "\033[4m"
 set cutfmt "\033[7;31m"
 set copyfmt "\033[7;32m"
 set icons true
+set info custom
 set incfilter true
 set incsearch true
 set mouse true
-set previewer bat
+set previewer ~/.config/lf/preview
 set selectfmt "\033[7;34m"
+set shell bash
 set tagfmt "\033[37m"
 
 map <esc> quit
 
-# Batch rename
+# Batch rename in $EDITOR, in a popup inside tmux
 cmd rename &{{
     old="$(mktemp)"
     new="$(mktemp)"
-    echo "${fs[@]}" > ~/test.txt
-    if [ -n "$fs" ]; then
-        while IFS= read -r f; do
-            echo "$(basename "$f")" >> "$old"
-        done <<< "$fs"
+    printf '%s\n' "${fs:-$f}" > "$old"
+    while IFS= read -r path; do
+        basename -- "$path"
+    done < "$old" > "$new"
+    if [ -n "$TMUX" ]; then
+        tmux display-popup -E $EDITOR "$new"
+        lf -remote "send $id rename-apply \"$old\" \"$new\""
     else
-        echo "$(basename "$f")" > "$old"
+        lf -remote "send $id rename-edit \"$old\" \"$new\""
     fi
-    cat "$old" > "$new"
-    tmux display-popup -E $EDITOR "$new"
-    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
-    paste "$old" "$new" | while IFS= read -r names; do
-        src="$(printf '%s' "$names" | cut -f1)"
-        dst="$(printf '%s' "$names" | cut -f2)"
-        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
-            continue
-        fi
-        mv -- "$src" "$dst"
+}}
+
+cmd rename-edit ${{
+    $EDITOR "$2"
+    lf -remote "send $id rename-apply \"$1\" \"$2\""
+}}
+
+# Rename the paths in $1 to the names in $2. All names are checked first. Files go through
+# temporary names, so swaps work.
+cmd rename-apply &{{
+    mapfile -t old < "$1"
+    mapfile -t new < "$2"
+    rm -- "$1" "$2"
+    message() {
+        lf -remote "send $id $1 \"$(sed 's/\\/\\\\/g;s/"/\\"/g' <<< "$2")\""
+    }
+    fail() {
+        message echoerr "rename: $1, nothing renamed"
+        exit 1
+    }
+    [ ${#old[@]} -eq ${#new[@]} ] || fail "expected ${#old[@]} lines, got ${#new[@]}"
+    declare -A source target
+    for path in "${old[@]}"; do
+        source[$path]=1
     done
-    rm -- "$old" "$new"
+    for i in "${!old[@]}"; do
+        name=${new[i]}
+        [[ -n $name && $name != */* && $name != . && $name != .. ]] || fail "invalid name '$name'"
+        dst=$(dirname -- "${old[i]}")/$name
+        [[ -z ${target[$dst]} ]] || fail "'$name' given twice"
+        target[$dst]=1
+        [[ -n ${source[$dst]} || ! ( -e $dst || -L $dst ) ]] || fail "'$name' already exists"
+    done
+    declare -a tmp
+    for i in "${!old[@]}"; do
+        dir=$(dirname -- "${old[i]}")
+        [[ ${old[i]} != "$dir/${new[i]}" ]] || continue
+        tmp[i]=$(mktemp -u -- "$dir/.rename.XXXXXX")
+        if ! mv -- "${old[i]}" "${tmp[i]}"; then
+            unset 'tmp[i]'
+            for j in "${!tmp[@]}"; do
+                mv -- "${tmp[j]}" "${old[j]}"
+            done
+            fail "cannot move '${old[i]}'"
+        fi
+    done
+    count=0
+    failed=()
+    for i in "${!tmp[@]}"; do
+        if mv -n -- "${tmp[i]}" "$(dirname -- "${old[i]}")/${new[i]}" && [ ! -e "${tmp[i]}" ]; then
+            ((count++))
+        else
+            failed+=("${tmp[i]} -> ${new[i]}")
+        fi
+    done
     lf -remote "send $id unselect"
+    if [ ${#failed[@]} -gt 0 ]; then
+        message echoerr "rename: renamed $count, failed (left as temporary names): ${failed[*]}"
+    else
+        message echo "Renamed $count file(s)"
+    fi
 }}
 
 # Change parent dir
@@ -51,7 +103,8 @@ map K move-parent up
 
 # | to fzf current dir
 cmd fzf ${{
-    file=$(fzf --preview 'bat {} --color=always' --preview-window='<80(up)')
+    file=$(fzf --preview '~/.config/lf/preview {} $FZF_PREVIEW_COLUMNS $FZF_PREVIEW_LINES' \
+        --preview-window='<80(up)')
     if [ -n "$file" ]; then
         lf -remote "send $id :select $file"
     fi
@@ -81,7 +134,7 @@ map w
     function send_retry {
         # repeat until a server picks up the request
         for i in {1..10}; do
-            if lf -remote "send $id $@" | grep -v "no such client id"; then
+            if ! lf -remote "send $id $@" | grep -q "no such client id"; then
                 break
             fi
             sleep 0.05;
@@ -97,7 +150,7 @@ map w
 # y (select for copy) and P to paste soft-link
 # d (select for cut) and P to paste hard-link
 cmd link %{{
-    set -- $(cat $HOME/local/share/lf/files)
+    set -- $(cat $HOME/.local/share/lf/files)
     mode="$1"
     shift
     if [ "$#" -lt 1 ]; then
@@ -115,8 +168,131 @@ cmd link %{{
 }}
 map P :link
 
-# Copy path to clipboard
-cmd yank-path $printf '%s' "$f" | xclip -i -selection clipboard
+# Copy path, directory, name or stem of the selected files
+cmd copy-path &{{
+    while IFS= read -r file; do
+        name=$(basename -- "$file")
+        case "$1" in
+        path) echo "$file" ;;
+        dir) dirname -- "$file" ;;
+        name) echo "$name" ;;
+        stem) [[ $name == ?*.* ]] && echo "${name%.*}" || echo "$name" ;;
+        esac
+    done <<< "$fx" | head -c -1 | clip-copy
+}}
+map c
+map cc copy-path path
+map cd copy-path dir
+map cf copy-path name
+map cn copy-path stem
+
+# Drag the selected files out with kitty's dnd kitten
+cmd drag &{{
+    mapfile -t files <<< "$fx"
+    args=(--exit-on drag-finish,esc-key --drop text/uri-list: --drop text/plain: -- "${files[@]}")
+    if socket=$(kitty-socket $$ 2>/dev/null); then
+        kitten @ --to "$socket" launch --type=overlay --cwd "$PWD" \
+            kitten dnd "${args[@]}" >/dev/null
+    else
+        kitty --directory "$PWD" kitten dnd "${args[@]}"
+    fi
+}}
+map D drag
+
+# Stage, unstage or remove the selected files
+cmd git-files &{{
+    mapfile -t files <<< "$fx"
+    cd "$(dirname -- "${files[0]}")" || exit 1
+    if error=$(git "$@" -- "${files[@]}" 2>&1); then
+        lf -remote "send $id reload"
+        lf -remote "send $id on-cd"
+    else
+        error=${error//\\/\\\\}
+        error=${error//\"/\\\"}
+        error=${error//$'\n'/ }
+        lf -remote "send $id echoerr \"$error\""
+    fi
+}}
+map ga git-files add
+map gu git-files unstage
+map gd git-files rm -r -q
+
+# -+F -+X undo the LESS=FRX that git sets, so short output stays open
+cmd git-log $DELTA_PAGER='less -+F -+X' git log -p --follow -- "$f"
+cmd git-blame $DELTA_PAGER='less -+F -+X' git blame -- "$f"
+map gl git-log
+map gb git-blame
+
+# Jump to a zoxide directory, in a popup inside tmux
+cmd z &{{
+    if [ -z "$TMUX" ]; then
+        lf -remote "send $id z-inline \"$*\""
+        exit
+    fi
+    dir=$(zoxide query --list | fzf --tmux --layout reverse --info inline --no-sort --query "$*") &&
+        lf -remote "send $id cd \"$(sed 's/\\/\\\\/g;s/"/\\"/g' <<< "$dir")\""
+}}
+
+cmd z-inline ${{
+    dir=$(zoxide query --list |
+        fzf --height 40% --layout reverse --info inline --no-sort --query "$*") &&
+        lf -remote "send $id cd \"$(sed 's/\\/\\\\/g;s/"/\\"/g' <<< "$dir")\""
+}}
+map Z z
+
+# Mount archives with ratarmount and enter them, open other files with $OPENER.
+# Layout: $XDG_RUNTIME_DIR/lf-archive/$id/XXXXXX/{NAME,.archive}
+cmd open &{{
+    case "$f" in
+    *.zip | *.jar | *.tar | *.tar.* | *.tgz | *.tbz2 | *.txz | *.7z | *.rar | *.iso) ;;
+    *) exec $OPENER "$f" ;;
+    esac
+    lf -remote "send $id echo Mounting ${f##*/}"
+    base=${XDG_RUNTIME_DIR:-/tmp}/lf-archive/$id
+    mkdir -p "$base"
+    dir=$(mktemp -d "$base/XXXXXX")
+    mount=$dir/${f##*/}
+    mkdir "$mount"
+    ln -s -- "$f" "$dir/.archive"
+    if error=$(ratarmount --index-folders ~/.cache/ratarmount "$f" "$mount" 2>&1); then
+        mount=${mount//\\/\\\\}
+        mount=${mount//\"/\\\"}
+        lf -remote "send $id cd \"$mount\""
+    else
+        rm "$dir/.archive"
+        rmdir "$mount" "$dir"
+        error=$(tail -n 1 <<< "$error")
+        error=${error//\\/\\\\}
+        error=${error//\"/\\\"}
+        lf -remote "send $id echoerr \"$error\""
+    fi
+}}
+
+# Unmount archives that lf has left (all with "all"). h at a mount root selects the archive.
+cmd archive-leave &{{
+    base=${XDG_RUNTIME_DIR:-/tmp}/lf-archive/$id
+    if [ "${PWD%/*}" = "$base" ]; then
+        archive=$(readlink -- "$PWD/.archive")
+        archive=${archive//\\/\\\\}
+        archive=${archive//\"/\\\"}
+        lf -remote "send $id select \"$archive\""
+        exit
+    fi
+    # Keep the current mount and the mounts that hold its archive
+    declare -A keep
+    path=$PWD
+    while [[ $1 != all && $path == "$base"/* ]]; do
+        dir=${path#"$base"/}
+        dir=$base/${dir%%/*}
+        keep[$dir]=1
+        path=$(readlink -- "$dir/.archive")
+    done
+    for dir in "$base"/*; do
+        [[ -L $dir/.archive && -z ${keep[$dir]} ]] || continue
+        fusermount -u -z "$dir"/* && rm "$dir/.archive" && rmdir "$dir"/* "$dir"
+    done
+    rmdir "$base" 2>/dev/null
+}}
 
 # Open file synchronously/asynchronously
 cmd open-sync $$@ $fx
@@ -124,11 +300,72 @@ cmd open-async &$@ $fx
 map o push :open-sync<space>
 map O push :open-async<space>
 
-# set pane_path when changing directory
-cmd on-cd &printf '\033]7;%s\033\' "$PWD" > /dev/tty
+# lf waits for one previewer at a time, so kill the one of the previous file
+cmd on-select &{{
+    pidfile=${XDG_RUNTIME_DIR:-/tmp}/lf-preview-$id
+    { read -r pid; read -r path; } < "$pidfile" 2>/dev/null || exit 0
+    [ "$path" = "$f" ] && exit 0
+    descendants() {
+        for child in $(pgrep -P "$1"); do
+            echo "$child"
+            descendants "$child"
+        done
+    }
+    pids=$(descendants "$pid")
+    kill "$pid" $pids 2>/dev/null
+}}
 
-# unset pane_path when quitting
-cmd on-quit &printf '\033]7;\033\' > /dev/tty
+# Set pane_path, update zoxide, unmount archives, show git status in the prompt
+cmd on-cd &{{
+    printf '\033]7;%s\033\' "$PWD" > /dev/tty
+    [[ $PWD == ${XDG_RUNTIME_DIR:-/tmp}/lf-archive/* ]] || zoxide add -- "$PWD"
+    lf -remote "send $id archive-leave"
+    git=
+    if mapfile -t info < <(git-prompt-info) && [ ${#info[@]} -eq 4 ]; then
+        git=" \033[1;33m ${info[0]}"
+        [[ -n ${info[1]} ]] && git+=" \033[31m[${info[1]}]"
+        ((info[2])) && git+=" \033[22;32m+${info[2]}"
+        ((info[3])) && git+=" \033[31m-${info[3]}"
+        git+="\033[0m"
+    fi
+    prompt="\033[32;1m%u@%h\033[0m:\033[34;1m%d\033[0m\033[1m%f\033[0m$git"
+    lf -remote "send $id set promptfmt \"$prompt\""
+}}
+
+# Show added and deleted lines (git diff HEAD) in the info column
+cmd on-load &{{
+    cd "$(dirname -- "$1")" || exit 0
+    git rev-parse --is-inside-work-tree &>/dev/null || exit 0
+    declare -A added deleted binary
+    while IFS=$'\t' read -r -d '' a d path; do
+        # Renames: empty path, then old and new path
+        [[ -n $path ]] || { read -r -d '' _; read -r -d '' path; }
+        name=${path%%/*}
+        if [[ $a == - ]]; then
+            binary[$name]=1
+        else
+            ((added[$name] += a, deleted[$name] += d))
+        fi
+    done < <(git diff --numstat --relative -z HEAD 2>/dev/null)
+    cmds=
+    for file in "$@"; do
+        name=${file##*/}
+        info=
+        ((added[$name])) && info+="\033[22;32m+${added[$name]}\033[0m "
+        ((deleted[$name])) && info+="\033[22;31m-${deleted[$name]}\033[0m "
+        ((binary[$name])) && info+="\033[22;33mbin\033[0m "
+        file=${file//\\/\\\\}
+        file=${file//\"/\\\"}
+        cmds+="addcustominfo \"$file\" \"${info% }\"; "
+    done
+    lf -remote "send $id :$cmds"
+}}
+
+# Unset pane_path and unmount archives
+cmd on-quit :{{
+    &printf '\033]7;\033\' > /dev/tty
+    archive-leave all
+}}
 
 # trigger on-cd upon startup
 on-cd

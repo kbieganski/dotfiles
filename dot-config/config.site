@@ -1,0 +1,5 @@
+case $PACKAGE_TARNAME in
+verilator)
+    : "${CXXFLAGS=-g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer}"
+    ;;
+esac

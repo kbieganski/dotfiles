@@ -1,18 +1,18 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 package=$(cargo read-manifest | jq -r .name)
 history_dir=$HOME/.cargo/tests-history
 mkdir -p "$history_dir"
 
 watch=false
-args=
+args=()
 while [ -n "$1" ]; do
     case "$1" in
     --watch | -w)
         watch=true
         ;;
     *)
-        args="$args $1"
+        args+=("$1")
         ;;
     esac
     shift
@@ -32,8 +32,8 @@ test_filter=$(
 
 if [ $? -eq 0 ]; then
     if $watch; then
-        cargo watch --exec test "$test_filter" "$args"
+        watchexec --exts rs,toml -- cargo test "$test_filter" "${args[@]}"
     else
-        cargo test "$test_filter" "$args"
+        cargo test "$test_filter" "${args[@]}"
     fi
 fi

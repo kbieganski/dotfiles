@@ -1,0 +1,182 @@
+#!/bin/sh
+# Previewer for lf and fzf: preview FILE WIDTH HEIGHT
+# Images use kitty Unicode placeholders: the graphics command goes to the terminal, the
+# placeholder text to lf, which then positions and clears the image.
+file=$1
+w=$2
+h=$3
+
+show_image() {
+    tty=/dev/tty
+    size=
+    if [ -n "$NVIM" ]; then
+        # Send the graphics command to Neovim's own terminal
+        if ! { tty=$(nvim_tty) && size=$(window_size "$tty"); }; then
+            describe
+        fi
+    elif [ -n "$FZF_PREVIEW_COLUMNS" ]; then
+        # Move the final color reset to the previous line, as fzf-preview.sh does
+        kitten icat --clear --stdin=no --transfer-mode=memory --unicode-placeholder \
+            --place "${w}x${h}@0x0" -- "$1" </dev/null 2>/dev/null |
+            sed '$d' | sed "\$s/\$/$(printf '\033')[m/"
+        exit
+    fi
+    kitten icat --stdin=no --transfer-mode=memory --unicode-placeholder \
+        ${size:+"--use-window-size=$size"} --place "${w}x${h}@0x0" -- "$1" </dev/null 2>/dev/null |
+        python3 -c '
+import re, sys
+data = sys.stdin.buffer.read()
+# Graphics commands, plain or in tmux passthrough
+gfx = re.compile(rb"\x1bPtmux;(?:\x1b\x1b|[^\x1b])*\x1b\\|\x1b_G[^\x1b]*\x1b\\")
+with open(sys.argv[1], "wb") as tty:
+    tty.write(b"".join(gfx.findall(data)))
+text = gfx.sub(b"", data)
+# The image id is the foreground color. lf only parses the semicolon form.
+color = re.search(rb"\x1b\[38[:;]2[:;](\d+)[:;](\d+)[:;](\d+)m", text)
+color = b"\x1b[38;2;%s;%s;%sm" % color.groups()
+text = re.sub(rb"\x1b\[(\d+)C", lambda m: b" " * int(m.group(1)), text)
+text = re.sub(rb"\r|\x1b[78]|\x1b\[[\d;]*H|\x1b\[[\d:;]*m", b"", text)
+for line in text.split(b"\n"):
+    if line.strip():
+        sys.stdout.buffer.write(color + line + b"\x1b[39m\n")
+' "$tty"
+    # Disable lf's preview cache, so the image is sent again
+    exit 1
+}
+
+# Terminal of the nearest parent Neovim
+nvim_tty() {
+    pid=$$
+    while [ "${pid:-0}" -gt 1 ] && [ -e "/proc/$pid" ]; do
+        if [ "$(cat "/proc/$pid/comm")" = nvim ]; then
+            readlink "/proc/$pid/fd/1"
+            return
+        fi
+        pid=$(ps -o ppid= -p "$pid" | tr -d ' ')
+    done
+    return 1
+}
+
+# Size of terminal $1 for icat --use-window-size: cols,rows,width,height
+window_size() {
+    python3 -c '
+import fcntl, struct, sys, termios
+with open(sys.argv[1]) as tty:
+    rows, cols, width, height = struct.unpack("4H", fcntl.ioctl(tty, termios.TIOCGWINSZ, bytes(8)))
+if not width or not height:
+    sys.exit(1)
+print(f"{cols},{rows},{width},{height}")
+' "$1"
+}
+
+describe() {
+    file -Lb -- "$file" | fold -s -w "$w"
+    exit
+}
+
+# Run a command that writes $tmp/out.png and show it
+render() {
+    "$@" && show_image "$tmp/out.png"
+}
+
+video_frame() {
+    duration=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$file")
+    ffmpeg -v error -ss "$(awk -v d="${duration:-0}" 'BEGIN { print d / 10 }')" -i "$file" \
+        -frames:v 1 -vf scale=1024:-2 "$tmp/out.png"
+}
+
+# Directories (from fzf; lf lists them itself)
+if [ -d "$file" ]; then
+    exec eza -1 --color=always --icons -- "$file"
+fi
+
+tmp=$(mktemp -d)
+# shellcheck disable=SC2154 # lf sets $id
+pidfile=${XDG_RUNTIME_DIR:-/tmp}/lf-preview-$id
+trap 'rm -rf -- "$tmp"' EXIT
+trap 'exit 1' TERM
+# For on-select in lfrc
+if [ -n "$id" ]; then
+    printf '%s\n%s\n' "$$" "$file" >"$pidfile"
+    trap 'rm -rf -- "$tmp" "$pidfile"' EXIT
+fi
+
+# Archives list file names. GNU tar stops on SIGPIPE, bsdtar would not.
+case "$file" in
+*.zip | *.jar)
+    unzip -Z1 "$file"
+    exit
+    ;;
+*.tar | *.tar.* | *.tgz | *.tbz2 | *.txz)
+    tar -tf "$file"
+    exit
+    ;;
+*.7z | *.rar | *.iso)
+    7z l -ba -slt "$file" | sed -n 's/^Path = //p'
+    exit
+    ;;
+*.gz | *.xz | *.zst | *.bz2)
+    case "$file" in
+    *.gz) decompress=gzip ;;
+    *.xz) decompress=xz ;;
+    *.zst) decompress=zstd ;;
+    *.bz2) decompress=bzip2 ;;
+    esac
+    "$decompress" -dc -- "$file" | bat --paging=never --file-name "$(basename -- "${file%.*}")"
+    exit
+    ;;
+*.diff | *.patch)
+    delta --paging=never --width "$w" <"$file"
+    exit
+    ;;
+*.pdf)
+    render pdftoppm -f 1 -l 1 -singlefile -png -scale-to 1024 "$file" "$tmp/out"
+    ;;
+*.svg)
+    render rsvg-convert -w 1024 -o "$tmp/out.png" "$file"
+    ;;
+*.ttf | *.otf | *.ttc | *.woff | *.woff2)
+    render magick -background white -fill black -font "$file" -pointsize 64 \
+        label:'ABCDEFGHIJKLM\nNOPQRSTUVWXYZ\nabcdefghijklm\nnopqrstuvwxyz\n0123456789 !?&@{}' \
+        "$tmp/out.png"
+    ;;
+esac
+
+case "$(file -Lb --mime-type -- "$file")" in
+image/*)
+    show_image "$file"
+    ;;
+video/*)
+    render video_frame
+    ;;
+application/x-executable | application/x-pie-executable | application/x-sharedlib | \
+    application/x-object)
+    # Type, dependencies, then symbols (dynamic symbols if stripped)
+    file -Lb -- "$file" | fold -s -w "$w"
+    readelf -d -W "$file" | sed -n 's/.*(\(NEEDED\|SONAME\|RPATH\|RUNPATH\)) *//p'
+    nm -C --defined-only "$file" 2>/dev/null | grep . || nm -DC --defined-only "$file" 2>/dev/null
+    exit
+    ;;
+esac
+
+if [ "$(file -Lb --mime-encoding -- "$file")" = binary ]; then
+    xxd -- "$file"
+    exit
+fi
+
+# Diff against HEAD if changed. realpath finds the repository of stow symlinks. Outside a work
+# tree git diff would run as --no-index; exit 1 means changed, 128 an error.
+real=$(realpath -- "$file")
+dir=$(dirname -- "$real")
+status=0
+if [ "$(git -C "$dir" rev-parse --is-inside-work-tree 2>/dev/null)" = true ]; then
+    git -C "$dir" diff --quiet HEAD -- "$real" 2>/dev/null
+    status=$?
+fi
+if [ "$status" = 1 ]; then
+    # Without the file header
+    git -C "$dir" diff HEAD -- "$real" |
+        delta --paging=never --width "$w" --file-style omit --file-decoration-style none | sed 1d
+else
+    bat --paging=never -- "$file"
+fi

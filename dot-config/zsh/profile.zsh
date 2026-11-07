@@ -29,13 +29,13 @@ function profile {
 
     local syms=$(mktemp)
     local demangled=$(mktemp)
-    readelf -sW "$elf" | grep -v '\.' | while read _ _ _ _ _ _ _ sym; do
+    readelf -sW "$elf" | \grep -v '\.' | while read _ _ _ _ _ _ _ sym; do
        echo $sym
     done | tee $syms | c++filt | rustfilt > $demangled
 
     sudo perf probe -d "probe_$elf_base:*"
     for func in "${funcs[@]}"; do
-        local lineno=$(grep -n -m 1 $func $demangled | cut -d: -f1)
+        local lineno=$(\grep -n -m 1 $func $demangled | cut -d: -f1)
         local sym=$(sed "${lineno}q;d" $syms)
         sudo perf probe --no-demangle -x "$elf" "$func=$sym"
         sudo perf probe --no-demangle -x "$elf" "${func}=$sym%return"

@@ -25,3 +25,14 @@ SPACESHIP_PROMPT_ORDER=(
   sudo
   char
 )
+
+SPACESHIP_GIT_ORDER=(git_branch git_info git_commit)
+spaceship_git_info() {
+  spaceship::is_git || return
+  local info=("${(@f)$(git-prompt-info)}") out=
+  (( ${#info} == 4 )) || return
+  [[ -n ${info[2]} ]] && out+=" [${info[2]}]"
+  (( info[3] )) && out+=" %b%F{green}+${info[3]}"
+  (( info[4] )) && out+=" %b%F{red}-${info[4]}"
+  [[ -n $out ]] && spaceship::section --color red "$out"
+}

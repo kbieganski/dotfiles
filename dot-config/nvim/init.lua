@@ -36,6 +36,27 @@ vim.o.writebackup    = false -- disable backup when overwriting
 vim.o.signcolumn     = 'yes:3'
 vim.o.diffopt        = 'inline:word'
 
+-- Clipboard: copy with OSC 52 through the terminal (works in tmux and over SSH),
+-- paste with wl-paste or xclip, since kitty asks for permission on every OSC 52 read
+local osc52          = require 'vim.ui.clipboard.osc52'
+local function paste(register)
+    local primary = register == '*'
+    local cmd
+    if os.getenv 'WAYLAND_DISPLAY' and vim.fn.executable 'wl-paste' == 1 then
+        cmd = { 'wl-paste', '--no-newline', primary and '--primary' or nil }
+    elseif os.getenv 'DISPLAY' and vim.fn.executable 'xclip' == 1 then
+        cmd = { 'xclip', '-o', '-selection', primary and 'primary' or 'clipboard' }
+    else
+        return osc52.paste(register)()
+    end
+    return vim.split(vim.system(cmd):wait().stdout or '', '\n')
+end
+vim.g.clipboard = {
+    name = 'osc52-copy',
+    copy = { ['+'] = osc52.copy '+', ['*'] = osc52.copy '*' },
+    paste = { ['+'] = function() return paste '+' end, ['*'] = function() return paste '*' end },
+}
+
 -- Faster loading
 vim.loader.enable()
 
@@ -222,7 +243,8 @@ local function fzf_cmd(opts)
     if opts.history == nil then opts.history = true end
     opts.start_history = opts.start_history or false
     return 'fzf --multi --query ' .. vim.fn.shellescape(get_visual_selection())
-        .. ' --preview "bat {} --color=always" --preview-window="<80(up)" '
+        .. ' --preview "~/.config/lf/preview {} \\$FZF_PREVIEW_COLUMNS \\$FZF_PREVIEW_LINES"'
+        .. ' --preview-window="<80(up)" '
         .. (opts.history and '--history=' .. vim.fn.stdpath 'data' .. '/fzf-history' or '')
         .. (opts.start_history and ' --bind start:prev-history' or '')
 end
@@ -244,7 +266,9 @@ function Lf(path)
 end
 
 local function git_root()
-    return (vim.system { 'git', 'get-root' }:wait().stdout:gsub('%s+$', ''))
+    local result = vim.system({ 'git', 'get-root' }):wait()
+    if result.code ~= 0 or not result.stdout or result.stdout == '' then return nil end
+    return (result.stdout:gsub('%s+$', ''))
 end
 
 local function fzg_cmd(opts)

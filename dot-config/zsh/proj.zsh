@@ -20,13 +20,13 @@ function proj {
     done
     mkdir -p $proj_dir
     local remote=$(gh repo list $owner --json name | jq -r ".[] | .name" | sort | uniq)
-    local local=$(ls $proj_dir)
+    local local=$(\ls $proj_dir)
     local all=$(echo "$remote\n$local" | sort | uniq)
     local proj=$(echo "$all" | \fzf)
     if [ -z "$proj" ]; then
         return
     else
-        echo "$local" | grep -xc "$proj" &> /dev/null
+        echo "$local" | \grep -xc "$proj" &> /dev/null
         local is_local=$?
         if [ $is_local -ne 0 ]; then
             if [ -z $owner ]; then

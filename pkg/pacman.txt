@@ -76,6 +76,7 @@ hyperfine
 i3blocks
 i3-wm
 imagemagick
+imv
 inetutils
 inkscape
 inotify-tools
@@ -188,6 +189,7 @@ waybar
 webkit2gtk
 wget
 wireplumber
+wl-clipboard
 xbindkeys
 xclip
 xdot

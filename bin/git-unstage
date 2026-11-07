@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if git rev-parse -q --verify HEAD >/dev/null; then
+    exec git restore --staged "$@"
+else
+    exec git rm -r -q --cached "$@"
+fi
